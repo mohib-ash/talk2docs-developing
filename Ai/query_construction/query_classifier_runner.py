@@ -23,7 +23,7 @@ from utils.schemas import APIResponse, DocumentStatus, MultiIndexStatus
 from utils.APIResponce_error_code_enum import SYSTEM_ERROR_CODES
 from utils.logging.logEvents import RetrievalStrategyLog
 from utils.logging.helper_log import log_state
-
+from redis.asyncio import Redis
 from vector_db.chroma import (
     get_user_summary_vdb,
     get_user_explanation_vdb,
@@ -32,20 +32,20 @@ from vector_db.chroma import (
 
     
 #btw this function acts as a middle man for Answer_Ai and classification techniqyes
-async def execute_retrieval_strategy(model, question: str, classification_response: QueryClassificationResult, user_id: int, retriever: EnsembleRetriever, doc_name: list[str], db: AsyncSession) -> APIResponse:
+async def execute_retrieval_strategy(model, redis_client: Redis, question: str, classification_response: QueryClassificationResult, user_id: int, retriever: EnsembleRetriever, doc_name: list[str], db: AsyncSession) -> APIResponse:
     log_state(RetrievalStrategyLog.RETRIEVAL_STRATEGY_STARTED, function="execute_retrieval_strategy", user_id=user_id)
     
     technique: QueryTechnique = classification_response.selected_technique
     confidence_score: float = classification_response.confidence_score
     
-    
+    #why this has 2? coz it doesnt contain a pydantic
     if technique == QueryTechnique.HYDE:
         result: APIResponse = await HYDE_fucntion(question=question, user_id=user_id)
         if not result.success:
             log_state(RetrievalStrategyLog.RETRIEVAL_STRATEGY_FAILED, function="execute_retrieval_strategy", user_id=user_id)
             log_state(RetrievalStrategyLog.EXITING_RETRIEVAL_STRATEGY, function="execute_retrieval_strategy", user_id=user_id)
             log_state(RetrievalStrategyLog.FALLING_BACK_TO_DEFAULT_ROUTE, function="execute_retrieval_strategy", user_id=user_id)
-            return result 
+            return result #hyde didnt work so now ill go to defualt case and use orignal question
         
         
         result: APIResponse = await use_HYDE(user_id=user_id, hyde_doc=result.data, retriever=retriever)
@@ -53,11 +53,11 @@ async def execute_retrieval_strategy(model, question: str, classification_respon
             log_state(RetrievalStrategyLog.RETRIEVAL_STRATEGY_FAILED, function="execute_retrieval_strategy", user_id=user_id)
             log_state(RetrievalStrategyLog.EXITING_RETRIEVAL_STRATEGY, function="execute_retrieval_strategy", user_id=user_id)
             log_state(RetrievalStrategyLog.FALLING_BACK_TO_DEFAULT_ROUTE, function="execute_retrieval_strategy", user_id=user_id)
-            return result 
+            return result #again go defualt case
         
         log_state(RetrievalStrategyLog.RETRIEVAL_STRATEGY_SUCCESS, function="execute_retrieval_strategy", user_id=user_id)
         log_state(RetrievalStrategyLog.EXITING_RETRIEVAL_STRATEGY, function="execute_retrieval_strategy", user_id=user_id)
-        return result 
+        return result ##list[langchaindocument] of 20! senmtaic serch results -> same case is for defualt clase 
         
     
     if technique == QueryTechnique.MULTI_QUERY:
@@ -74,7 +74,7 @@ async def execute_retrieval_strategy(model, question: str, classification_respon
             return result 
         log_state(RetrievalStrategyLog.RETRIEVAL_STRATEGY_SUCCESS, function="execute_retrieval_strategy", user_id=user_id)
         log_state(RetrievalStrategyLog.EXITING_RETRIEVAL_STRATEGY, function="execute_retrieval_strategy", user_id=user_id)
-        return result 
+        return result #list[langchaindocument] of 20! senmtaic serch results -> same case is for defualt clase 
     
     
     if technique == QueryTechnique.ADVANCED_TRANSLATION:
@@ -147,12 +147,13 @@ async def execute_retrieval_strategy(model, question: str, classification_respon
             summary_vdb, explain_vdb = await asyncio.gather(
                 get_user_summary_vdb(user_id=user_id, db=db),
                 get_user_explanation_vdb(user_id=user_id, db=db)
-            )  
+            )  #unlike normal await this one is: u both go i will await for both of u! instead of 1st await finish then 2nd await 
 
             if summary_vdb and explain_vdb:
+                # Concurrently build secondary retrievers
                 summary_retriever, explanation_retriever = await asyncio.gather(
-                    build_get_retriever(user_vdb=summary_vdb, doc_name=doc_name, k=20, user_id=user_id),
-                    build_get_retriever(user_vdb=explain_vdb, doc_name=doc_name, k=20, user_id=user_id)
+                    build_get_retriever(user_vdb=summary_vdb, doc_name=doc_name, k=20, user_id=user_id, db=db, redis_client=redis_client),
+                    build_get_retriever(user_vdb=explain_vdb, doc_name=doc_name, k=20, user_id=user_id, db=db, redis_client=redis_client)
                 )
 
                 if summary_retriever and explanation_retriever:
@@ -170,13 +171,14 @@ async def execute_retrieval_strategy(model, question: str, classification_respon
                         log_state(RetrievalStrategyLog.EXITING_RETRIEVAL_STRATEGY, function="execute_retrieval_strategy", user_id=user_id)
                         return mi_result
 
-
+            # Any failure above falls through to Tier 2 logging
             log_state(RetrievalStrategyLog.MULTI_INDEX_EXECUTION_FAILED, function="execute_retrieval_strategy", user_id=user_id)
             log_state(RetrievalStrategyLog.FALLING_BACK_TO_MULTI_QUERY, function="execute_retrieval_strategy", user_id=user_id)
         else:
             log_state(RetrievalStrategyLog.MULTI_INDEX_NOT_READY, function="execute_retrieval_strategy", user_id=user_id)
             log_state(RetrievalStrategyLog.FALLING_BACK_TO_MULTI_QUERY, function="execute_retrieval_strategy", user_id=user_id)
 
+        #coz if prediction was to do multi-index heavy level vague came so cant let it go normally we do mult-quer
         result: APIResponse = await multi_query_function(
             model=model, 
             user_id=user_id, 

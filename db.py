@@ -44,13 +44,10 @@ async def get_db():
     
 
 
-#intentionally separating FastAPI request lifecycle from Celery worker lifecycle, making Celery own its DB engine.
+from sqlalchemy.pool import NullPool
 celery_engine = create_async_engine(
     DATABASE_URL,
-    pool_size=5,
-    max_overflow=5,
-    pool_timeout=30,
-    pool_recycle=3600,
+    poolclass=NullPool,
 )
 
 CelerySessionLocal = async_sessionmaker(

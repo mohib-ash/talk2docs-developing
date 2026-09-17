@@ -30,8 +30,8 @@ from Ai.ai_utils import safe_retrieve
 async def use_HYDE(user_id: int, hyde_doc: str, retriever: EnsembleRetriever) -> APIResponse:
     log_state(HyDELog.HYDE_RETRIEVAL_STARTED, function="use_HYDE", user_id=user_id)
     
-
-    try: 
+    #Retrieve chunks using the HyDE passage
+    try: #try for rertiver fail not hyd_doc file
         retrieved_docs: list[LangChainDocument] = await safe_retrieve(retriever, hyde_doc)
     except Exception as e:
         log_state(HyDELog.HYDE_RETRIEVAL_FAILED, level=LogState.EXCEPTION, function="use_HYDE", exc=e, user_id=user_id)
@@ -43,7 +43,7 @@ async def use_HYDE(user_id: int, hyde_doc: str, retriever: EnsembleRetriever) ->
             error_message="Retriver failed to get results for hyde_docs"
         )
     
-
+    #upper was retiver expction, this is if that thang came empty
     if not retrieved_docs:
         log_state(HyDELog.HYDE_RETRIEVAL_FAILED, function="use_HYDE", user_id=user_id)
         log_state(HyDELog.EXITING_HYDE_RETRIVER, function="use_HYDE", user_id=user_id)

@@ -17,6 +17,9 @@ celery_app.conf.task_routes = {
     "ai.*": { 
         "queue": "ai"
     },
+    "retri.*": {  
+        "queue": "retri"
+    },
     "email.*": {
         "queue": "email"
     },

@@ -60,6 +60,8 @@ async def safe_parse(raw_output, parser, llm, query, max_retries=3) -> object | 
                 
             current_str = clean_json_string(current_str)
 
+
+
         try:
             return parser.parse(current_str) 
         except OutputParserException as e: 
@@ -93,5 +95,4 @@ async def safe_parse(raw_output, parser, llm, query, max_retries=3) -> object | 
                 if check_provider_quota(e):
                     return None
     return None
-
 

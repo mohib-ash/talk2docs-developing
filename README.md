@@ -40,10 +40,7 @@ Instead, the query passes through an AI-driven decision pipeline:
 User Question
       │
       ▼
-Intent Classification
-      │
-      ▼
-Query Classification
+Intent Classification and Query Classification
       │
       ▼
 Retrieval Technique Selection
@@ -87,6 +84,7 @@ The architecture is designed around separation of concerns, asynchronous process
 
 - 📄 Asynchronous document ingestion
 - 🧠 Docling + structure-aware chunking
+- 📦 Utilizes My own package PyPI: [TriCacheLLM-MMA](https://pypi.org/project/TriCacheLLM-MMA/) | Github: [TriCacheLLM_MMA GitHub](https://github.com/mohib-ash/TriCacheLLM_MMA)
 - 🗃️ Raw / Summary / Explanation vector indexes
 - 🔍 Hybrid Vector + BM25 retrieval
 - 🔀 Reciprocal Rank Fusion
@@ -99,6 +97,17 @@ The architecture is designed around separation of concerns, asynchronous process
 - 👤 User-isolated document retrieval
 - 📊 Persistent document lifecycle tracking
 - 📝 Structured logging & centralized errors
+
+
+
+---
+
+# 📦 TriCacheLLM-MMA Integration
+
+The core caching, multi-index coordination, and retrieval components of Talk2Docs originated from [TriCacheLLM_MMA GitHub](https://github.com/mohib-ash/TriCacheLLM_MMA) and have since been modularized and published as an independent Python package:
+
+- **PyPI Package:** [TriCacheLLM-MMA](https://pypi.org/project/TriCacheLLM-MMA/)
+- **Purpose:** Manages asynchronous caching, chunk-to-representation mapping across Raw, Summary, and Explanation indexes, and optimized retrieval query execution.
 
 ---
 
@@ -281,6 +290,7 @@ Task 1
 
 Workers communicate using serializable payloads rather than passing ORM objects between processes.
 This keeps workers independently executable and avoids coupling Celery processes to SQLAlchemy session state.
+There are more workers in the project for instance new BM25 new creation when new doc arrives, saving data in cache vector database etc.
 
 ---
 
@@ -447,7 +457,7 @@ rather than relying exclusively on one retrieval method.
 
 ---
 
-# ⚡ Global BM25 Architecture
+# ⚡ BM25 Architecture
 
 Talk2Docs separates the **lexical retrieval index** from the vector database lifecycle.
 A BM25 retriever requires corpus-level statistics such as:
@@ -471,7 +481,7 @@ User
  │    ├── Document C
  │    └── ...
  │
- └── Global BM25
+ └── BM25
       ├── Document A chunks
       ├── Document B chunks
       ├── Document C chunks
@@ -503,7 +513,7 @@ ChromaDB
 LangChainDocument
           │
           ▼
-BM25Retriever
+BM25Retriever (This will be cached, if not available we use version - 1)
 
 This keeps the responsibilities separate:
 ChromaDB
@@ -566,6 +576,41 @@ It first determines what kind of question it is and which retrieval strategy sho
                             Answer Generation
 ```
 ---
+
+
+
+
+
+## ⚡ Post-Generation Lifecycle & Dual-Tier Caching
+
+Once `Answer_ai` successfully compiles and returns the final response, the application enters an optimized post-processing and caching pipeline. To ensure low latency for future requests without blocking the active HTTP response, the system executes caching tasks asynchronously.
+
+```text
+               Answer Generation (Successful APIResponse)
+                                   │
+                                   ▼
+                      Pydantic Serialization Check
+               (model_dump_json() / dict() / json.dumps())
+                                   │
+                                   ▼
+                   Fetch Corpus Source Versions
+                                   │
+                                   ▼
+          ┌─────────────────────────────────────────────────┐
+          │     Async Background Task (asyncio.create_task) │
+          ├────────────────────────┬────────────────────────┤
+          │                        │                        │
+          ▼                        ▼                        ▼
+    Tier 1: Hot Exact Cache    Tier 2: Vector Cache    Structured Logging
+    (Redis SETEX - 24h TTL)    (Semantic Redis Store)  (QuestionLogs Enum)
+          │                        │                        │
+          └────────────────────────┼────────────────────────┘
+                                   │
+                                   ▼
+                       Return Response to Client
+
+
+```
 
 # 🧭 Query & Intent Classification
 
@@ -860,58 +905,90 @@ The entire system can be represented as two major pipelines.
 
 ## Question Pipeline
 
-```text
-                         USER
-                          │
-                          ▼
-                     Question
-                          │
-                          ▼
-                  Intent Classifier
-                          │
-                          ▼
-                  Query Classifier
-                          │
-                          ▼
-                 Retrieval Technique
-                          │
-        ┌─────────────────┼──────────────────┐
-        │                 │                  │
-        ▼                 ▼                  ▼
-   Multi-Query           HyDE          Step-Back
-        │                 │                  │
-        ├────────────┬────┴───────┬──────────┤
-        │            │            │
-        ▼            ▼            ▼
- Translation   Decomposition   Multi-Index
-        │            │            │
-        └────────────┴──────┬─────┘
-                            │
-                            ▼
-                     Hybrid Retrieval
-                     ┌──────────────┐
-                     │ Vector + BM25│
-                     └──────┬───────┘
-                            │
-                            ▼
-                     Candidate Chunks
-                            │
-                            ▼
-                       AI Reranker
-                            │
-                            ▼
-                         Top-K
-                            │
-                            ▼
-                        Answer AI
-                            │
-                            ▼
-                  Structured AnswerModel
-                            │
-                            ▼
-                           USER
-```
 
+The architecture has evolved far beyond a straight-through pipeline. When a user asks a question, it enters a multi-layered routing, context-management, caching, and retrieval workflow designed for low-latency semantic caching and stateful conversation.
+
+```text
+                                        USER
+                                         │
+                                         ▼
+                             Question / Payload Entry
+                                         │
+                                         ▼
+                     ┌───────────────────────────────────────┐
+                     │   Cache VDB Creation Worker           │
+                     └───────────────────┬───────────────────┘
+                                         │
+                                         ▼
+                     ┌───────────────────────────────────────┐
+                     │   Conversation vs. Next Question      │
+                     │             Classifier                │
+                     └───────────────────┬───────────────────┘
+                                         │
+                   ┌─────────────────────┴─────────────────────┐
+                   ▼                                           ▼
+          [Standalone Question]                       [Conversation Context]
+                   │                                           │
+                   │                                  ┌────────┴────────┐
+                   │                                  │ LTM/STM VDB     │
+                   │                                  │ Worker & Pipeline│
+                   │                                  └────────┬────────┘
+                   │                                           │
+                   └─────────────────────┬─────────────────────┘
+                                         │
+                                         ▼
+                     ┌───────────────────────────────────────┐
+                     │    3-Tier Cache Validation Check      │
+                     │  (Hot Exact → Semantic → Vector VDB)  │
+                     └───────────────────┬───────────────────┘
+                                         │
+                   ┌─────────────────────┴─────────────────────┐
+                   ▼                                           ▼
+              [CACHE HIT]                                 [CACHE MISS]
+                   │                                           │
+                   │                                           ▼
+                   │                               ┌───────────────────────┐
+                   │                               │ Intent & Query Class  │
+                   │                               └──────────┬────────────┘
+                   │                                          │
+                   │                                          ▼
+                   │                               ┌───────────────────────┐
+                   │                               │ Advanced Retrieval    │
+                   │                               │ (HyDE, Step-Back, etc)│
+                   │                               └──────────┬────────────┘
+                   │                                          │
+                   │                                          ▼
+                   │                               ┌───────────────────────┐
+                   │                               │ Hybrid (Vector + BM25)│
+                   │                               └──────────┬────────────┘
+                   │                                          │
+                   │                                          ▼
+                   │                               ┌───────────────────────┐
+                   │                               │ AI Reranker & Top-K   │
+                   │                               └──────────┬────────────┘
+                   │                                          │
+                   │                                          ▼
+                   │                               ┌───────────────────────┐
+                   │                               │ Answer AI Execution   │
+                   │                               └──────────┬────────────┘
+                   │                                          │
+                   │                                          ▼
+                   │                               ┌───────────────────────┐
+                   │                               │ Structured Response   │
+                   │                               └──────────┬────────────┘
+                   │                                          │
+                   │                                          ▼
+                   │                               ┌───────────────────────┐
+                   │                               │ Background Push to    │
+                   │                               │ Cache VDB & Tier 1/2  │
+                   │                               └──────────┬────────────┘
+                   │                                          │
+                   └─────────────────────┬────────────────────┘
+                                         │
+                                         ▼
+                                        USER
+
+```
 ---
 
 # ⚡ Performance & Benchmarking
@@ -1166,43 +1243,44 @@ Talk2Docs/
 ---
 
 # 🛠️ Technology Stack
-
 ## Backend
 
-- **Python 3.12+**
-- **FastAPI** — API framework
-- **Pydantic v2** — validation and structured AI output
-- **SQLAlchemy 2.0 Async** — asynchronous ORM
-- **Alembic** — database migrations
+- **Python - 3.12+**
+- **FastAPI** - API framework
+- **Pydantic v2** - validation and structured AI output
+- **SQLAlchemy 2.0 Async** - asynchronous ORM
+- **Alembic** - database migrations
 
 ## AI / RAG
 
-- **LangChain** — RAG orchestration and retrieval abstractions
-- **Sentence Transformers** — embeddings
-- **ChromaDB** — vector storage and semantic retrieval
-- **BM25** — lexical retrieval
-- **Hybrid Retrieval** — vector + BM25
-- **Reciprocal Rank Fusion (RRF)** — result fusion
-- **LLM Query Transformation** — Multi-Query, HyDE, Step-Back, Translation, and Decomposition
-- **Cohere Encoder Reranking** — candidate reranking
-- **Structured AI Output** — Pydantic-validated model responses
+- **LangChain** - RAG orchestration and retrieval abstractions
+- **Sentence Transformers** - embeddings
+- **ChromaDB** - vector storage and semantic retrieval
+- **BM25** - lexical retrieval
+- **Hybrid Retrieval** - vector + BM25
+- **Reciprocal Rank Fusion (RRF)** - result fusion
+- **LLM Query Transformation** - Multi-Query, HyDE, Step-Back, Translation, and Decomposition
+- **Cohere Encoder Reranking** - candidate reranking
+- **Structured AI Output** - Pydantic-validated model responses
+- **[TriCacheLLM-MMA](https://pypi.org/project/TriCacheLLM-MMA/0.1.8/)** - Custom caching and multi-index retrieval infrastructure package
+
 
 ## Document Processing
 
-- **Docling** — document parsing
-- **HybridChunker** — structure-aware chunking
-- **Content / Signature Validation** — upload validation
+- **Docling** - document parsing
+- **HybridChunker** - structure-aware chunking
+- **Content / Signature Validation** - upload validation
 
 ## Background Processing
 
-- **Celery** — asynchronous task execution
-- **Redis** — Celery broker/backend and application infrastructure
+- **Celery** - asynchronous task execution
+- **Redis** - Celery broker/backend and application infrastructure
 
 ## Database & Storage
 
-- **PostgreSQL** — persistent application and document metadata
-- **ChromaDB** — Raw, Summary, and Explanation vector indexes
-- **Redis** — server-side sessions and transient state
+- **PostgreSQL** - persistent application and document metadata
+- **ChromaDB** - Raw, Summary, and Explanation vector indexes
+- **Redis** - server-side sessions and transient state
 
 ## Authentication & Security
 
@@ -1210,7 +1288,7 @@ Talk2Docs/
 - **OAuth2PasswordBearer**
 - **Redis-backed sessions**
 - **Session revocation**
-- **SlowAPI** — API rate limiting
+- **SlowAPI** - API rate limiting
 - **User-scoped document and vector retrieval**
 
 ## Infrastructure & Observability
@@ -1251,9 +1329,7 @@ list[LangChainDocument]
 
 # 📈 Current Progress
 
-```text
 Core Backend  
-
 * ✅ FastAPI application
 * ✅ Async SQLAlchemy
 * ✅ PostgreSQL
@@ -1269,7 +1345,6 @@ Core Backend
 
 
 Document Pipeline  
-
 * ✅ File validation
 * ✅ File persistence
 * ✅ Document metadata
@@ -1284,7 +1359,6 @@ Document Pipeline
 
 
 Multi-Index Architecture  
-
 * ✅ Raw VDB
 * ✅ Summary VDB architecture
 * ✅ Explanation VDB architecture
@@ -1299,8 +1373,7 @@ Multi-Index Architecture
 * ✅ Multi-index parallel retrieval
 
 
-Retrieval  
-
+Retrieval & Caching  
 * ✅ Vector retrieval
 * ✅ BM25 retrieval
 * ✅ Hybrid retrieval
@@ -1315,10 +1388,17 @@ Retrieval
 * ✅ Common `list[LangChainDocument]` retrieval contract
 * ✅ AI reranking
 * ✅ Reranker validation and mapping
+* ✅ 3-Tier Cache Engine (Hot Exact, Semantic, Vector VDB)
+* ✅ Persistent Global BM25 (Redis + Pickle versioning)
+
+
+Conversational Routing & Memory  
+* ✅ Conversation vs. Next-Question classification
+* ✅ LTM/STM VDB worker pipeline architecture
+* ✅ Asynchronous background cache population (`asyncio.create_task`)
 
 
 Answer Generation  
-
 * ✅ Document-grounded answers
 * ✅ Structured Pydantic output
 * ✅ Source citations
@@ -1326,12 +1406,11 @@ Answer Generation
 * ✅ Confidence scoring
 * ✅ Meaning-preservation signal
 
-```
 ---
-# 🗺️ Roadmap
-```
-Phase 1: Core Backend  
 
+# 🗺️ Roadmap
+
+Phase 1: Core Backend  
 * [x] FastAPI
 * [x] PostgreSQL
 * [x] Async SQLAlchemy
@@ -1350,7 +1429,6 @@ Phase 1: Core Backend
 
 
 Phase 2: Document Intelligence  
-
 * [x] Upload validation
 * [x] File persistence
 * [x] Document metadata
@@ -1369,7 +1447,6 @@ Phase 2: Document Intelligence
 
 
 Phase 3: Hybrid Retrieval  
-
 * [x] Vector retrieval
 * [x] BM25 retrieval
 * [x] Hybrid retrieval
@@ -1383,7 +1460,6 @@ Phase 3: Hybrid Retrieval
 
 
 Phase 4: Advanced RAG  
-
 * [x] Intent classification
 * [x] Query classification
 * [x] Multi-Query
@@ -1400,7 +1476,6 @@ Phase 4: Advanced RAG
 
 
 Phase 5: Multi-Index RAG  
-
 * [x] Raw VDB
 * [x] Summary VDB
 * [x] Explanation VDB
@@ -1419,7 +1494,6 @@ Phase 5: Multi-Index RAG
 
 
 Phase 6: Retrieval Performance  
-
 * [x] End-to-end benchmarking
 * [x] Retrieval latency profiling
 * [x] Parallel independent operations
@@ -1433,38 +1507,34 @@ Phase 6: Retrieval Performance
 
 
 
-Phase 7: Global BM25  
-
+Phase 7: Global BM25 & Caching  
 * [x] Identify corpus-wide BM25 rebuild bottleneck
 * [x] Separate BM25 from vector index lifecycle
 * [x] Design user-scoped global BM25
 * [x] Design background BM25 construction
 * [x] Design BM25 readiness fallback
-* [ ] Implement persistent global BM25
-* [ ] Add BM25 lifecycle/status tracking
-* [ ] Integrate new-document synchronization
-* [ ] Validate stale-index fallback behavior
+* [x] Implement persistent global BM25 (`.pkl` master artifacts)
+* [x] Add BM25 lifecycle/status tracking & versioning (`v1`/`v2`)
+* [x] Integrate new-document synchronization
+* [x] Implement 3-Tier Caching (Hot Exact, Semantic, Vector VDB)
 * [ ] Benchmark large user libraries
-* [ ] Investigate true incremental TF/DF updates
 
 
 
-Phase 8: Memory  
-
-* [ ] Short-Term Memory (STM)
-* [ ] Long-Term Memory (LTM)
-* [ ] Memory-specific VDB architecture
-* [ ] Conversation-aware retrieval
+Phase 8: Memory & Conversational Routing  
+* [ ] Conversation vs. Next-Question classifier
+* [ ] LTM/STM VDB worker pipeline architecture
+* [ ] Short-Term Memory (STM) full implementation
+* [ ] Long-Term Memory (LTM) full implementation
+* [ ] Memory-specific VDB architecture integration
+* [ ] Conversation-aware retrieval routing
 * [ ] User memory isolation
-* [ ] Memory ranking
-* [ ] Memory lifecycle
-* [ ] Memory summarization
-* [ ] Context-aware answer generation
+* [ ] Memory ranking & lifecycle
+* [ ] Context-aware answer generation tuning
 
 
 
 Phase 9: Production Hardening  
-
 * [ ] Complete route-level logging
 * [ ] Complete Celery lifecycle logging
 * [ ] Remove temporary/debug comments
@@ -1481,104 +1551,10 @@ Phase 9: Production Hardening
 * [ ] CI/CD
 * [ ] Monitoring
 * [ ] Load testing
-```
-
 ---
 
-# 🏁 Architecture at a Glance
-
-The current Talk2Docs architecture can be summarized as two connected
-pipelines: asynchronous document ingestion and adaptive question answering.
-
-```text
-┌───────────────────────────────────────────────────────────────┐
-│                       DOCUMENT PIPELINE                       │
-└───────────────────────────────────────────────────────────────┘
-
-User Upload
-    │
-    ▼
-FastAPI
-    │
-    ▼
-Authentication + Validation
-    │
-    ▼
-Celery
-    │
-    ▼
-Docling
-    │
-    ▼
-Structure-Aware Chunking
-    │
-    ▼
-Embeddings
-    │
-    ▼
-┌───────────────┐
-│    RAW VDB    │
-└───────┬───────┘
-        │
-        ├──────────────► Summary AI ─────► SUMMARY VDB
-        │
-        └──────────────► Explanation AI ─► EXPLANATION VDB
 
 
-┌───────────────────────────────────────────────────────────────┐
-│                       QUESTION PIPELINE                       │
-└───────────────────────────────────────────────────────────────┘
-
-User Question
-      │
-      ▼
-Query & Intent Classifier
-      │
-      ▼
-Technique Selection
-      │
-      ├── Multi-Query
-      ├── HyDE
-      ├── Step-Back
-      ├── Advanced Translation
-      ├── Query Decomposition
-      └── Multi-Index
-      │
-      ▼
-Hybrid Retrieval
-      │
-      ├── Vector Search
-      └── BM25
-      │
-      ▼
-RRF / Result Fusion
-      │
-      ▼
-list[LangChainDocument]
-      │
-      ▼
-Reranker
-      │
-      ▼
-Top-K Documents
-      │
-      ▼
-Answer AI
-      │
-      ▼
-AnswerModel
-      │
-      ├── Answer
-      ├── Topic
-      ├── Citations
-      ├── Summary
-      ├── Confidence
-      └── Meaning Preservation
-      │
-      ▼
-     User
-```
----
 # ❤️ Why Talk2Docs Exists
 
 Talk2Docs started as a document-processing backend and evolved into an

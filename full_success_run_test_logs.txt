@@ -1,0 +1,578 @@
+route logs: (single doc)
+floaty@Floats:/mnt/g/python/Talk 2 docs proj/DOC proj$ source "/mnt/g/python/BackEnd FastAPI/Lecs/L20/.V_ENV/bin/activate"
+(.V_ENV) floaty@Floats:/mnt/g/python/Talk 2 docs proj/DOC proj$ WATCHFILES_FORCE_POLLING=true uvicorn code2:app --reload --reload-exclude "chroma_db" --reload-exclude "*.sqlite*" --reload-exclude "*.log"
+INFO:     Will watch for changes in these directories: ['/mnt/g/python/Talk 2 docs proj/DOC proj']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [7778] using WatchFiles
+/mnt/g/python/BackEnd FastAPI/Lecs/L20/.V_ENV/lib/python3.12/site-packages/numpy/_core/getlimits.py:551: UserWarning: Signature b'\x00\xd0\xcc\xcc\xcc\xcc\xcc\xcc\xfb\xbf\x00\x00\x00\x00\x00\x00' for <class 'numpy.longdouble'> does not match any known type: falling back to type probe function.
+This warnings indicates broken support for the dtype!
+  machar = _get_machar(dtype)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 103/103 [00:00<00:00, 2006.28it/s]
+INFO:     Started server process [7781]
+INFO:     Waiting for application startup.
+Starting application
+INFO:     Application startup complete.
+--> Incoming request: GET /docs
+[REQUEST START] GET /docs client=127.0.0.1
+[REQUEST END] GET /docs status=200 time=0.39ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:53931 - "GET /docs HTTP/1.1" 200 OK
+--> Incoming request: GET /openapi.json
+[REQUEST START] GET /openapi.json client=127.0.0.1
+[REQUEST END] GET /openapi.json status=200 time=415.63ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:53931 - "GET /openapi.json HTTP/1.1" 200 OK
+--> Incoming request: POST /users/sign-up
+[REQUEST START] POST /users/sign-up client=127.0.0.1
+2026-08-27 23:38:02 | INFO | USER_SERVICE_STARTED | create_user_service | None | None | None
+2026-08-27 23:38:02 | INFO | CREATING_USER | create_user_service | None | None | None
+2026-08-27 23:38:02 | INFO | VALIDATING_REQUEST | create_user_service | None | None | None
+2026-08-27 23:38:02 | INFO | SUCCESS | create_user_service | None | None | None
+2026-08-27 23:38:02 | INFO | EXITING_USER_SERVICE | create_user_service | None | None | None
+[REQUEST END] POST /users/sign-up status=201 time=435.35ms
+<-- Outgoing response: 201
+INFO:     127.0.0.1:53931 - "POST /users/sign-up HTTP/1.1" 201 Created
+--> Incoming request: POST /login
+[REQUEST START] POST /login client=127.0.0.1
+2026-08-27 23:38:14 | INFO | AUTH_SERVICE_STARTED | login_user_service | None | None | None
+2026-08-27 23:38:14 | INFO | AUTHENTICATING_USER | login_user_service | None | None | None
+2026-08-27 23:38:14 | INFO | EXECUTING_DATABASE_QUERY | login_user_service | None | None | None
+2026-08-27 23:38:14 | INFO | VALIDATING_REQUEST | login_user_service | None | None | None
+2026-08-27 23:38:14 | INFO | CONNECTING_TO_REDIS | login_user_service | None | None | None
+2026-08-27 23:38:14 | INFO | CREATING_SESSION | login_user_service | None | None | None
+2026-08-27 23:38:14 | INFO | CACHING_JWT_SESSION | cache_jwt_data | None | None | None
+2026-08-27 23:38:14 | INFO | SUCCESS | cache_jwt_data | None | None | None
+2026-08-27 23:38:14 | INFO | SESSION_CREATED | login_user_service | None | None | None
+2026-08-27 23:38:14 | INFO | SUCCESS | login_user_service | None | None | None
+2026-08-27 23:38:14 | INFO | EXITING_AUTH_SERVICE | login_user_service | None | None | None
+[REQUEST END] POST /login status=200 time=343.06ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:53932 - "POST /login HTTP/1.1" 200 OK
+--> Incoming request: POST /login
+[REQUEST START] POST /login client=127.0.0.1
+2026-08-27 23:38:25 | INFO | AUTH_SERVICE_STARTED | login_user_service | None | None | None
+2026-08-27 23:38:25 | INFO | AUTHENTICATING_USER | login_user_service | None | None | None
+2026-08-27 23:38:25 | INFO | EXECUTING_DATABASE_QUERY | login_user_service | None | None | None
+2026-08-27 23:38:25 | INFO | VALIDATING_REQUEST | login_user_service | None | None | None
+2026-08-27 23:38:26 | INFO | CONNECTING_TO_REDIS | login_user_service | None | None | None
+2026-08-27 23:38:26 | INFO | CREATING_SESSION | login_user_service | None | None | None
+2026-08-27 23:38:26 | INFO | CACHING_JWT_SESSION | cache_jwt_data | None | None | None
+2026-08-27 23:38:26 | INFO | SUCCESS | cache_jwt_data | None | None | None
+2026-08-27 23:38:26 | INFO | SESSION_CREATED | login_user_service | None | None | None
+2026-08-27 23:38:26 | INFO | SUCCESS | login_user_service | None | None | None
+2026-08-27 23:38:26 | INFO | EXITING_AUTH_SERVICE | login_user_service | None | None | None
+[REQUEST END] POST /login status=200 time=282.77ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:53938 - "POST /login HTTP/1.1" 200 OK
+--> Incoming request: POST /upload/upload-doc
+[REQUEST START] POST /upload/upload-doc client=127.0.0.1
+2026-08-27 23:38:32 | INFO | UPLOAD_SERVICE_STARTED | upload_doc | None | None | None
+2026-08-27 23:38:32 | INFO | VALIDATING_FILE | upload_doc | None | None | None
+2026-08-27 23:38:32 | INFO | VALIDATION_SERVICE_STARTED | file_validation_service | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:32 | INFO | CHECKING_FILENAME | file_validation_service | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:32 | INFO | CHECKING_EXTENSION | file_validation_service | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:32 | INFO | CHECKING_MIME_TYPE | file_validation_service | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:32 | INFO | READING_FILE_BYTES | file_validation_service | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:32 | INFO | VALIDATING_MAGIC_BYTES | file_validation_service | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:32 | INFO | VALIDATING_MAGIC_BYTES | validate_file_content_type | None | None | None
+2026-08-27 23:38:32 | INFO | VALIDATING_MAGIC_BYTES | _validate_zip_container | None | None | None
+Content validation took: 0.003778696060180664 seconds
+2026-08-27 23:38:32 | INFO | CHECKING_DUPLICATE_HASH | file_validation_service | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:33 | INFO | CONSTRUCTING_PAYLOAD | file_validation_service | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:33 | INFO | VALIDATION_SERVICE_SUCCESS | file_validation_service | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:33 | INFO | EXITING_VALIDATION_SERVICE | file_validation_service | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:33 | INFO | VALIDATION_SUCCESS | upload_doc | None | None | None
+2026-08-27 23:38:33 | INFO | INITIATING_WORKER | upload_doc | None | None | None
+2026-08-27 23:38:33 | INFO | WORKER_INITIATED_SUCCESS | upload_doc | None | None | None
+2026-08-27 23:38:33 | INFO | UPLOAD_SUCCESS | upload_doc | None | None | None
+2026-08-27 23:38:33 | INFO | EXITING_UPLOAD_SERVICE | upload_doc | None | None | None
+[REQUEST END] POST /upload/upload-doc status=200 time=169.30ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:53940 - "POST /upload/upload-doc HTTP/1.1" 200 OK
+--> Incoming request: GET /upload/upload_worker/829d5af6-dd58-457b-832f-850346883671/6166dca0-dbcb-4672-803d-1d6ec65e6d18
+[REQUEST START] GET /upload/upload_worker/829d5af6-dd58-457b-832f-850346883671/6166dca0-dbcb-4672-803d-1d6ec65e6d18 client=127.0.0.1
+2026-08-27 23:38:47 | INFO | POLL_WORKER_REQUESTED | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:47 | INFO | REDIS_AND_DB_STATUS_CHECK_STARTED | redis_and_db_worker_status | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:47 | INFO | CHECKING_REDIS_WORKER_STATE | get_worker_redis_status | None | None | None
+2026-08-27 23:38:47 | INFO | REDIS_WORKER_SUCCESS | get_worker_redis_status | None | None | None
+2026-08-27 23:38:47 | INFO | FETCHING_DOCUMENT_BY_REQUEST_ID | get_document_by_request_id | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:47 | INFO | DOCUMENT_FOUND_STATE | get_document_by_request_id | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:47 | INFO | REDIS_AND_DB_STATUS_CHECK_SUCCESS | redis_and_db_worker_status | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:47 | INFO | INITIATING_MULTI_INDEX_CHECK | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:47 | INFO | INITIATING_WORKER | multi_index_db_creation_worker_and_bm25_maker_inishiator | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:47 | INFO | CHECKING_BM25_STATUS | multi_index_db_creation_worker_and_bm25_maker_inishiator | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:48 | INFO | BM25_STATUS_PENDING_INIT | multi_index_db_creation_worker_and_bm25_maker_inishiator | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:48 | INFO | QUEUING_MULTI_INDEX_TASK_INISHIATOR | multi_index_db_creation_worker_and_bm25_maker_inishiator | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:48 | INFO | QUEUING_BM25_TASK_INITIATOR | multi_index_db_creation_worker_and_bm25_maker_inishiator | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:48 | INFO | WORKER_INITIATED_SUCCESS | multi_index_db_creation_worker_and_bm25_maker_inishiator | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:48 | INFO | REFRESHING_DOCUMENT_STATUS | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:48 | INFO | CHECKING_BM25_STATUS | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:48 | INFO | BM25_STATUS_FETCHED_SUCCESS | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:38:48 | INFO | POLL_WORKER_SUCCESS | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+[REQUEST END] GET /upload/upload_worker/829d5af6-dd58-457b-832f-850346883671/6166dca0-dbcb-4672-803d-1d6ec65e6d18 status=200 time=117.91ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:53954 - "GET /upload/upload_worker/829d5af6-dd58-457b-832f-850346883671/6166dca0-dbcb-4672-803d-1d6ec65e6d18 HTTP/1.1" 200 OK
+--> Incoming request: GET /upload/upload_worker/829d5af6-dd58-457b-832f-850346883671/6166dca0-dbcb-4672-803d-1d6ec65e6d18
+[REQUEST START] GET /upload/upload_worker/829d5af6-dd58-457b-832f-850346883671/6166dca0-dbcb-4672-803d-1d6ec65e6d18 client=127.0.0.1
+2026-08-27 23:39:05 | INFO | POLL_WORKER_REQUESTED | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | REDIS_AND_DB_STATUS_CHECK_STARTED | redis_and_db_worker_status | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | CHECKING_REDIS_WORKER_STATE | get_worker_redis_status | None | None | None
+2026-08-27 23:39:05 | INFO | REDIS_WORKER_SUCCESS | get_worker_redis_status | None | None | None
+2026-08-27 23:39:05 | INFO | FETCHING_DOCUMENT_BY_REQUEST_ID | get_document_by_request_id | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | DOCUMENT_FOUND_STATE | get_document_by_request_id | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | REDIS_AND_DB_STATUS_CHECK_SUCCESS | redis_and_db_worker_status | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | INITIATING_MULTI_INDEX_CHECK | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | INITIATING_WORKER | multi_index_db_creation_worker_and_bm25_maker_inishiator | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | CHECKING_BM25_STATUS | multi_index_db_creation_worker_and_bm25_maker_inishiator | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | BM25_STATUS_FETCHED_SUCCESS | multi_index_db_creation_worker_and_bm25_maker_inishiator | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | WORKER_SKIPPED_BOTH_READY | multi_index_db_creation_worker_and_bm25_maker_inishiator | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | REFRESHING_DOCUMENT_STATUS | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | CHECKING_BM25_STATUS | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | BM25_STATUS_FETCHED_SUCCESS | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+2026-08-27 23:39:05 | INFO | POLL_WORKER_SUCCESS | get_upload_worker_result | 6166dca0-dbcb-4672-803d-1d6ec65e6d18 | None | None
+[REQUEST END] GET /upload/upload_worker/829d5af6-dd58-457b-832f-850346883671/6166dca0-dbcb-4672-803d-1d6ec65e6d18 status=200 time=13.56ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:53962 - "GET /upload/upload_worker/829d5af6-dd58-457b-832f-850346883671/6166dca0-dbcb-4672-803d-1d6ec65e6d18 HTTP/1.1" 200 OK
+--> Incoming request: POST /question
+[REQUEST START] POST /question client=127.0.0.1
+2026-08-27 23:39:41 | INFO | QUESTION_SERVICE_STARTED | ask_question | None | None | None
+2026-08-27 23:39:41 | INFO | CHECKING_USER_VDB | ask_question | None | None | None
+2026-08-27 23:39:41 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-08-27 23:39:41 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-08-27 23:39:41 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-08-27 23:39:42 | INFO | INVOKING_AI_SERVICE | ask_question | None | None | None
+2026-08-27 23:39:42 | INFO | AI_SERVICE_STARTED | Answer_ai | None | None | None
+2026-08-27 23:39:42 | INFO | BUILDING_RETRIVER_STARTED | build_get_retriever | None | None | None
+2026-08-27 23:39:42 | INFO | FETCHING_DOCS_FOR_BM25 | build_get_retriever | None | None | None
+2026-08-27 23:39:42 | INFO | AI_SERVICE_STARTED | query_classifier | None | None | None
+2026-08-27 23:39:42 | INFO | AI_PROVIDER_REQUEST | query_classifier | None | None | None
+2026-08-27 23:39:42 | INFO | AI_PROVIDER_IN_PROCESSING | query_classifier | None | None | None
+2026-08-27 23:39:42 | INFO | BUILDING_VECTOR_RETRIVER | build_get_retriever | None | None | None
+2026-08-27 23:39:42 | INFO | BUILDING_VECTOR_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-08-27 23:39:42 | INFO | BUILDING_BM25 | build_get_retriever | None | None | None
+2026-08-27 23:39:42 | INFO | BUILDING_BM25_SUCCESS | build_get_retriever | None | None | None
+2026-08-27 23:39:42 | INFO | CREATING_HYBRID_RETRIVER | build_get_retriever | None | None | None
+2026-08-27 23:39:42 | INFO | CREATING_HYBRID_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-08-27 23:39:42 | INFO | BUILDING_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-08-27 23:39:42 | INFO | EXITING_RETRIVER_BUILDER | build_get_retriever | None | None | None
+2026-08-27 23:39:43 | INFO | AI_PROVIDER_SUCCESS | query_classifier | None | None | None
+2026-08-27 23:39:43 | INFO | AI_SERVICE_COMPLETED | query_classifier | None | None | None
+2026-08-27 23:39:43 | INFO | AI_SERVICE_ENDED | query_classifier | None | None | None
+2026-08-27 23:39:43 | INFO | EXITING_AI_SERVICE | query_classifier | None | None | None
+[TIMING] asyncio.gather (retriever + classifier): 746.10 ms
+[TIMING] retrieval strategy / safe_retrieve execution: 287.52 ms
+2026-08-27 23:39:43 | INFO | AI_SERVICE_STARTED | cohere_rerank | None | None | None
+2026-08-27 23:39:43 | INFO | AI_PROVIDER_REQUEST | cohere_rerank | None | None | None
+2026-08-27 23:39:43 | INFO | AI_PROVIDER_IN_PROCESSING | cohere_rerank | None | None | None
+2026-08-27 23:39:44 | INFO | AI_PROVIDER_SUCCESS | cohere_rerank | None | None | None
+2026-08-27 23:39:44 | INFO | VALIDATING_RERANK_RESULT_STARTED | cohere_rerank | None | None | None
+2026-08-27 23:39:44 | INFO | VALIDATING_RERANK_RESULT_SUCCESS | cohere_rerank | None | None | None
+2026-08-27 23:39:44 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-08-27 23:39:44 | INFO | AI_SERVICE_ENDED | cohere_rerank | None | None | None
+2026-08-27 23:39:44 | INFO | EXITING_AI_SERVICE | cohere_rerank | None | None | None
+[TIMING] cohere_rerank execution: 807.87 ms
+2026-08-27 23:39:44 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-08-27 23:39:44 | INFO | AI_PROVIDER_REQUEST | Answer_ai | None | None | None
+2026-08-27 23:39:44 | INFO | AI_PROVIDER_IN_PROCESSING | Answer_ai | None | None | None
+2026-08-27 23:39:45 | INFO | AI_PROVIDER_SUCCESS | Answer_ai | None | None | None
+2026-08-27 23:39:45 | INFO | AI_SERVICE_COMPLETED | Answer_ai | None | None | None
+2026-08-27 23:39:45 | INFO | AI_SERVICE_ENDED | Answer_ai | None | None | None
+2026-08-27 23:39:45 | INFO | EXITING_AI_SERVICE | Answer_ai | None | None | None
+2026-08-27 23:39:45 | INFO | QUESTION_SUCCESS | ask_question | None | None | None
+2026-08-27 23:39:45 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
+[REQUEST END] POST /question status=200 time=3563.33ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:53969 - "POST /question HTTP/1.1" 200 OK
+
+
+
+
+celery logs:
+(.V_ENV) floaty@Floats:/mnt/g/python/Talk 2 docs proj/DOC proj$ celery -A celery_worker.celery_app worker -Q ai,retri --loglevel=info
+/mnt/g/python/BackEnd FastAPI/Lecs/L20/.V_ENV/lib/python3.12/site-packages/numpy/_core/getlimits.py:551: UserWarning: Signature b'\x00\xd0\xcc\xcc\xcc\xcc\xcc\xcc\xfb\xbf\x00\x00\x00\x00\x00\x00' for <class 'numpy.longdouble'> does not match any known type: falling back to type probe function.
+This warnings indicates broken support for the dtype!
+  machar = _get_machar(dtype)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 103/103 [00:00<00:00, 2257.31it/s]
+ 
+ -------------- celery@Floats v5.6.3 (recovery)
+--- ***** ----- 
+-- ******* ---- Linux-4.4.0-18362-Microsoft-x86_64-with-glibc2.39 2026-08-27 23:36:30
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         fastapi_ai_backend:0x7fe1c2ab53d0
+- ** ---------- .> transport:   redis://localhost:6379/0
+- ** ---------- .> results:     redis://localhost:6379/1
+- *** --- * --- .> concurrency: 8 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> ai               exchange=ai(direct) key=ai
+                .> retri            exchange=retri(direct) key=retri
+
+[tasks]
+  . ai.create_rest_vdbs
+  . ai.parse_doc_worker
+  . ai.upload_save_file_worker
+  . retri.creating_global_bm25
+
+[2026-08-27 23:36:36,335: INFO/MainProcess] Connected to redis://localhost:6379/0
+[2026-08-27 23:36:36,343: INFO/MainProcess] mingle: searching for neighbors
+[2026-08-27 23:36:37,365: INFO/MainProcess] mingle: all alone
+[2026-08-27 23:36:37,415: INFO/MainProcess] celery@Floats ready.
+[2026-08-27 23:38:33,131: INFO/MainProcess] Task ai.upload_save_file_worker[829d5af6-dd58-457b-832f-850346883671] received
+[2026-08-27 23:38:33,139: INFO/ForkPoolWorker-7] SAVE_TASK_STARTED
+[2026-08-27 23:38:33,140: INFO/ForkPoolWorker-7] VALIDATING_TASK_PAYLOAD
+[2026-08-27 23:38:33,141: INFO/ForkPoolWorker-7] SAVING_DOC_TO_DB
+[2026-08-27 23:38:33,145: INFO/ForkPoolWorker-7] SAVE_TASK1_ASYNC_STARTED
+[2026-08-27 23:38:33,149: INFO/ForkPoolWorker-7] SAVE_SERVICE_STARTED
+[2026-08-27 23:38:33,149: INFO/ForkPoolWorker-7] WRITING_FILE_TO_DISK
+[2026-08-27 23:38:33,217: INFO/ForkPoolWorker-7] COMMITTING_DOC_TO_DB
+[2026-08-27 23:38:33,551: INFO/ForkPoolWorker-7] VALIDATING_SAVED_DOC_ORM
+[2026-08-27 23:38:33,552: INFO/ForkPoolWorker-7] SAVE_SERVICE_SUCCESS
+[2026-08-27 23:38:33,556: INFO/ForkPoolWorker-7] SAVE_TASK1_ASYNC_SUCCESS
+[2026-08-27 23:38:33,557: INFO/ForkPoolWorker-7] INITIATING_TASK_2
+[2026-08-27 23:38:33,594: INFO/ForkPoolWorker-7] TASK_2_INITIATED_SUCCESS
+[2026-08-27 23:38:33,594: INFO/MainProcess] Task ai.parse_doc_worker[dceb91e5-f0de-49e9-9a95-8458e6a2f3a2] received
+[2026-08-27 23:38:33,598: INFO/ForkPoolWorker-8] TASK_2_STARTED
+[2026-08-27 23:38:33,598: INFO/ForkPoolWorker-8] VALIDATING_TASK_2_PAYLOAD
+[2026-08-27 23:38:33,598: INFO/ForkPoolWorker-8] RUNNING_TASK_2_ASYNC
+[2026-08-27 23:38:33,600: INFO/ForkPoolWorker-7] Task ai.upload_save_file_worker[829d5af6-dd58-457b-832f-850346883671] succeeded in 0.46517850000009275s: None
+[2026-08-27 23:38:33,601: INFO/ForkPoolWorker-8] TASK_2_ASYNC_STARTED
+[2026-08-27 23:38:33,602: INFO/ForkPoolWorker-8] TASK_2_SERVICE_STARTED
+[2026-08-27 23:38:33,787: INFO/ForkPoolWorker-8] PARSING_STAGE_STARTED
+[2026-08-27 23:38:33,792: INFO/ForkPoolWorker-8] detected formats: [<InputFormat.DOCX: 'docx'>]
+[2026-08-27 23:38:33,850: INFO/ForkPoolWorker-8] Going to convert document batch...
+[2026-08-27 23:38:33,851: INFO/ForkPoolWorker-8] Initializing pipeline for SimplePipeline with options hash 7d306d2d021deac65a97d1a5f925362a
+[2026-08-27 23:38:33,941: INFO/ForkPoolWorker-8] Loading plugin 'docling_defaults'
+[2026-08-27 23:38:33,947: INFO/ForkPoolWorker-8] Registered picture descriptions: ['picture_description_vlm_engine', 'vlm', 'api']
+[2026-08-27 23:38:33,948: INFO/ForkPoolWorker-8] Processing document 2349cfaff2d659e31d5bbb2c809b34e4.docx
+[2026-08-27 23:38:34,452: INFO/ForkPoolWorker-8] Finished converting document 2349cfaff2d659e31d5bbb2c809b34e4.docx in 0.66 sec.
+[2026-08-27 23:38:34,465: INFO/ForkPoolWorker-8] PARSING_STAGE_SUCCESS
+[2026-08-27 23:38:34,465: INFO/ForkPoolWorker-8] CHUNKING_STAGE_STARTED
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (536 > 512). Running this sequence through the model will result in indexing errors
+[2026-08-27 23:38:34,752: INFO/ForkPoolWorker-8] CHUNKING_STAGE_SUCCESS
+[2026-08-27 23:38:34,753: INFO/ForkPoolWorker-8] EMBEDDING_STAGE_STARTED
+[2026-08-27 23:38:36,413: INFO/ForkPoolWorker-8] EMBEDDING_STAGE_SUCCESS
+[2026-08-27 23:38:36,413: INFO/ForkPoolWorker-8] TASK_2_SERVICE_SUCCESS
+[2026-08-27 23:38:36,415: INFO/ForkPoolWorker-8] TASK_2_ASYNC_SUCCESS
+[2026-08-27 23:38:36,417: INFO/ForkPoolWorker-8] TASK_2_SUCCESS
+[2026-08-27 23:38:36,430: INFO/ForkPoolWorker-8] Task ai.parse_doc_worker[dceb91e5-f0de-49e9-9a95-8458e6a2f3a2] succeeded in 2.833833300000151s: None
+[2026-08-27 23:38:48,049: INFO/MainProcess] Task ai.create_rest_vdbs[6a2e883f-45c7-4200-a956-a91fd55fb3ea] received
+[2026-08-27 23:38:48,050: INFO/ForkPoolWorker-7] MULTI_INDEX_TASK_STARTED
+[2026-08-27 23:38:48,051: INFO/ForkPoolWorker-7] FETCHING_DOCUMENT_FOR_TASK
+[2026-08-27 23:38:48,052: INFO/MainProcess] Task retri.creating_global_bm25[d0f36899-da5d-4ebb-bb27-bc7ec9e95660] received
+[2026-08-27 23:38:48,053: INFO/ForkPoolWorker-8] MULTI_INDEX_TASK_STARTED
+[2026-08-27 23:38:48,054: INFO/ForkPoolWorker-8] FETCHING_DOCUMENT_FOR_TASK
+[2026-08-27 23:38:48,199: INFO/ForkPoolWorker-7] FETCHING_RAW_CHUNKS
+[2026-08-27 23:38:48,300: INFO/ForkPoolWorker-8] FETCHING_RAW_CHUNKS
+[2026-08-27 23:38:48,356: INFO/ForkPoolWorker-8] BUILDING_GLOBAL_BM25
+[2026-08-27 23:38:48,550: INFO/ForkPoolWorker-8] WORKER_INITIATED_SUCCESS
+[2026-08-27 23:38:48,553: INFO/ForkPoolWorker-8] Task retri.creating_global_bm25[d0f36899-da5d-4ebb-bb27-bc7ec9e95660] succeeded in 0.49994070000002466s: {'success': True, 'user_id': 27, 'total_chunks_indexed': 2, 'index_path': '/mnt/g/python/Talk 2 docs proj/DOC proj/v_dbs/user_27/master_bm25_docs_v1.pkl', 'retriever_index_path': '/mnt/g/python/Talk 2 docs proj/DOC proj/v_dbs/user_27/master_bm25_retriever_v1.pkl'}
+[2026-08-27 23:38:48,688: INFO/ForkPoolWorker-7] BUILDING_SUMMARY_VDB
+[2026-08-27 23:38:48,689: INFO/ForkPoolWorker-7] AI_SERVICE_STARTED
+[2026-08-27 23:38:48,698: INFO/ForkPoolWorker-7] AI_PROVIDER_REQUEST
+[2026-08-27 23:38:48,698: INFO/ForkPoolWorker-7] AI_PROVIDER_IN_PROCESSING
+[2026-08-27 23:38:50,053: INFO/ForkPoolWorker-7] HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-08-27 23:38:50,095: INFO/ForkPoolWorker-7] AI_PROVIDER_SUCCESS
+[2026-08-27 23:38:50,096: INFO/ForkPoolWorker-7] AI_SERVICE_COMPLETED
+[2026-08-27 23:38:50,096: INFO/ForkPoolWorker-7] AI_SERVICE_ENDED
+[2026-08-27 23:38:50,096: INFO/ForkPoolWorker-7] EXITING_AI_SERVICE
+[2026-08-27 23:38:51,146: INFO/ForkPoolWorker-7] SUMMARY_VDB_SUCCESS
+[2026-08-27 23:38:51,146: INFO/ForkPoolWorker-7] BUILDING_EXPLANATION_VDB
+[2026-08-27 23:38:51,146: INFO/ForkPoolWorker-7] AI_SERVICE_STARTED
+[2026-08-27 23:38:51,148: INFO/ForkPoolWorker-7] AI_PROVIDER_REQUEST
+[2026-08-27 23:38:51,149: INFO/ForkPoolWorker-7] AI_PROVIDER_IN_PROCESSING
+[2026-08-27 23:38:53,290: INFO/ForkPoolWorker-7] HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-08-27 23:38:53,293: INFO/ForkPoolWorker-7] AI_PROVIDER_SUCCESS
+[2026-08-27 23:38:53,293: INFO/ForkPoolWorker-7] AI_SERVICE_COMPLETED
+[2026-08-27 23:38:53,293: INFO/ForkPoolWorker-7] AI_SERVICE_ENDED
+[2026-08-27 23:38:53,294: INFO/ForkPoolWorker-7] EXITING_AI_SERVICE
+[2026-08-27 23:38:54,401: INFO/ForkPoolWorker-7] EXPLANATION_VDB_SUCCESS
+[2026-08-27 23:38:54,522: INFO/ForkPoolWorker-7] MULTI_INDEX_TASK_COMPLETED
+[2026-08-27 23:38:54,525: INFO/ForkPoolWorker-7] Task ai.create_rest_vdbs[6a2e883f-45c7-4200-a956-a91fd55fb3ea] succeeded in 6.47539020000022s: {'success': True, 'doc_id': 36, 'summary_status': 'ready', 'explanation_status': 'ready'}
+
+--> Incoming request: POST /question
+[REQUEST START] POST /question client=127.0.0.1
+2026-08-28 00:43:26 | INFO | QUESTION_SERVICE_STARTED | ask_question | None | None | None
+2026-08-28 00:43:26 | INFO | CHECKING_USER_VDB | ask_question | None | None | None
+2026-08-28 00:43:26 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-08-28 00:43:26 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-08-28 00:43:26 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-08-28 00:43:26 | INFO | INVOKING_AI_SERVICE | ask_question | None | None | None
+2026-08-28 00:43:26 | INFO | AI_SERVICE_STARTED | Answer_ai | None | None | None
+2026-08-28 00:43:26 | INFO | BUILDING_RETRIVER_STARTED | build_get_retriever | None | None | None
+2026-08-28 00:43:26 | INFO | FETCHING_DOCS_FOR_BM25 | build_get_retriever | None | None | None
+2026-08-28 00:43:26 | INFO | AI_SERVICE_STARTED | query_classifier | None | None | None
+2026-08-28 00:43:26 | INFO | AI_PROVIDER_REQUEST | query_classifier | None | None | None
+2026-08-28 00:43:26 | INFO | AI_PROVIDER_IN_PROCESSING | query_classifier | None | None | None
+[CACHE HIT] Loaded global BM25 retriever from Redis for user 29 (v1)
+2026-08-28 00:43:26 | INFO | BUILDING_VECTOR_RETRIVER | build_get_retriever | None | None | None
+2026-08-28 00:43:26 | INFO | BUILDING_VECTOR_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-08-28 00:43:26 | INFO | BUILDING_BM25 | build_get_retriever | None | None | None
+2026-08-28 00:43:26 | INFO | BUILDING_BM25_SUCCESS | build_get_retriever | None | None | None
+2026-08-28 00:43:26 | INFO | CREATING_HYBRID_RETRIVER | build_get_retriever | None | None | None
+2026-08-28 00:43:26 | INFO | CREATING_HYBRID_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-08-28 00:43:26 | INFO | BUILDING_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-08-28 00:43:26 | INFO | EXITING_RETRIVER_BUILDER | build_get_retriever | None | None | None
+2026-08-28 00:43:27 | INFO | AI_PROVIDER_SUCCESS | query_classifier | None | None | None
+2026-08-28 00:43:27 | INFO | AI_SERVICE_COMPLETED | query_classifier | None | None | None
+2026-08-28 00:43:27 | INFO | AI_SERVICE_ENDED | query_classifier | None | None | None
+2026-08-28 00:43:27 | INFO | EXITING_AI_SERVICE | query_classifier | None | None | None
+[TIMING] asyncio.gather (retriever + classifier): 1241.07 ms
+[TIMING] retrieval strategy / safe_retrieve execution: 274.62 ms
+2026-08-28 00:43:28 | INFO | AI_SERVICE_STARTED | cohere_rerank | None | None | None
+2026-08-28 00:43:28 | INFO | AI_PROVIDER_REQUEST | cohere_rerank | None | None | None
+2026-08-28 00:43:28 | INFO | AI_PROVIDER_IN_PROCESSING | cohere_rerank | None | None | None
+2026-08-28 00:43:28 | INFO | AI_PROVIDER_SUCCESS | cohere_rerank | None | None | None
+2026-08-28 00:43:28 | INFO | VALIDATING_RERANK_RESULT_STARTED | cohere_rerank | None | None | None
+2026-08-28 00:43:28 | INFO | VALIDATING_RERANK_RESULT_SUCCESS | cohere_rerank | None | None | None
+2026-08-28 00:43:28 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-08-28 00:43:28 | INFO | AI_SERVICE_ENDED | cohere_rerank | None | None | None
+2026-08-28 00:43:28 | INFO | EXITING_AI_SERVICE | cohere_rerank | None | None | None
+[TIMING] cohere_rerank execution: 825.31 ms
+2026-08-28 00:43:28 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-08-28 00:43:28 | INFO | AI_PROVIDER_REQUEST | Answer_ai | None | None | None
+2026-08-28 00:43:28 | INFO | AI_PROVIDER_IN_PROCESSING | Answer_ai | None | None | None
+2026-08-28 00:43:32 | INFO | AI_PROVIDER_SUCCESS | Answer_ai | None | None | None
+2026-08-28 00:43:32 | INFO | AI_SERVICE_COMPLETED | Answer_ai | None | None | None
+2026-08-28 00:43:32 | INFO | AI_SERVICE_ENDED | Answer_ai | None | None | None
+2026-08-28 00:43:32 | INFO | EXITING_AI_SERVICE | Answer_ai | None | None | None
+2026-08-28 00:43:32 | INFO | QUESTION_SUCCESS | ask_question | None | None | None
+2026-08-28 00:43:32 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
+[REQUEST END] POST /question status=200 time=5905.94ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:55469 - "POST /question HTTP/1.1" 200 OK
+
+
+
+route outputs:
+{
+  "email": "user@example.com",
+  "user_id": 27,
+  "created_at": "2026-08-27T18:38:02.576259Z"
+}
+
+
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNywiamlkIjoiOWQ0ZDc3ZjQtNjg1NC00M2JkLTg2YWEtOTcyYWM0MDNlZTJkIiwiZXhwIjoxNzg3ODU5NDk0fQ.B8ynT-IYRoB6cPEa8fNmgbZt8VVKG3u-HApHrCyUsNM",
+  "token_type": "bearer"
+}
+
+
+{
+  "task_id": "829d5af6-dd58-457b-832f-850346883671",
+  "status": "queued",
+  "doc_upload_api_responce": {
+    "request_id": "6166dca0-dbcb-4672-803d-1d6ec65e6d18",
+    "user_id": 27
+  }
+}
+
+
+{
+  "worker_1": {
+    "status": "completed",
+    "task_id": "829d5af6-dd58-457b-832f-850346883671",
+    "state": "SUCCESS",
+    "failed": false,
+    "detail": "The task for validation of doc and initial vdb created (yes both in one, i was nested)"
+  },
+  "doc_in_worker_1": {
+    "status": "READY",
+    "failure_reason": null
+  },
+  "multi_index_worker_2": {
+    "doc_id": 36,
+    "summary_status": "ready",
+    "explanation_status": "ready"
+  },
+  "bm25_worker_3": {
+    "status": "READY",
+    "version": 1,
+    "index_path": "/mnt/g/python/Talk 2 docs proj/DOC proj/v_dbs/user_27/master_bm25_docs_v1.pkl",
+    "failure_reason": null
+  }
+}
+
+
+
+{
+  "vdb_fetched_answer": "Omega Prime is the Head Captain of Squad Ω, the highest authority within Squad Ω and the sole Royal Guard candidate. Omega Prime commands all Squad Ω operations, acts as the final stabilizer during Seireitei crises, and is the only entity that can ascend to Squad 0 when a seat becomes vacant. Omega Prime does not deploy at the initial activation of Squad Ω; it descends only in extreme escalation or system instability, becoming the critical response entity when Squad Ω is failing.",
+  "topic": "Bleach System Hierarchy",
+  "citations": [
+    {
+      "page_number": null,
+      "section_heading": null,
+      "location_fallback": "Source File: New bleach system (mine).docx",
+      "verbatim_quote": "**III. Ω PRIME (HEAD CAPTAIN OF SQUAD Ω)**\n**Role:**\nHighest authority of Squad Ω and sole Royal Guard candidate.\n**Functions:**\n- Commands all Squad Ω operations\n- Acts as final stabilizer of Seireitei crisis\n- Maintains system balance between Ω and Squad 0"
+    }
+  ],
+  "answer_summary": "Omega Prime is the Head Captain of Squad Ω, the top authority in that squad and the sole candidate for Royal Guard. It commands Squad Ω, stabilizes crises, and can ascend to Squad 0 when needed. It only deploys in extreme escalation or when Squad Ω is failing.",
+  "confidence_score": 0.98,
+  "is_meaning_preserved": true
+}
+
+
+
+{
+  "vdb_fetched_answer": "Omega Prime is the head captain of Squad Ω and the sole Royal Guard candidate. Its core duties are to command all Squad Ω operations, act as the final stabilizer during Seireitei crises, and maintain the balance between Squad Ω and Squad 0. Omega Prime does not deploy at the initial activation of Squad Ω; it descends only in extreme escalation or system instability and becomes the critical response entity when Squad Ω is failing. Only Omega Prime can ascend to Squad 0 when a seat becomes vacant, and if Omega Prime becomes non‑functional, it triggers the Squad 0 intervention protocol.",
+  "topic": "Omega Prime Duties",
+  "citations": [
+    {
+      "page_number": null,
+      "section_heading": null,
+      "location_fallback": "Source File: New bleach system (mine).docx",
+      "verbatim_quote": "**III. Ω PRIME (HEAD CAPTAIN OF SQUAD Ω)**\n**Role:**\nHighest authority of Squad Ω and sole Royal Guard candidate.\n**Functions:**\n- Commands all Squad Ω operations\n- Acts as final stabilizer of Seireitei crisis\n- Maintains system balance between Ω and Squad 0"
+    }
+  ],
+  "answer_summary": "Omega Prime’s core responsibilities are to lead Squad Ω, serve as the ultimate stabilizer during crises, preserve the balance between Squad Ω and Squad 0, and be the exclusive candidate for ascending to Squad 0 when a seat opens. It only deploys in extreme escalation and triggers Squad 0 intervention if it becomes non‑functional.",
+  "confidence_score": 0.92,
+  "is_meaning_preserved": true
+}
+
+
+
+
+
+
+#Multi-doc (same user added new doc)
+INFO:     127.0.0.1:55469 - "POST /question HTTP/1.1" 200 OK
+--> Incoming request: POST /upload/upload-doc
+[REQUEST START] POST /upload/upload-doc client=127.0.0.1
+2026-08-28 00:50:26 | INFO | UPLOAD_SERVICE_STARTED | upload_doc | None | None | None
+2026-08-28 00:50:26 | INFO | VALIDATING_FILE | upload_doc | None | None | None
+2026-08-28 00:50:26 | INFO | VALIDATION_SERVICE_STARTED | file_validation_service | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:26 | INFO | CHECKING_FILENAME | file_validation_service | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:26 | INFO | CHECKING_EXTENSION | file_validation_service | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:26 | INFO | CHECKING_MIME_TYPE | file_validation_service | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:26 | INFO | READING_FILE_BYTES | file_validation_service | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:26 | INFO | VALIDATING_MAGIC_BYTES | file_validation_service | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:26 | INFO | VALIDATING_MAGIC_BYTES | validate_file_content_type | None | None | None
+Content validation took: 0.0007131099700927734 seconds
+2026-08-28 00:50:26 | INFO | CHECKING_DUPLICATE_HASH | file_validation_service | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:26 | INFO | CONSTRUCTING_PAYLOAD | file_validation_service | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:26 | INFO | VALIDATION_SERVICE_SUCCESS | file_validation_service | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:26 | INFO | EXITING_VALIDATION_SERVICE | file_validation_service | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:26 | INFO | VALIDATION_SUCCESS | upload_doc | None | None | None
+2026-08-28 00:50:26 | INFO | INITIATING_WORKER | upload_doc | None | None | None
+2026-08-28 00:50:26 | INFO | WORKER_INITIATED_SUCCESS | upload_doc | None | None | None
+2026-08-28 00:50:26 | INFO | UPLOAD_SUCCESS | upload_doc | None | None | None
+2026-08-28 00:50:26 | INFO | EXITING_UPLOAD_SERVICE | upload_doc | None | None | None
+[REQUEST END] POST /upload/upload-doc status=200 time=178.77ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:55546 - "POST /upload/upload-doc HTTP/1.1" 200 OK
+--> Incoming request: GET /upload/upload_worker/cd6543dc-9738-4ceb-bbc5-16c3c8272423/42e81bb4-5cea-47a0-8f9f-9382b0e36d49
+[REQUEST START] GET /upload/upload_worker/cd6543dc-9738-4ceb-bbc5-16c3c8272423/42e81bb4-5cea-47a0-8f9f-9382b0e36d49 client=127.0.0.1
+2026-08-28 00:50:41 | INFO | POLL_WORKER_REQUESTED | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | REDIS_AND_DB_STATUS_CHECK_STARTED | redis_and_db_worker_status | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | CHECKING_REDIS_WORKER_STATE | get_worker_redis_status | None | None | None
+2026-08-28 00:50:41 | INFO | REDIS_WORKER_SUCCESS | get_worker_redis_status | None | None | None
+2026-08-28 00:50:41 | INFO | FETCHING_DOCUMENT_BY_REQUEST_ID | get_document_by_request_id | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | DOCUMENT_FOUND_STATE | get_document_by_request_id | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | REDIS_AND_DB_STATUS_CHECK_SUCCESS | redis_and_db_worker_status | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | INITIATING_MULTI_INDEX_CHECK | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | INITIATING_WORKER | multi_index_db_creation_worker_and_bm25_maker_inishiator | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | CHECKING_BM25_STATUS | multi_index_db_creation_worker_and_bm25_maker_inishiator | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | BM25_STATUS_FETCHED_SUCCESS | multi_index_db_creation_worker_and_bm25_maker_inishiator | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | QUEUING_MULTI_INDEX_TASK_INISHIATOR | multi_index_db_creation_worker_and_bm25_maker_inishiator | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | QUEUING_BM25_TASK_INITIATOR | multi_index_db_creation_worker_and_bm25_maker_inishiator | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | WORKER_INITIATED_SUCCESS | multi_index_db_creation_worker_and_bm25_maker_inishiator | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | REFRESHING_DOCUMENT_STATUS | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | CHECKING_BM25_STATUS | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | BM25_STATUS_FETCHED_SUCCESS | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:41 | INFO | POLL_WORKER_SUCCESS | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+[REQUEST END] GET /upload/upload_worker/cd6543dc-9738-4ceb-bbc5-16c3c8272423/42e81bb4-5cea-47a0-8f9f-9382b0e36d49 status=200 time=54.42ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:55556 - "GET /upload/upload_worker/cd6543dc-9738-4ceb-bbc5-16c3c8272423/42e81bb4-5cea-47a0-8f9f-9382b0e36d49 HTTP/1.1" 200 OK
+--> Incoming request: GET /upload/upload_worker/cd6543dc-9738-4ceb-bbc5-16c3c8272423/42e81bb4-5cea-47a0-8f9f-9382b0e36d49
+[REQUEST START] GET /upload/upload_worker/cd6543dc-9738-4ceb-bbc5-16c3c8272423/42e81bb4-5cea-47a0-8f9f-9382b0e36d49 client=127.0.0.1
+2026-08-28 00:50:46 | INFO | POLL_WORKER_REQUESTED | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | REDIS_AND_DB_STATUS_CHECK_STARTED | redis_and_db_worker_status | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | CHECKING_REDIS_WORKER_STATE | get_worker_redis_status | None | None | None
+2026-08-28 00:50:46 | INFO | REDIS_WORKER_SUCCESS | get_worker_redis_status | None | None | None
+2026-08-28 00:50:46 | INFO | FETCHING_DOCUMENT_BY_REQUEST_ID | get_document_by_request_id | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | DOCUMENT_FOUND_STATE | get_document_by_request_id | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | REDIS_AND_DB_STATUS_CHECK_SUCCESS | redis_and_db_worker_status | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | INITIATING_MULTI_INDEX_CHECK | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | INITIATING_WORKER | multi_index_db_creation_worker_and_bm25_maker_inishiator | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | CHECKING_BM25_STATUS | multi_index_db_creation_worker_and_bm25_maker_inishiator | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | BM25_STATUS_FETCHED_SUCCESS | multi_index_db_creation_worker_and_bm25_maker_inishiator | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | WORKER_SKIPPED_BOTH_READY | multi_index_db_creation_worker_and_bm25_maker_inishiator | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | REFRESHING_DOCUMENT_STATUS | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | CHECKING_BM25_STATUS | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | BM25_STATUS_FETCHED_SUCCESS | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+2026-08-28 00:50:46 | INFO | POLL_WORKER_SUCCESS | get_upload_worker_result | 42e81bb4-5cea-47a0-8f9f-9382b0e36d49 | None | None
+[REQUEST END] GET /upload/upload_worker/cd6543dc-9738-4ceb-bbc5-16c3c8272423/42e81bb4-5cea-47a0-8f9f-9382b0e36d49 status=200 time=34.81ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:55564 - "GET /upload/upload_worker/cd6543dc-9738-4ceb-bbc5-16c3c8272423/42e81bb4-5cea-47a0-8f9f-9382b0e36d49 HTTP/1.1" 200 OK
+
+
+
+INFO:     Application startup complete.
+--> Incoming request: POST /question
+[REQUEST START] POST /question client=127.0.0.1
+2026-08-28 00:59:16 | INFO | QUESTION_SERVICE_STARTED | ask_question | None | None | None
+2026-08-28 00:59:16 | INFO | CHECKING_USER_VDB | ask_question | None | None | None
+2026-08-28 00:59:16 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-08-28 00:59:16 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-08-28 00:59:16 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-08-28 00:59:16 | INFO | INVOKING_AI_SERVICE | ask_question | None | None | None
+2026-08-28 00:59:16 | INFO | AI_SERVICE_STARTED | Answer_ai | None | None | None
+2026-08-28 00:59:16 | INFO | BUILDING_RETRIVER_STARTED | build_get_retriever | None | None | None
+2026-08-28 00:59:16 | INFO | FETCHING_DOCS_FOR_BM25 | build_get_retriever | None | None | None
+2026-08-28 00:59:16 | INFO | AI_SERVICE_STARTED | query_classifier | None | None | None
+2026-08-28 00:59:16 | INFO | AI_PROVIDER_REQUEST | query_classifier | None | None | None
+2026-08-28 00:59:16 | INFO | AI_PROVIDER_IN_PROCESSING | query_classifier | None | None | None
+[CACHE HIT] Loaded global BM25 retriever from Redis for user 29 (v2)
+2026-08-28 00:59:16 | INFO | BUILDING_VECTOR_RETRIVER | build_get_retriever | None | None | None
+2026-08-28 00:59:16 | INFO | BUILDING_VECTOR_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-08-28 00:59:16 | INFO | BUILDING_BM25 | build_get_retriever | None | None | None
+2026-08-28 00:59:16 | INFO | BUILDING_BM25_SUCCESS | build_get_retriever | None | None | None
+2026-08-28 00:59:16 | INFO | CREATING_HYBRID_RETRIVER | build_get_retriever | None | None | None
+2026-08-28 00:59:16 | INFO | CREATING_HYBRID_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-08-28 00:59:16 | INFO | BUILDING_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-08-28 00:59:16 | INFO | EXITING_RETRIVER_BUILDER | build_get_retriever | None | None | None
+2026-08-28 00:59:17 | INFO | AI_PROVIDER_SUCCESS | query_classifier | None | None | None
+2026-08-28 00:59:17 | INFO | AI_SERVICE_COMPLETED | query_classifier | None | None | None
+2026-08-28 00:59:17 | INFO | AI_SERVICE_ENDED | query_classifier | None | None | None
+2026-08-28 00:59:17 | INFO | EXITING_AI_SERVICE | query_classifier | None | None | None
+[TIMING] asyncio.gather (retriever + classifier): 1092.00 ms
+[TIMING] retrieval strategy / safe_retrieve execution: 139.70 ms
+2026-08-28 00:59:17 | INFO | AI_SERVICE_STARTED | cohere_rerank | None | None | None
+2026-08-28 00:59:17 | INFO | AI_PROVIDER_REQUEST | cohere_rerank | None | None | None
+2026-08-28 00:59:17 | INFO | AI_PROVIDER_IN_PROCESSING | cohere_rerank | None | None | None
+2026-08-28 00:59:18 | INFO | AI_PROVIDER_SUCCESS | cohere_rerank | None | None | None
+2026-08-28 00:59:18 | INFO | VALIDATING_RERANK_RESULT_STARTED | cohere_rerank | None | None | None
+2026-08-28 00:59:18 | INFO | VALIDATING_RERANK_RESULT_SUCCESS | cohere_rerank | None | None | None
+2026-08-28 00:59:18 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-08-28 00:59:18 | INFO | AI_SERVICE_ENDED | cohere_rerank | None | None | None
+2026-08-28 00:59:18 | INFO | EXITING_AI_SERVICE | cohere_rerank | None | None | None
+[TIMING] cohere_rerank execution: 836.66 ms
+2026-08-28 00:59:18 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-08-28 00:59:18 | INFO | AI_PROVIDER_REQUEST | Answer_ai | None | None | None
+2026-08-28 00:59:18 | INFO | AI_PROVIDER_IN_PROCESSING | Answer_ai | None | None | None
+2026-08-28 00:59:25 | INFO | AI_PROVIDER_SUCCESS | Answer_ai | None | None | None
+2026-08-28 00:59:25 | INFO | AI_SERVICE_COMPLETED | Answer_ai | None | None | None
+2026-08-28 00:59:25 | INFO | AI_SERVICE_ENDED | Answer_ai | None | None | None
+2026-08-28 00:59:25 | INFO | EXITING_AI_SERVICE | Answer_ai | None | None | None
+2026-08-28 00:59:25 | INFO | QUESTION_SUCCESS | ask_question | None | None | None
+2026-08-28 00:59:25 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
+[REQUEST END] POST /question status=200 time=9543.19ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:55707 - "POST /question HTTP/1.1" 200 OK
+
+
+
+
+
+results:
+{
+  "vdb_fetched_answer": "The provided context does not contain any information that directly compares the themes of the Bleach series with the project ideas listed for your portfolio. The Bleach-related content focuses on a hierarchical system of squads and their rules, while the portfolio projects cover a range of AI, web‑scraping, and microservice topics. No explicit thematic overlap or comparison is present in the supplied documents.",
+  "topic": "Comparison of Bleach Themes and Portfolio Projects",
+  "citations": [],
+  "answer_summary": "The context lacks any material that discusses or compares the thematic elements of Bleach with the portfolio project ideas. Therefore, a meaningful comparison cannot be drawn from the available information.",
+  "confidence_score": 0.25,
+  "is_meaning_preserved": true
+}

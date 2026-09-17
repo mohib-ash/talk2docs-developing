@@ -179,12 +179,19 @@ def _reciprocal_rank_fusion(user_id: int, results_per_query: list[list[LangChain
                     doc.metadata.get("source", ""),
                     doc.metadata.get("page", ""),
                 )))
+                """
+                    this is either get chunk_id of form embedding's metadata OR of they dont got no id, get all rest and use em to make hash
+                    so we have a way to work around
+                """
 
+
+                #if we have not seen a chunk then add it to dict, if we have then move onn 
                 if chunk_id not in doc_map:
                     doc_map[chunk_id] = doc
                     fused_scores[chunk_id] = 0.0
 
                 fused_scores[chunk_id] += 1.0 / (k + rank)
+                
         reranked_ids = sorted(fused_scores.keys(), key=lambda x: fused_scores[x], reverse=True)
         final_docs = [doc_map[doc_id] for doc_id in reranked_ids]
     except Exception as exc:
@@ -199,6 +206,7 @@ async def query_decomposition_function(model: Any, question: str, user_id: int, 
     log_state(QueryDecompositionLog.QUERY_DECOMPOSITION_STARTED, function="query_decomposition_function", user_id=user_id)
     log_state(ServiceLog.AI_SERVICE_STARTED, function="query_decomposition_function", user_id=user_id)
 
+    # 1. Setup parser and prompt template
     parser = PydanticOutputParser(pydantic_object=QueryDecompositionOutput)
 
     decomposition_prompt = ChatPromptTemplate.from_messages([
@@ -223,7 +231,7 @@ async def query_decomposition_function(model: Any, question: str, user_id: int, 
 
         extracted_parsed = parser.parse(cleaned_content)
 
-
+        # FIXED: Success is logged strictly here when both invocation and parsing succeed
         log_state(ProviderLog.AI_PROVIDER_SUCCESS, level=LogState.INFO, function="query_decomposition_function", user_id=user_id)
 
     except Exception as e:
@@ -246,11 +254,11 @@ async def query_decomposition_function(model: Any, question: str, user_id: int, 
 
     decomposed_queries: list[str] = []
 
-
+    # Branch 1: Structured parsing succeeded
     if extracted_parsed and extracted_parsed.sub_queries:
         decomposed_queries = extracted_parsed.sub_queries
 
-
+    # Branch 2: Structured parsing failed -> Fallback to Raw Repair
     else:
         log_state(RepairLog.AI_REPAIR_INITIALIZED, function="query_decomposition_function", user_id=user_id)
         raw = getattr(raw_response, "content", None) if raw_response else None
@@ -315,7 +323,7 @@ async def query_decomposition_function(model: Any, question: str, user_id: int, 
         log_state(RepairLog.AI_REPAIR_SUCCESS, function="query_decomposition_function", user_id=user_id)
         decomposed_queries = recovered.sub_queries
 
-
+    # Guarantee the original user prompt is present to prevent context omission
     if question not in decomposed_queries:
         decomposed_queries.append(question)
 

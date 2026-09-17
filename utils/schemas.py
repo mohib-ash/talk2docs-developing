@@ -274,3 +274,16 @@ class LogState(enum.Enum):
     WARNING = "warning"
     EXCEPTION = "exception"
     ERROR = "error"
+
+class BM25Status(str, enum.Enum):
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING" 
+    READY = "READY"
+    FAILED = "FAILED"
+    STALE = "STALE"
+
+class CacheVDBStatus(enum.Enum):
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    READY = "READY"
+    FAILED = "FAILED"

@@ -1,7 +1,4 @@
-# ============================================================
 # Python
-# ============================================================
-
 __pycache__/
 *.py[cod]
 *$py.class
@@ -12,46 +9,49 @@ __pycache__/
 venv/
 env/
 ENV/
+.V_ENV/
 
-# ============================================================
+# Distribution / Packaging
+build/
+dist/
+*.egg-info/
+sdist/
+wheels/
+
+
 # Environment / Secrets
-# ============================================================
-
 .env
 .env.*
 !.env.example
 
-# ============================================================
-# IDE
-# ============================================================
 
+# IDE / Editor
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# ============================================================
-# Logs / Runtime
-# ============================================================
 
+# Logs / Runtime / Temporary Files
 logs/
 *.log
+temp.py
+*.tmp
 
-# ============================================================
-# Uploaded / User-generated files
-# ============================================================
 
+# Uploaded / User-generated Files
 uploaded_files/
 
-# ============================================================
-# Vector databases / Generated indexes
-# ============================================================
 
+# Vector Databases / Generated Indexes / Persistent Data
 v_dbs/
 vector_db/
+*.sqlite
+*.sqlite3
+*.db
 
-# ============================================================
-# Testing / Coverage
-# ============================================================
 
+# Testing / Coverage / Caching
 .pytest_cache/
 .coverage
 .coverage.*
@@ -59,10 +59,35 @@ htmlcov/
 .mypy_cache/
 .ruff_cache/
 
-# ============================================================
-# OS
-# ============================================================
 
+# OS Generated
 .DS_Store
 Thumbs.db
 desktop.ini
+
+
+# My Own:
+Ai/70b
+Ai/old
+Ai/intent_classifier_manul.py
+Ai/intent_classifier(merged_w_qury_c).py
+routers/chat/question_route(b4 abstraction).py
+
+#txt and for me
+notes
+alembic.ini
+asyncio notes.txt
+cache idea.txt
+csv, xclx.txt
+info.txt
+with_cache_full_run.txt
+how to make nignx read.png
+notes.txt
+old_redis....txt
+Structure to reach.txt
+
+
+
+
+
+push token.txt

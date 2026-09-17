@@ -146,7 +146,7 @@ async def step_back_function(model: Any, question: str, user_id: int, retriever:
 
     step_back_query: str | None = extracted_parsed.step_back_question if extracted_parsed else None
 
-
+    # Fallback to raw repair if primary output parsing failed
     if not step_back_query:
         log_state(RepairLog.AI_REPAIR_INITIALIZED, function="step_back_function", user_id=user_id)
         raw = getattr(raw_response, "content", None) if raw_response else None
@@ -201,7 +201,7 @@ async def step_back_function(model: Any, question: str, user_id: int, retriever:
 
         log_state(RepairLog.AI_REPAIR_SUCCESS, function="step_back_function", user_id=user_id)
         step_back_query = recovered.step_back_question
-    
+
     try:        
         log_state(StepBackLog.STEP_BACK_RETRIEVAL_STARTED, function="step_back_function", user_id=user_id)
         retrieval_tasks: list[Awaitable[list[LangChainDocument]]] = [
@@ -222,7 +222,7 @@ async def step_back_function(model: Any, question: str, user_id: int, retriever:
             error_message=f"Step-back dual retrieval failed: {str(exc)}",
         )
 
-
+    # 4. RRF Merging & Deduplication
     fused_documents = _reciprocal_rank_fusion(user_id=user_id, results_per_query=parallel_results)
     if fused_documents is None:
         log_state(ServiceLog.AI_SERVICE_FAILED, function="step_back_function", user_id=user_id)
@@ -238,6 +238,7 @@ async def step_back_function(model: Any, question: str, user_id: int, retriever:
 
     final_documents = fused_documents[:top_n_final]
 
+    # 5. Empty check and return
     if not final_documents:
         log_state(ExceptionLog.NO_RELATED_DOCUMENT_FOUND, function="step_back_function", user_id=user_id)
         log_state(ServiceLog.AI_SERVICE_FAILED, function="step_back_function", user_id=user_id)

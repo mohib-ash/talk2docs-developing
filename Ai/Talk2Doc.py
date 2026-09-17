@@ -4,6 +4,7 @@ import re
 import time
 from typing import Annotated, Any
 
+from langchain_chroma import Chroma
 from langchain_classic.retrievers.ensemble import EnsembleRetriever
 from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document as LangChainDocument
@@ -30,6 +31,7 @@ from Ai.query_classifier import (
 from Ai.query_construction.query_classifier_runner import execute_retrieval_strategy
 from Ai.raw_and_parsed_clean import extract_parsed_data, extract_raw_data
 from Ai.retry_logic import check_provider_quota
+from Ai.worker_inishiators import push_responce_in_cache_inishiator
 from core.Exceptions.exceptions import AIServiceException
 from utils.APIResponce_error_code_enum import SYSTEM_ERROR_CODES, USER_ERROR_CODES
 from utils.logging.helper_log import LogState, log_state
@@ -44,13 +46,14 @@ from utils.logging.logEvents import (
 from utils.schemas import APIResponse, QuestionRequest
 from Ai.ai_utils import safe_retrieve
 from Ai.re_ranker_via_encoder import cohere_rerank
+from redis.asyncio import Redis
 
-
+# Reuse string constraints cleanly across fields
 ShortTopicStr = Annotated[
     str,
     StringConstraints(
         min_length=2,
-        max_length=40,
+        max_length=65,  # Bumped up to give the LLM more breathing room
         strip_whitespace=True,
         to_lower=False,
     ),
@@ -203,12 +206,13 @@ class AnswerModel(BaseModel):
         return round(v, 2)
     
     @field_validator("answer_summary", mode="before") #--eq(1) before coz model will bring answers we wanna use those answers to do some logic on!
-    @classmethod 
+    @classmethod #in pydantic v2 if class has model_config then classmethod is a must!
     def truncate_summary(cls, v: Any) -> Any:
         if isinstance(v, str) and len(v) > 350:
+            # Slice gracefully at 350 characters or find the last sentence break
             truncated = v[:350]
             last_period = truncated.rfind(".")
-            if last_period > 200:
+            if last_period > 200:  # Cut cleanly at a sentence if possible
                 return truncated[: last_period + 1]
             return truncated.strip() + "..."
         return v
@@ -222,7 +226,10 @@ class AnswerModel(BaseModel):
     @classmethod
     def clean_and_limit_fetched_answer(cls, v: Any) -> Any:
         if isinstance(v, str):
+            # First, normalize your newlines and whitespace if you want it neat
             cleaned = " ".join(v.split())
+            
+            # Optional: Add a length cap if it tends to get excessively long
             MAX_LEN = 1000
             if len(cleaned) > MAX_LEN:
                 truncated = cleaned[:MAX_LEN]
@@ -233,6 +240,19 @@ class AnswerModel(BaseModel):
                 
             return cleaned
         return v
+
+
+    
+    
+
+
+#a field_validator is additional instructions to BaseModel where basemodel is checking if input to feilds match the defined datatype
+#e.g age: int, name: str -> fo(age=5000, name="    ") -> technically valid logically WRRRONG! basemdoel will work coz we did gave int and str
+#but thats not correct now is it? so thats where field validtors come in!! more info to reach field!
+#field_validator can 1) check a field, 2) modify values, 3) resuing validators (more than 1 field)
+#field_validator -> takes inn a field name and passes it to the function bellow (ima use it in answer_summary) coz 350 too low and if i remove it yap
+#b4 that know for reach run field_validators run too! auto! and we can have checks init too! if check pass what we return becomes that field's value btw!
+#--eq(1)
 
 
 
@@ -257,11 +277,12 @@ SYSTEM_TEMPLATE = r"""You are AnswerAI, an authoritative, highly precise AI rese
 - Extract `verbatim_quote` exact snippets directly from the context without altering wording.
 - Set `page_number` to null/None if explicit page metadata is not provided in <context>. NEVER guess or estimate page numbers.
 - Use `location_fallback` (e.g., source file name, paragraph, or chunk ID) whenever `page_number` is null.
-- CONSOLIDATE CITATIONS: Avoid over-granular micro-citations. If multiple supporting phrases come from the same source file or chunk, combine them into a single comprehensive citation object rather than creating a separate object for every single sentence.
+- MULTI-SOURCE CITATION REQUIREMENT: If the answer incorporates facts or concepts from multiple distinct source files (e.g., Tier 1 and Tier 2/3), you MUST include a separate citation object for *each* contributing source file, rather than consolidating them into a single citation.
 
 4. UNANSWERABLE QUESTIONS & MISSING INFORMATION:
 - If Tiers 1 and 2 do NOT contain enough information to answer the question, explicitly explain what is missing in `answer_summary`.
-- Set `confidence_score` below 0.50 whenever the context lacks facts to directly answer the question.
+- If the context is insufficient, `vdb_fetched_answer` must still contain a concise grounded explanation of why the question cannot be answered from the context. NEVER return an empty string.
+- Set `confidence_score` below 0.50 (or 0.0) whenever the context lacks facts to directly answer the question.
 
 5. STRICT FAITHFULNESS & HALLUCINATION CONTROL:
 - Do NOT invent information, external facts, or assumptions outside <context>.
@@ -337,9 +358,13 @@ FEW_SHOT_EXAMPLES = [
 async def Answer_ai(
     model: Any,
     user_id: int,
-    user_vdb: Any,
+    user_raw_vdb: Chroma,
     user_payload: QuestionRequest,
     db: AsyncSession,
+    normal_redis_instance: Redis,
+    bytes_redis: Redis,
+    cache_policy: str,
+    # cache_vdb: Chroma
 ) -> APIResponse:
     log_state(ServiceLog.AI_SERVICE_STARTED, function="Answer_ai", user_id=user_id)
     question: str = user_payload.question
@@ -361,10 +386,12 @@ async def Answer_ai(
         doc_name = [doc_name]
     docs_msg = f"in {', '.join(doc_name)}" if doc_name else "in your collection"
 
+
+    #INSTRUMENTATION TIMER START 
     t_pipeline_start = time.perf_counter()
 
     retriever_task = asyncio.create_task(
-        build_get_retriever(user_vdb=user_vdb, doc_name=doc_name, k=10, user_id=user_id)
+        build_get_retriever(user_vdb=user_raw_vdb, doc_name=doc_name, k=10, user_id=user_id, db=db, redis_client=bytes_redis)
     )
     classifier_task: APIResponse = asyncio.create_task(
         query_classifier(question, user_id)
@@ -374,10 +401,9 @@ async def Answer_ai(
         retriever_task, classifier_task
     )
 
-    
     print(f"[TIMING] asyncio.gather (retriever + classifier): {(time.perf_counter() - t_pipeline_start) * 1000:.2f} ms")
 
-    if not classification_response.success: 
+    if not classification_response.success: #this is where bad intent is trund back!
         return classification_response
 
     if retriever is None:
@@ -387,10 +413,9 @@ async def Answer_ai(
         )
 
     retrieved_docs: list[LangChainDocument] | None = None
+    
+    # INSTRUMENTATION TIMER FOR STRATEGY/RETRIEVAL 
     t_retrieval_start = time.perf_counter()
-
-
-
 
     if (
         classification_response.success
@@ -398,6 +423,7 @@ async def Answer_ai(
         and classification_response.data.selected_technique != QueryTechnique.NONE
     ):
         
+    
         strategy_result: APIResponse = await execute_retrieval_strategy(
             model=model,
             question=question,
@@ -406,12 +432,13 @@ async def Answer_ai(
             retriever=retriever,
             doc_name=doc_name,
             db=db,
+            redis_client=bytes_redis
         )
-
-
 
         if strategy_result.success and strategy_result.data:
             retrieved_docs = strategy_result.data
+
+
 
 
     if not retrieved_docs:
@@ -424,6 +451,8 @@ async def Answer_ai(
             error_code=SYSTEM_ERROR_CODES.NO_DATA_FOUND_BY_RETRIVER.value,
             message=f"No data found by retriver in: {docs_msg}.",
         )
+
+    #INSTRUMENTATION TIMER FOR COHERE 
     t_cohere_start = time.perf_counter()
 
     cohere_ranked_response = await cohere_rerank(
@@ -452,7 +481,6 @@ async def Answer_ai(
         ranked_docs = retrieved_docs[:5]
 
     formatted_context: str = format_tiered_context(ranked_docs)
-
     parser = PydanticOutputParser(pydantic_object=AnswerModel)
 
     example_prompt = ChatPromptTemplate.from_messages([
@@ -492,13 +520,14 @@ async def Answer_ai(
         if not cleaned_content:
             raise ValueError("Model returned an empty content payload.")
         extracted_parsed = parser.parse(cleaned_content)
-
-        log_state(
-            ProviderLog.AI_PROVIDER_SUCCESS,
-            level=LogState.INFO,
-            function="Answer_ai",
-            user_id=user_id,
-        )
+        
+        
+        #WRAP THIS IN TRY TOO! COZ IF THIS FAILS IT THINKS FULL MODEL FAILED AND WE RETRY BAAAAD! 
+        if cache_policy == "cacheable":
+            ans: APIResponse = await push_responce_in_cache_inishiator(model_output=extracted_parsed, question=question, user_id=user_id, doc_name=doc_name, db=db)
+            task_id = ans.data["task_id"]
+        
+        log_state(ProviderLog.AI_PROVIDER_SUCCESS, level=LogState.INFO, function="Answer_ai", user_id=user_id)
         log_state(ServiceLog.AI_SERVICE_COMPLETED, function="Answer_ai", user_id=user_id)
         log_state(ServiceLog.AI_SERVICE_ENDED, function="Answer_ai", user_id=user_id)
         log_state(ServiceLog.EXITING_AI_SERVICE, function="Answer_ai", user_id=user_id)
@@ -512,23 +541,10 @@ async def Answer_ai(
 
     except Exception as e:
         initial_error = e
-
-        log_state(
-            ProviderLog.AI_PROVIDER_FAILURE,
-            level=LogState.EXCEPTION,
-            function="Answer_ai",
-            exc=e,
-            user_id=user_id,
-        )
+        log_state(ProviderLog.AI_PROVIDER_FAILURE, level=LogState.EXCEPTION, function="Answer_ai", exc=e, user_id=user_id)
 
         if check_provider_quota(e):
-            log_state(
-                ServiceLog.AI_MY_QUOTA_REACHED,
-                level=LogState.EXCEPTION,
-                function="Answer_ai",
-                exc=e,
-                user_id=user_id,
-            )
+            log_state(ServiceLog.AI_MY_QUOTA_REACHED, level=LogState.EXCEPTION, function="Answer_ai", exc=e, user_id=user_id)
             log_state(ServiceLog.AI_SERVICE_FAILED, function="Answer_ai", user_id=user_id)
             log_state(ServiceLog.EXITING_AI_SERVICE, function="Answer_ai", user_id=user_id)
 
@@ -539,35 +555,14 @@ async def Answer_ai(
                 error_message="No more tokens left to process this request",
             )
 
-        log_state(
-            RepairLog.AI_REPAIR_INITIALIZED,
-            level=LogState.WARNING,
-            function="Answer_ai",
-            user_id=user_id,
-        )
+        log_state(RepairLog.AI_REPAIR_INITIALIZED, level=LogState.WARNING, function="Answer_ai", user_id=user_id)
         extracted_parsed = None
-
+        
     raw = getattr(raw_response, "content", None) if raw_response else None
-
     if not raw:
-        log_state(
-            ServiceLog.AI_SERVICE_FAILED,
-            level=LogState.WARNING,
-            function="Answer_ai",
-            user_id=user_id,
-        )
-        log_state(
-            RepairLog.AI_REPAIR_INITIALIZATION_STOPPED,
-            level=LogState.WARNING,
-            function="Answer_ai",
-            user_id=user_id,
-        )
-        log_state(
-            ServiceLog.EXITING_AI_SERVICE,
-            level=LogState.WARNING,
-            function="Answer_ai",
-            user_id=user_id,
-        )
+        log_state(ServiceLog.AI_SERVICE_FAILED, level=LogState.WARNING, function="Answer_ai", user_id=user_id)
+        log_state(RepairLog.AI_REPAIR_INITIALIZATION_STOPPED, level=LogState.WARNING, function="Answer_ai", user_id=user_id)
+        log_state(ServiceLog.EXITING_AI_SERVICE, level=LogState.WARNING, function="Answer_ai", user_id=user_id)
 
         return APIResponse(
             success=False,
@@ -577,39 +572,14 @@ async def Answer_ai(
         )
 
     try:
-        log_state(
-            RepairLog.AI_REPAIR_STARTED,
-            function="Answer_ai",
-            user_id=user_id,
-        )
-        log_state(
-            RepairLog.AI_REPAIR_IN_PROGRESS,
-            function="Answer_ai",
-            user_id=user_id,
-        )
+        log_state(RepairLog.AI_REPAIR_STARTED, function="Answer_ai", user_id=user_id)
+        log_state(RepairLog.AI_REPAIR_IN_PROGRESS, function="Answer_ai", user_id=user_id)
 
-        recovered = await extract_raw_data(
-            raw,
-            parser,
-            model,
-            question,
-            AnswerModel,
-        )
-
+        recovered = await extract_raw_data(raw, parser, model, question, AnswerModel)
     except Exception as e:
         if check_provider_quota(e):
-            log_state(
-                ServiceLog.AI_MY_QUOTA_REACHED,
-                level=LogState.EXCEPTION,
-                function="Answer_ai",
-                exc=e,
-                user_id=user_id,
-            )
-            log_state(
-                RepairLog.AI_REPAIR_PREMATURELY_ENDED,
-                function="Answer_ai",
-                user_id=user_id,
-            )
+            log_state(ServiceLog.AI_MY_QUOTA_REACHED, level=LogState.EXCEPTION, function="Answer_ai", exc=e, user_id=user_id)
+            log_state(RepairLog.AI_REPAIR_PREMATURELY_ENDED, function="Answer_ai", user_id=user_id)
             log_state(ServiceLog.AI_SERVICE_FAILED, function="Answer_ai", user_id=user_id)
             log_state(ServiceLog.EXITING_AI_SERVICE, function="Answer_ai", user_id=user_id)
 
@@ -620,13 +590,7 @@ async def Answer_ai(
                 error_message="No more tokens left to process this request",
             )
 
-        log_state(
-            RepairLog.AI_REPAIR_PREMATURELY_ENDED,
-            level=LogState.EXCEPTION,
-            function="Answer_ai",
-            exc=e,
-            user_id=user_id,
-        )
+        log_state(RepairLog.AI_REPAIR_PREMATURELY_ENDED, level=LogState.EXCEPTION, function="Answer_ai", exc=e, user_id=user_id)
         log_state(ServiceLog.AI_SERVICE_FAILED, function="Answer_ai", user_id=user_id)
         log_state(ServiceLog.EXITING_AI_SERVICE, function="Answer_ai", user_id=user_id)
 
@@ -646,6 +610,10 @@ async def Answer_ai(
             error_code=SYSTEM_ERROR_CODES.RAW_REPAIR_FAILURE.value,
             error_message="Structured output parsing failed and manual recovery returned no result.",
         )
+    
+    if cache_policy == "cacheable":
+        ans: APIResponse = await push_responce_in_cache_inishiator(model_output=recovered, question=question, user_id=user_id, doc_name=doc_name, db=db)
+        task_id = ans.data["task_id"]
 
     log_state(RepairLog.AI_REPAIR_SUCCESS, function="Answer_ai", user_id=user_id)
     log_state(ServiceLog.AI_SERVICE_COMPLETED, function="Answer_ai", user_id=user_id)

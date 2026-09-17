@@ -118,6 +118,7 @@ async def advanced_translation_function(
 
         extracted_parsed = parser.parse(cleaned_content)
 
+        # FIXED: Moved inside the try block so it only fires on true provider & parsing success[cite: 10]
         log_state(
             ProviderLog.AI_PROVIDER_SUCCESS,
             function="advanced_translation_function",

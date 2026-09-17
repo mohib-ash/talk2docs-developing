@@ -41,7 +41,6 @@ class Settings(BaseSettings):
     cohere_api_key: str
     cohere_rerank_model: str
     
-    # Configures Pydantic to read automatically from local filesystem
     model_config = SettingsConfigDict(env_file=".env")
 
 settings = Settings()

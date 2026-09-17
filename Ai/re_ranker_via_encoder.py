@@ -100,6 +100,7 @@ async def cohere_rerank(
         for result in response.results:
             original_doc = received_docs[result.index]
             
+            #adding new enrty in metatdat for all in great trequlizer
             updated_metadata = dict(original_doc.metadata or {})
             updated_metadata["rerank_score"] = float(result.relevance_score)
 

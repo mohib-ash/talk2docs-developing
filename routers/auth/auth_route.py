@@ -74,15 +74,13 @@ async def revoke_all_sessions(id: int, redis: Redis = Depends(get_redis)):
 
     if session_ids:
         for jid in session_ids:
-            await redis.delete(f"session:{jid}") 
+            await redis.delete(f"session:{jid}")
         await redis.delete(f"user_sessions:{id}") 
     
     else:
         return {
     "message": "No active sessions found."
 }
-
-
 
 
 
@@ -100,12 +98,6 @@ async def ban_user(id: int, db: AsyncSession = Depends(get_db), redis: Redis = D
         }
     user.is_banned = True
     await db.commit()
-    
-    
-    
-    
-    
-    
     
     return {
         "message": "User banned successfully"

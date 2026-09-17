@@ -273,7 +273,6 @@ async def multi_query_function(model: Any, question: str, user_id: int, retrieve
     if extracted_parsed and extracted_parsed.queries:
         expanded_queries = extracted_parsed.queries 
 
-
     # Branch 2: Structured parsing failed -> Fallback to Raw Repair
     else:
         log_state(RepairLog.AI_REPAIR_INITIALIZED, function="multi_query_function", user_id=user_id)
@@ -322,6 +321,9 @@ async def multi_query_function(model: Any, question: str, user_id: int, retrieve
         log_state(RepairLog.AI_REPAIR_SUCCESS, function="multi_query_function", user_id=user_id)
         expanded_queries = recovered.queries
 
+
+    
+
     if question not in expanded_queries: 
         expanded_queries.append(question)
 
@@ -329,11 +331,10 @@ async def multi_query_function(model: Any, question: str, user_id: int, retrieve
     # 3. Asynchronous parallel vector retrieval
     try:
         log_state(MultiQueryLog.MULTI_QUERY_RETRIEVAL_STARTED, function="multi_query_function", user_id=user_id)
+    
         retrieval_tasks: list[Awaitable[list[LangChainDocument]]] = [safe_retrieve(retriever, query) for query in expanded_queries] 
-
         multi_query_results: list[list[LangChainDocument]] = await asyncio.gather(*retrieval_tasks) 
         log_state(MultiQueryLog.MULTI_QUERY_RETRIEVAL_SUCCESS, function="multi_query_function", user_id=user_id)
-
         
 
     except Exception as exc:

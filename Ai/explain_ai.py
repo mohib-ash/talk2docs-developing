@@ -45,7 +45,7 @@ TopicText = Annotated[
         min_length=2,
         max_length=30,
         strip_whitespace=True,
-        pattern=r"^[A-Za-z0-9\s\-\/\&\,\.]+$",
+        pattern=r"^[A-Za-z0-9\s\-\/\&\,\.\u2011]+$",
     ),
 ]
 

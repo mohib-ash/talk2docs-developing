@@ -53,12 +53,14 @@ def _resolve_to_original_chunk(doc: LangChainDocument) -> LangChainDocument:
     """Guarantees that a retrieved document chunk holds verbatim original text,
     restoring page_content from metadata if retrieved from Summary or Explanation indices.
     """
-    doc_type = doc.metadata.get("doc_type", "raw")  
+    doc_type = doc.metadata.get("doc_type", "raw")  #if u find value of "doc_type" get it else give me "raw" as value, in key_value pair
+    
     
     if doc_type != "raw" and "raw_content" in doc.metadata:
+        
         return LangChainDocument(
-            page_content=doc.metadata["raw_content"], 
-            metadata={**doc.metadata, "doc_type": "raw"} 
+            page_content=doc.metadata["raw_content"],
+            metadata={**doc.metadata, "doc_type": "raw"}
         )
     return doc
 
@@ -98,8 +100,8 @@ def _reciprocal_rank_fusion_multi_index(
                     if existing_type != "raw" and current_type == "raw":
                         doc_map[chunk_id] = doc
 
-        sorted_chunks = sorted(fused_scores.items(), key=lambda item: item[1], reverse=True)
         
+        sorted_chunks = sorted(fused_scores.items(), key=lambda item: item[1], reverse=True)
         resolved_original_chunks = [
             _resolve_to_original_chunk(doc_map[chunk_id]) 
             for chunk_id, _ in sorted_chunks
@@ -131,11 +133,12 @@ async def multi_indexing_function(
     log_state(MultiIndexLog.MULTI_INDEX_STARTED, function="multi_indexing_function", user_id=user_id)
 
     try:
+        # 1. PARALLEL SEARCHES (Search A, Search B, Search C)
         retrieval_tasks: list[Awaitable[list[LangChainDocument]]] = [
            safe_retrieve(raw_retriever, question),  # Search A
             safe_retrieve(summary_retriever, question),  # Search B
             safe_retrieve(explanation_retriever, question),  # Search C
-        ]
+        ]# the fetch will be form summary but metadata will hold orignal chunk ;)
         parallel_results: list[list[LangChainDocument]] = await asyncio.gather(*retrieval_tasks)
 
     except Exception as exc:
