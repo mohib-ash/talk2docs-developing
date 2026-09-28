@@ -45,7 +45,6 @@ uploaded_files/
 
 # Vector Databases / Generated Indexes / Persistent Data
 v_dbs/
-vector_db/
 *.sqlite
 *.sqlite3
 *.db
