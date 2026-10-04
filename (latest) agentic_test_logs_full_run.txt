@@ -1,0 +1,1113 @@
+1) create new user:
+--> Incoming request: POST /users/sign-up
+[REQUEST START] POST /users/sign-up client=127.0.0.1
+2026-10-03 14:34:04 | INFO | USER_SERVICE_STARTED | create_user_service | None | None | None
+2026-10-03 14:34:04 | INFO | CREATING_USER | create_user_service | None | None | None
+2026-10-03 14:34:04 | INFO | VALIDATING_REQUEST | create_user_service | None | None | None
+2026-10-03 14:34:04 | INFO | SUCCESS | create_user_service | None | None | None
+2026-10-03 14:34:04 | INFO | EXITING_USER_SERVICE | create_user_service | None | None | None
+[REQUEST END] POST /users/sign-up status=201 time=775.72ms
+<-- Outgoing response: 201
+INFO:     127.0.0.1:58360 - "POST /users/sign-up HTTP/1.1" 201 Created
+
+
+2) login said user:
+--> Incoming request: POST /login
+[REQUEST START] POST /login client=127.0.0.1
+2026-10-03 14:35:09 | INFO | AUTH_SERVICE_STARTED | login_user_service | None | None | None
+2026-10-03 14:35:09 | INFO | AUTHENTICATING_USER | login_user_service | None | None | None
+2026-10-03 14:35:09 | INFO | EXECUTING_DATABASE_QUERY | login_user_service | None | None | None
+2026-10-03 14:35:09 | INFO | VALIDATING_REQUEST | login_user_service | None | None | None
+2026-10-03 14:35:09 | INFO | CONNECTING_TO_REDIS | login_user_service | None | None | None
+2026-10-03 14:35:09 | INFO | CREATING_SESSION | login_user_service | None | None | None
+2026-10-03 14:35:09 | INFO | CACHING_JWT_SESSION | cache_jwt_data | None | None | None
+2026-10-03 14:35:09 | INFO | SUCCESS | cache_jwt_data | None | None | None
+2026-10-03 14:35:09 | INFO | SESSION_CREATED | login_user_service | None | None | None
+2026-10-03 14:35:09 | INFO | SUCCESS | login_user_service | None | None | None
+2026-10-03 14:35:09 | INFO | EXITING_AUTH_SERVICE | login_user_service | None | None | None
+[REQUEST END] POST /login status=200 time=530.87ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:51706 - "POST /login HTTP/1.1" 200 OK
+
+
+
+3) Authorizing form swagger:
+--> Incoming request: POST /login
+[REQUEST START] POST /login client=127.0.0.1
+2026-10-03 14:36:44 | INFO | AUTH_SERVICE_STARTED | login_user_service | None | None | None
+2026-10-03 14:36:44 | INFO | AUTHENTICATING_USER | login_user_service | None | None | None
+2026-10-03 14:36:44 | INFO | EXECUTING_DATABASE_QUERY | login_user_service | None | None | None
+2026-10-03 14:36:44 | INFO | VALIDATING_REQUEST | login_user_service | None | None | None
+2026-10-03 14:36:44 | INFO | CONNECTING_TO_REDIS | login_user_service | None | None | None
+2026-10-03 14:36:44 | INFO | CREATING_SESSION | login_user_service | None | None | None
+2026-10-03 14:36:44 | INFO | CACHING_JWT_SESSION | cache_jwt_data | None | None | None
+2026-10-03 14:36:44 | INFO | SUCCESS | cache_jwt_data | None | None | None
+2026-10-03 14:36:44 | INFO | SESSION_CREATED | login_user_service | None | None | None
+2026-10-03 14:36:44 | INFO | SUCCESS | login_user_service | None | None | None
+2026-10-03 14:36:44 | INFO | EXITING_AUTH_SERVICE | login_user_service | None | None | None
+[REQUEST END] POST /login status=200 time=291.05ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:55012 - "POST /login HTTP/1.1" 200 OK
+
+
+
+4) upload file:
+terminal logs:
+--> Incoming request: POST /upload/upload-doc
+[REQUEST START] POST /upload/upload-doc client=127.0.0.1
+2026-10-03 15:08:34 | INFO | UPLOAD_SERVICE_STARTED | upload_doc | None | None | None
+2026-10-03 15:08:34 | INFO | VALIDATING_FILE | upload_doc | None | None | None
+2026-10-03 15:08:34 | INFO | VALIDATION_SERVICE_STARTED | file_validation_service | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:08:34 | INFO | CHECKING_FILENAME | file_validation_service | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:08:34 | INFO | CHECKING_EXTENSION | file_validation_service | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:08:34 | INFO | CHECKING_MIME_TYPE | file_validation_service | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:08:34 | INFO | READING_FILE_BYTES | file_validation_service | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:08:34 | INFO | VALIDATING_MAGIC_BYTES | file_validation_service | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:08:34 | INFO | VALIDATING_MAGIC_BYTES | validate_file_content_type | None | None | None
+2026-10-03 15:08:34 | INFO | VALIDATING_MAGIC_BYTES | _validate_zip_container | None | None | None
+Content validation took: 0.0042726993560791016 seconds
+2026-10-03 15:08:34 | INFO | CHECKING_DUPLICATE_HASH | file_validation_service | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:08:35 | INFO | CONSTRUCTING_PAYLOAD | file_validation_service | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:08:35 | INFO | VALIDATION_SERVICE_SUCCESS | file_validation_service | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:08:35 | INFO | EXITING_VALIDATION_SERVICE | file_validation_service | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:08:35 | INFO | VALIDATION_SUCCESS | upload_doc | None | None | None
+2026-10-03 15:08:35 | INFO | INITIATING_WORKER | upload_doc | None | None | None
+2026-10-03 15:08:36 | INFO | WORKER_INITIATED_SUCCESS | upload_doc | None | None | None
+2026-10-03 15:08:36 | INFO | UPLOAD_SUCCESS | upload_doc | None | None | None
+2026-10-03 15:08:36 | INFO | EXITING_UPLOAD_SERVICE | upload_doc | None | None | None
+[REQUEST END] POST /upload/upload-doc status=200 time=1787.27ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:43498 - "POST /upload/upload-doc HTTP/1.1" 200 OK
+
+
+
+
+celery logs:
+[2026-10-03 15:08:36,500: INFO/MainProcess] Task ai.upload_save_file_worker[9bc0f906-1df5-467e-8443-7385964ff322] received
+[2026-10-03 15:08:36,505: INFO/ForkPoolWorker-7] SAVE_TASK_STARTED
+[2026-10-03 15:08:36,506: INFO/ForkPoolWorker-7] VALIDATING_TASK_PAYLOAD
+[2026-10-03 15:08:36,507: INFO/ForkPoolWorker-7] SAVING_DOC_TO_DB
+[2026-10-03 15:08:36,510: INFO/ForkPoolWorker-7] SAVE_TASK1_ASYNC_STARTED
+[2026-10-03 15:08:36,511: INFO/ForkPoolWorker-7] SAVE_SERVICE_STARTED
+[2026-10-03 15:08:36,511: INFO/ForkPoolWorker-7] WRITING_FILE_TO_DISK
+[2026-10-03 15:08:36,623: INFO/ForkPoolWorker-7] COMMITTING_DOC_TO_DB
+[2026-10-03 15:08:37,391: INFO/ForkPoolWorker-7] VALIDATING_SAVED_DOC_ORM
+[2026-10-03 15:08:37,392: INFO/ForkPoolWorker-7] SAVE_SERVICE_SUCCESS
+[2026-10-03 15:08:37,397: INFO/ForkPoolWorker-7] SAVE_TASK1_ASYNC_SUCCESS
+[2026-10-03 15:08:37,398: INFO/ForkPoolWorker-7] INITIATING_TASK_2
+[2026-10-03 15:08:37,478: INFO/ForkPoolWorker-7] TASK_2_INITIATED_SUCCESS
+[2026-10-03 15:08:37,479: INFO/MainProcess] Task ai.parse_doc_worker[4adb2710-8573-4e1a-a011-18b365159954] received
+[2026-10-03 15:08:37,482: INFO/ForkPoolWorker-8] TASK_2_STARTED
+[2026-10-03 15:08:37,482: INFO/ForkPoolWorker-8] VALIDATING_TASK_2_PAYLOAD
+[2026-10-03 15:08:37,483: INFO/ForkPoolWorker-8] RUNNING_TASK_2_ASYNC
+[2026-10-03 15:08:37,484: INFO/ForkPoolWorker-8] TASK_2_ASYNC_STARTED
+[2026-10-03 15:08:37,485: INFO/ForkPoolWorker-8] TASK_2_SERVICE_STARTED
+[2026-10-03 15:08:37,497: INFO/ForkPoolWorker-7] Task ai.upload_save_file_worker[9bc0f906-1df5-467e-8443-7385964ff322] succeeded in 0.9926500459987437s: None
+[2026-10-03 15:08:37,857: INFO/ForkPoolWorker-8] PARSING_STAGE_STARTED
+[2026-10-03 15:08:37,869: INFO/ForkPoolWorker-8] detected formats: [<InputFormat.DOCX: 'docx'>]
+[2026-10-03 15:08:37,933: INFO/ForkPoolWorker-8] Going to convert document batch...
+[2026-10-03 15:08:37,934: INFO/ForkPoolWorker-8] Initializing pipeline for SimplePipeline with options hash 7d306d2d021deac65a97d1a5f925362a
+[2026-10-03 15:08:38,448: INFO/ForkPoolWorker-8] Loading plugin 'docling_defaults'
+[2026-10-03 15:08:38,600: INFO/ForkPoolWorker-8] Registered picture descriptions: ['picture_description_vlm_engine', 'vlm', 'api']
+[2026-10-03 15:08:38,601: INFO/ForkPoolWorker-8] Processing document 8b1b02699452294ee5f11d1018324053.docx
+[2026-10-03 15:08:39,249: INFO/ForkPoolWorker-8] Finished converting document 8b1b02699452294ee5f11d1018324053.docx in 1.39 sec.
+[2026-10-03 15:08:39,267: INFO/ForkPoolWorker-8] PARSING_STAGE_SUCCESS
+[2026-10-03 15:08:39,268: INFO/ForkPoolWorker-8] CHUNKING_STAGE_STARTED
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (536 > 512). Running this sequence through the model will result in indexing errors
+[2026-10-03 15:08:39,796: INFO/ForkPoolWorker-8] CHUNKING_STAGE_SUCCESS
+[2026-10-03 15:08:39,796: INFO/ForkPoolWorker-8] EMBEDDING_STAGE_STARTED
+[2026-10-03 15:08:47,904: INFO/ForkPoolWorker-8] EMBEDDING_STAGE_SUCCESS
+[2026-10-03 15:08:47,904: INFO/ForkPoolWorker-8] TASK_2_SERVICE_SUCCESS
+[2026-10-03 15:08:47,905: INFO/ForkPoolWorker-8] TASK_2_ASYNC_SUCCESS
+[2026-10-03 15:08:47,906: INFO/ForkPoolWorker-8] TASK_2_SUCCESS
+[2026-10-03 15:08:47,919: INFO/ForkPoolWorker-8] Task ai.parse_doc_worker[4adb2710-8573-4e1a-a011-18b365159954] succeeded in 8.269162098000379s: None
+
+
+
+5) Manditory pooling to see all vdbs and doc state:
+terminal (with multiple asyncio.time(2) tries:
+INFO:     127.0.0.1:43498 - "POST /upload/upload-doc HTTP/1.1" 200 OK
+--> Incoming request: GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4
+[REQUEST START] GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 client=127.0.0.1
+2026-10-03 15:10:10 | INFO | POLL_WORKER_REQUESTED | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | REDIS_AND_DB_STATUS_CHECK_STARTED | redis_and_db_worker_status | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | CHECKING_REDIS_WORKER_STATE | get_worker_redis_status | None | None | None
+2026-10-03 15:10:10 | INFO | REDIS_WORKER_SUCCESS | get_worker_redis_status | None | None | None
+2026-10-03 15:10:10 | INFO | FETCHING_DOCUMENT_BY_REQUEST_ID | get_document_by_request_id | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | DOCUMENT_FOUND_STATE | get_document_by_request_id | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | REDIS_AND_DB_STATUS_CHECK_SUCCESS | redis_and_db_worker_status | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | INITIATING_MULTI_INDEX_CHECK | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | INITIATING_WORKER | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | CHECKING_BM25_STATUS | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | BM25_STATUS_PENDING_INIT | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | QUEUING_MULTI_INDEX_TASK_INISHIATOR | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | QUEUING_BM25_TASK_INITIATOR | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | WORKER_INITIATED_SUCCESS | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | REFRESHING_DOCUMENT_STATUS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | CHECKING_BM25_STATUS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | BM25_STATUS_FETCHED_SUCCESS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:10 | INFO | POLL_WORKER_SUCCESS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+[REQUEST END] GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 status=200 time=166.18ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:34188 - "GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 HTTP/1.1" 200 OK
+--> Incoming request: GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4
+[REQUEST START] GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 client=127.0.0.1
+2026-10-03 15:10:20 | INFO | POLL_WORKER_REQUESTED | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | REDIS_AND_DB_STATUS_CHECK_STARTED | redis_and_db_worker_status | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | CHECKING_REDIS_WORKER_STATE | get_worker_redis_status | None | None | None
+2026-10-03 15:10:20 | INFO | REDIS_WORKER_SUCCESS | get_worker_redis_status | None | None | None
+2026-10-03 15:10:20 | INFO | FETCHING_DOCUMENT_BY_REQUEST_ID | get_document_by_request_id | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | DOCUMENT_FOUND_STATE | get_document_by_request_id | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | REDIS_AND_DB_STATUS_CHECK_SUCCESS | redis_and_db_worker_status | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | INITIATING_MULTI_INDEX_CHECK | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | INITIATING_WORKER | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | CHECKING_BM25_STATUS | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | BM25_STATUS_FETCHED_SUCCESS | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | WORKER_SKIPPED_NONE_NEEDED | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | REFRESHING_DOCUMENT_STATUS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | CHECKING_BM25_STATUS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | BM25_STATUS_FETCHED_SUCCESS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:20 | INFO | POLL_WORKER_SUCCESS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+[REQUEST END] GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 status=200 time=25.03ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:52046 - "GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 HTTP/1.1" 200 OK
+--> Incoming request: GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4
+[REQUEST START] GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 client=127.0.0.1
+2026-10-03 15:10:29 | INFO | POLL_WORKER_REQUESTED | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | REDIS_AND_DB_STATUS_CHECK_STARTED | redis_and_db_worker_status | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | CHECKING_REDIS_WORKER_STATE | get_worker_redis_status | None | None | None
+2026-10-03 15:10:29 | INFO | REDIS_WORKER_SUCCESS | get_worker_redis_status | None | None | None
+2026-10-03 15:10:29 | INFO | FETCHING_DOCUMENT_BY_REQUEST_ID | get_document_by_request_id | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | DOCUMENT_FOUND_STATE | get_document_by_request_id | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | REDIS_AND_DB_STATUS_CHECK_SUCCESS | redis_and_db_worker_status | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | INITIATING_MULTI_INDEX_CHECK | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | INITIATING_WORKER | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | CHECKING_BM25_STATUS | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | BM25_STATUS_FETCHED_SUCCESS | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | WORKER_SKIPPED_NONE_NEEDED | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | REFRESHING_DOCUMENT_STATUS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | CHECKING_BM25_STATUS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | BM25_STATUS_FETCHED_SUCCESS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:10:29 | INFO | POLL_WORKER_SUCCESS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+[REQUEST END] GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 status=200 time=36.25ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:40456 - "GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 HTTP/1.1" 200 OK
+--> Incoming request: GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4
+[REQUEST START] GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 client=127.0.0.1
+2026-10-03 15:11:46 | INFO | POLL_WORKER_REQUESTED | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | REDIS_AND_DB_STATUS_CHECK_STARTED | redis_and_db_worker_status | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | CHECKING_REDIS_WORKER_STATE | get_worker_redis_status | None | None | None
+2026-10-03 15:11:46 | INFO | REDIS_WORKER_SUCCESS | get_worker_redis_status | None | None | None
+2026-10-03 15:11:46 | INFO | FETCHING_DOCUMENT_BY_REQUEST_ID | get_document_by_request_id | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | DOCUMENT_FOUND_STATE | get_document_by_request_id | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | REDIS_AND_DB_STATUS_CHECK_SUCCESS | redis_and_db_worker_status | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | INITIATING_MULTI_INDEX_CHECK | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | INITIATING_WORKER | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | CHECKING_BM25_STATUS | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | BM25_STATUS_FETCHED_SUCCESS | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | WORKER_SKIPPED_BOTH_READY | multi_index_db_creation_worker_and_bm25_maker_inishiator | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | REFRESHING_DOCUMENT_STATUS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | CHECKING_BM25_STATUS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | BM25_STATUS_FETCHED_SUCCESS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+2026-10-03 15:11:46 | INFO | POLL_WORKER_SUCCESS | get_upload_worker_result | b674763b-42ab-4bf4-93ec-56f59dde0dc4 | None | None
+[REQUEST END] GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 status=200 time=28.94ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:45344 - "GET /upload/upload_worker/9bc0f906-1df5-467e-8443-7385964ff322/b674763b-42ab-4bf4-93ec-56f59dde0dc4 HTTP/1.1" 200 OK
+
+
+
+celery (demonstrates recovery path works as well):
+[2026-10-03 15:10:10,357: INFO/MainProcess] Task ai.create_rest_vdbs[70ab4ae8-48b6-4dad-a63f-5acdfbc29a03] received
+[2026-10-03 15:10:10,360: INFO/ForkPoolWorker-7] MULTI_INDEX_TASK_STARTED
+[2026-10-03 15:10:10,361: INFO/ForkPoolWorker-7] FETCHING_DOCUMENT_FOR_TASK
+[2026-10-03 15:10:10,362: INFO/MainProcess] Task retri.creating_global_bm25[3937da94-b6ad-4e3c-aedf-4e2f690df656] received
+[2026-10-03 15:10:10,363: INFO/ForkPoolWorker-8] MULTI_INDEX_TASK_STARTED
+[2026-10-03 15:10:10,365: INFO/ForkPoolWorker-8] FETCHING_DOCUMENT_FOR_TASK
+[2026-10-03 15:10:10,534: INFO/ForkPoolWorker-7] FETCHING_RAW_CHUNKS
+[2026-10-03 15:10:10,704: INFO/ForkPoolWorker-8] FETCHING_RAW_CHUNKS
+[2026-10-03 15:10:11,065: INFO/ForkPoolWorker-8] BUILDING_GLOBAL_BM25
+[2026-10-03 15:10:11,100: INFO/ForkPoolWorker-7] BUILDING_SUMMARY_VDB
+[2026-10-03 15:10:11,100: INFO/ForkPoolWorker-7] AI_SERVICE_STARTED
+[2026-10-03 15:10:11,105: INFO/ForkPoolWorker-7] AI_PROVIDER_REQUEST
+[2026-10-03 15:10:11,105: INFO/ForkPoolWorker-7] AI_PROVIDER_IN_PROCESSING
+[2026-10-03 15:10:11,240: INFO/ForkPoolWorker-8] WORKER_INITIATED_SUCCESS
+[2026-10-03 15:10:11,245: INFO/ForkPoolWorker-8] Task retri.creating_global_bm25[3937da94-b6ad-4e3c-aedf-4e2f690df656] succeeded in 0.8818117899991194s: {'success': True, 'user_id': 37, 'total_chunks_indexed': 2, 'index_path': '/mnt/g/python/Talk 2 docs proj/DOC proj/v_dbs/user_37/master_bm25_docs_v1.pkl', 'retriever_index_path': '/mnt/g/python/Talk 2 docs proj/DOC proj/v_dbs/user_37/master_bm25_retriever_v1.pkl'}
+[2026-10-03 15:10:12,781: INFO/ForkPoolWorker-7] HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-10-03 15:10:12,813: INFO/ForkPoolWorker-7] AI_PROVIDER_SUCCESS
+[2026-10-03 15:10:12,813: INFO/ForkPoolWorker-7] AI_SERVICE_COMPLETED
+[2026-10-03 15:10:12,813: INFO/ForkPoolWorker-7] AI_SERVICE_ENDED
+[2026-10-03 15:10:12,813: INFO/ForkPoolWorker-7] EXITING_AI_SERVICE
+[2026-10-03 15:10:13,902: INFO/ForkPoolWorker-7] SUMMARY_VDB_SUCCESS
+[2026-10-03 15:10:13,902: INFO/ForkPoolWorker-7] BUILDING_EXPLANATION_VDB
+[2026-10-03 15:10:13,902: INFO/ForkPoolWorker-7] AI_SERVICE_STARTED
+[2026-10-03 15:10:13,904: INFO/ForkPoolWorker-7] AI_PROVIDER_REQUEST
+[2026-10-03 15:10:13,904: INFO/ForkPoolWorker-7] AI_PROVIDER_IN_PROCESSING
+[2026-10-03 15:10:15,926: INFO/ForkPoolWorker-7] HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-10-03 15:10:15,933: ERROR/ForkPoolWorker-7] AI_PROVIDER_FAILURE
+Traceback (most recent call last):
+  File ".V_ENV/lib/python3.12/site-packages/langchain_core/output_parsers/pydantic.py", line 28, in _parse_obj
+    return self.pydantic_object.model_validate(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".V_ENV/lib/python3.12/site-packages/pydantic/main.py", line 732, in model_validate
+    return cls.__pydantic_validator__.validate_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for ExplanationBatchModel
+explanations.0.topic
+  String should have at most 30 characters [type=string_too_long, input_value='Hierarchical Military Structure', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/string_too_long
+explanations.1.key_takeaway
+  String should have at most 300 characters [type=string_too_long, input_value='Squad\u202f0’s immorta... continuity of command.', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/string_too_long
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Ai/explain_ai.py", line 256, in explanation_ai
+    extracted_parsed = parser.parse(cleaned_content)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ".V_ENV/lib/python3.12/site-packages/langchain_core/output_parsers/pydantic.py", line 93, in parse
+    return self.parse_result([Generation(text=text)])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.V_ENV/lib/python3.12/site-packages/langchain_core/output_parsers/pydantic.py", line 78, in parse_result
+    return self._parse_obj(json_object)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.V_ENV/lib/python3.12/site-packages/langchain_core/output_parsers/pydantic.py", line 37, in _parse_obj
+    raise self._parser_exception(e, obj) from e
+langchain_core.exceptions.OutputParserException: Failed to parse ExplanationBatchModel from completion {"explanations": [{"chunk_index": 0, "explanation": "The text outlines the ultimate hierarchical structure governing the Soul Society’s defense forces. It begins with **Gotei 13**, the frontline military unit responsible for all threats up to captain level and for maintaining order in Seireitei. Its power collapses once roughly 95 % of its combat capacity is lost, and it cannot interact with Royal Realm forces. The next tier, **Squad Ω (Omega Division)**, serves as a transcendent response layer that sits between Gotei 13 and the Royal Guard (Squad 0). All its members are captain‑class or higher and are essentially future Royal Guard candidates. Squad Ω activates only when Gotei 13 is near collapse, can descend into Seireitei during crisis, and handles threats beyond captain‑level capability, but it cannot permanently override Squad 0 authority or ascend unless through its leader, **Ω Prime**. **Ω Prime** is the sole Royal Guard candidate and the highest authority within Squad Ω; it commands all Ω operations, acts as the final stabilizer during Seireitei crises, and maintains balance between Ω and Squad 0. Ω Prime does not deploy at the initial activation of Ω; it descends only in extreme escalation or instability and becomes critical when Squad Ω is failing. Only Ω Prime can ascend to Squad 0 when a seat becomes vacant; other Ω captains must first become Ω Prime. If Ω Prime fails, it triggers Squad 0 intervention. Finally, **Squad 0 (Royal Guard)** protects the Royal Palace and Soul King, maintaining existence‑level balance. The **Immortality & Core System** section explains that Squad 0 members are anchored to the Royal Palace’s immortality system. Inside the Palace they cannot be permanently killed; if “killed,” they regenerate via the Palace system. Outside the Palace (in Squad Ω or beyond), they possess pseudo‑immortality. Thus, the hierarchy establishes clear roles, activation conditions, and limits on authority and mortality across the defense structure.", "key_takeaway": "The Soul Society’s defense is a tiered hierarchy—Gotei 13, Squad Ω, Ω Prime, and Squad 0—each with specific activation rules, authority limits, and mortality conditions that ensure orderly escalation and containment of crises.", "topic": "Hierarchical Military Structure", "confidence_score": 0.99, "is_meaning_preserved": true}, {"chunk_index": 1, "explanation": "This chunk details the mechanics governing Squad 0’s interaction with the core immortality system and the conditions for their descent into the Omega layer. When Squad 0 members descend from the Royal Palace, the anchoring that grants them full immortality becomes partial; they can only be killed through destruction of their core. Each member possesses a **Core** that anchors them to the Palace’s immortality, stabilizes their existence outside the Palace, and functions as a divine life‑seal. If the core remains intact, members enjoy full immortality in the Palace and high survival stability outside. If the core is broken, immortality is removed and members become fully killable, though they can recover the core upon returning to the Palace. If the core is destroyed and the member is defeated, the result is permanent death with no Palace respawn or system restoration. Core break does not cause instant death; it merely renders the member killable. The **Descent Rule** specifies that Squad 0 may descend only when Gotei 13 is completely collapsed, Squad Ω is about 95 % failed or unstable, and Ω Prime is critically incapacitated. Squad 0 never enters Gotei 13’s battlefield; they descend solely into the Squad Ω layer. The **Intervention Rule** limits descent to one member at a time, whose role is containment and stabilization of the Ω layer rather than general combat. The **Death & Succession Rule** explains that if a Squad 0 member dies in Ω, the seat becomes vacant, Ω Prime ascends immediately, and after stabilization the ascension is executed. If Ω Prime dies, the next strongest Ω Captain becomes the new Ω Prime, but no instant replacement occurs during active combat; succession happens only after a stabilization phase.", "key_takeaway": "Squad 0’s immortality hinges on an internal core; breaking or destroying this core determines whether they can be killed. Their descent into the Omega layer is tightly controlled by strict conditions, limited to single‑member interventions, and tied to a succession protocol that ensures continuity of command.", "topic": "Military Immortality Mechanics", "confidence_score": 0.98, "is_meaning_preserved": true}]}. Got: 2 validation errors for ExplanationBatchModel
+explanations.0.topic
+  String should have at most 30 characters [type=string_too_long, input_value='Hierarchical Military Structure', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/string_too_long
+explanations.1.key_takeaway
+  String should have at most 300 characters [type=string_too_long, input_value='Squad\u202f0’s immorta... continuity of command.', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/string_too_long
+For troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/OUTPUT_PARSING_FAILURE 
+[2026-10-03 15:10:15,995: INFO/ForkPoolWorker-7] AI_SERVICE_FAILED
+[2026-10-03 15:10:15,995: INFO/ForkPoolWorker-7] EXITING_AI_SERVICE
+[2026-10-03 15:10:15,996: INFO/ForkPoolWorker-7] AI_PROVIDER_SUCCESS
+[2026-10-03 15:10:15,996: INFO/ForkPoolWorker-7] AI_REPAIR_INITIALIZED
+[2026-10-03 15:10:15,996: INFO/ForkPoolWorker-7] AI_REPAIR_STARTED
+[2026-10-03 15:10:15,996: INFO/ForkPoolWorker-7] AI_REPAIR_IN_PROGRESS
+[2026-10-03 15:10:16,102: INFO/ForkPoolWorker-7] HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[2026-10-03 15:10:16,102: INFO/ForkPoolWorker-7] Retrying request to /openai/v1/chat/completions in 15.000000 seconds
+[2026-10-03 15:10:35,918: INFO/ForkPoolWorker-7] HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-10-03 15:10:35,921: INFO/ForkPoolWorker-7] AI_REPAIR_SUCCESS
+[2026-10-03 15:10:35,921: INFO/ForkPoolWorker-7] AI_SERVICE_COMPLETED
+[2026-10-03 15:10:35,921: INFO/ForkPoolWorker-7] AI_SERVICE_ENDED
+[2026-10-03 15:10:35,921: INFO/ForkPoolWorker-7] EXITING_AI_SERVICE
+[2026-10-03 15:10:36,787: INFO/ForkPoolWorker-7] EXPLANATION_VDB_SUCCESS
+[2026-10-03 15:10:36,919: INFO/ForkPoolWorker-7] MULTI_INDEX_TASK_COMPLETED
+[2026-10-03 15:10:36,924: INFO/ForkPoolWorker-7] Task ai.create_rest_vdbs[70ab4ae8-48b6-4dad-a63f-5acdfbc29a03] succeeded in 24.39790334999998s: {'success': True, 'doc_id': 49, 'summary_status': 'ready', 'explanation_status': 'ready'}
+
+
+
+6) Asking a question:
+terminal:
+--> Incoming request: POST /question
+[REQUEST START] POST /question client=127.0.0.1
+2026-10-03 15:52:57 | INFO | QUESTION_ROUTE_STARTED | ask_question | None | None | None
+2026-10-03 15:52:57 | INFO | CHECKING_USER_VDB | ask_question | None | None | None
+2026-10-03 15:52:57 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 15:52:57 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 15:52:57 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 15:52:57 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-03 15:52:57 | INFO | CACHE_VDB_CREATING_PENDING | create_cache_vdb_inishiator | None | None | None
+2026-10-03 15:52:57 | INFO | CACHE_VDB_LOCKED_PROCESSING | create_cache_vdb_inishiator | None | None | None
+2026-10-03 15:52:57 | INFO | CACHE_VDB_WORKER_FIRED | create_cache_vdb_inishiator | None | None | None
+2026-10-03 15:52:57 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 15:52:57 | INFO | LTM_VDB_CREATING_PENDING | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 15:52:57 | INFO | LTM_VDB_LOCKED_PROCESSING | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 15:52:57 | INFO | LTM_VDB_WORKER_FIRED | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 15:52:57 | INFO | CHECKING_MULTI_TIER_CACHE | ask_question | None | None | None
+2026-10-03 15:52:57 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
+2026-10-03 15:52:57 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
+2026-10-03 15:52:57 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
+2026-10-03 15:52:57 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
+2026-10-03 15:52:58 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
+2026-10-03 15:52:58 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
+2026-10-03 15:52:58 | INFO | CACHE_POLICY_CACHEABLE | multi_tier_cache_system | None | None | None
+2026-10-03 15:52:58 | INFO | REDIS_VECTOR_SEARCH_STARTED | get_redis_vector_cached | None | None | None
+2026-10-03 15:52:58 | INFO | REDIS_VECTOR_GENERATING_EMBEDDING | get_redis_vector_cached | None | None | None
+2026-10-03 15:52:58 | INFO | REDIS_VECTOR_SCOPE_NORMALIZED | get_redis_vector_cached | None | None | None
+2026-10-03 15:52:58 | INFO | REDIS_VECTOR_QUERY_EXECUTING | get_redis_vector_cached | None | None | None
+2026-10-03 15:52:58 | INFO | REDIS_VECTOR_ERROR | get_redis_vector_cached | None | str | SEARCH_INDEX_NOT_FOUND Index not found: idx:user_cache:38
+2026-10-03 15:52:58 | INFO | CHECKING_USER_VDB | get_user_cache_vdb | None | None | None
+2026-10-03 15:52:58 | INFO | VDB_FOUND | get_user_cache_vdb | None | None | None
+2026-10-03 15:52:58 | INFO | CHROMA_SIMILARITY_SEARCH_STARTED | get_cached | None | None | None
+2026-10-03 15:52:59 | INFO | CHROMA_CANDIDATES_NOT_FOUND | get_cached | None | None | None
+2026-10-03 15:52:59 | INFO | CACHE_SYSTEM_MISS_FALLBACK | multi_tier_cache_system | None | None | None
+2026-10-03 15:52:59 | INFO | CACHE_MISS_FALLTHROUGH | ask_question | None | None | None
+2026-10-03 15:52:59 | INFO | INVOKING_AI_SERVICE | ask_question | None | None | None
+2026-10-03 15:52:59 | INFO | AI_SERVICE_STARTED | Answer_ai | None | None | None
+2026-10-03 15:52:59 | INFO | BUILDING_RETRIVER_STARTED | build_get_retriever | None | None | None
+2026-10-03 15:52:59 | INFO | FETCHING_DOCS_FOR_BM25 | build_get_retriever | None | None | None
+2026-10-03 15:52:59 | INFO | AI_SERVICE_STARTED | query_classifier | None | None | None
+2026-10-03 15:52:59 | INFO | AI_PROVIDER_REQUEST | query_classifier | None | None | None
+2026-10-03 15:52:59 | INFO | AI_PROVIDER_IN_PROCESSING | query_classifier | None | None | None
+[CACHE MISS] Loading master docs from disk for user 38 (v1)
+2026-10-03 15:52:59 | INFO | BUILDING_VECTOR_RETRIVER | build_get_retriever | None | None | None
+2026-10-03 15:52:59 | INFO | BUILDING_VECTOR_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-10-03 15:52:59 | INFO | BUILDING_BM25 | build_get_retriever | None | None | None
+2026-10-03 15:52:59 | INFO | BUILDING_BM25_SUCCESS | build_get_retriever | None | None | None
+2026-10-03 15:52:59 | INFO | CREATING_HYBRID_RETRIVER | build_get_retriever | None | None | None
+2026-10-03 15:52:59 | INFO | CREATING_HYBRID_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-10-03 15:52:59 | INFO | BUILDING_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-10-03 15:52:59 | INFO | EXITING_RETRIVER_BUILDER | build_get_retriever | None | None | None
+2026-10-03 15:52:59 | INFO | AI_PROVIDER_SUCCESS | query_classifier | None | None | None
+2026-10-03 15:52:59 | INFO | AI_SERVICE_COMPLETED | query_classifier | None | None | None
+2026-10-03 15:52:59 | INFO | AI_SERVICE_ENDED | query_classifier | None | None | None
+2026-10-03 15:52:59 | INFO | EXITING_AI_SERVICE | query_classifier | None | None | None
+[TIMING] asyncio.gather (retriever + classifier): 863.10 ms
+[TIMING] retrieval strategy / safe_retrieve execution: 256.11 ms
+2026-10-03 15:53:00 | INFO | AI_SERVICE_STARTED | cohere_rerank | None | None | None
+2026-10-03 15:53:00 | INFO | AI_PROVIDER_REQUEST | cohere_rerank | None | None | None
+2026-10-03 15:53:00 | INFO | AI_PROVIDER_IN_PROCESSING | cohere_rerank | None | None | None
+2026-10-03 15:53:00 | INFO | AI_PROVIDER_SUCCESS | cohere_rerank | None | None | None
+2026-10-03 15:53:00 | INFO | VALIDATING_RERANK_RESULT_STARTED | cohere_rerank | None | None | None
+2026-10-03 15:53:00 | INFO | VALIDATING_RERANK_RESULT_SUCCESS | cohere_rerank | None | None | None
+2026-10-03 15:53:00 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-10-03 15:53:00 | INFO | AI_SERVICE_ENDED | cohere_rerank | None | None | None
+2026-10-03 15:53:00 | INFO | EXITING_AI_SERVICE | cohere_rerank | None | None | None
+[TIMING] cohere_rerank execution: 636.32 ms
+2026-10-03 15:53:00 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-10-03 15:53:00 | INFO | AI_PROVIDER_REQUEST | Answer_ai | None | None | None
+2026-10-03 15:53:00 | INFO | AI_PROVIDER_IN_PROCESSING | Answer_ai | None | None | None
+2026-10-03 15:53:01 | INFO | AI_PROVIDER_SUCCESS | Answer_ai | None | None | None
+2026-10-03 15:53:01 | INFO | AI_SERVICE_COMPLETED | Answer_ai | None | None | None
+2026-10-03 15:53:01 | INFO | AI_SERVICE_ENDED | Answer_ai | None | None | None
+2026-10-03 15:53:01 | INFO | EXITING_AI_SERVICE | Answer_ai | None | None | None
+2026-10-03 15:53:01 | INFO | QUESTION_SUCCESS | ask_question | None | None | None
+2026-10-03 15:53:01 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
+2026-10-03 15:53:01 | INFO | BACKGROUND_CACHE_POPULATION_FIRED | ask_question | None | None | None
+2026-10-03 15:53:01 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
+[REQUEST END] POST /question status=200 time=4758.47ms
+2026-10-03 15:53:01 | INFO | REDIS_VECTOR_SAVE_STARTED | save_to_redis_vector_cache | None | None | None
+2026-10-03 15:53:01 | INFO | REDIS_INDEX_CHECK_STARTED | create_redis_vector_index | None | None | None
+<-- Outgoing response: 200
+INFO:     127.0.0.1:53650 - "POST /question HTTP/1.1" 200 OK
+2026-10-03 15:53:01 | INFO | REDIS_INDEX_CREATION_STARTED | create_redis_vector_index | None | None | None
+2026-10-03 15:53:03 | INFO | REDIS_INDEX_CREATED_SUCCESS | create_redis_vector_index | None | None | None
+2026-10-03 15:53:03 | INFO | REDIS_INDEX_INITIALIZATION_COMPLETE | create_redis_vector_index | None | None | None
+2026-10-03 15:53:03 | INFO | REDIS_VECTOR_INDEX_ENSURED | save_to_redis_vector_cache | None | None | None
+2026-10-03 15:53:03 | INFO | REDIS_VECTOR_EMBEDDING_GENERATED | save_to_redis_vector_cache | None | None | None
+2026-10-03 15:53:03 | INFO | REDIS_VECTOR_PAYLOAD_SERIALIZED | save_to_redis_vector_cache | None | None | None
+2026-10-03 15:53:03 | INFO | REDIS_VECTOR_HASH_SAVED | save_to_redis_vector_cache | None | None | None
+2026-10-03 15:53:03 | INFO | REDIS_VECTOR_TTL_SET | save_to_redis_vector_cache | None | None | None
+
+
+celery:
+[2026-10-03 15:52:57,681: INFO/MainProcess] Task ai.cache_vdb[68746889-9a5c-40dc-8797-f00dc7f8aa41] received
+[2026-10-03 15:52:57,683: INFO/ForkPoolWorker-7] CELERY_TASK_STARTED
+[2026-10-03 15:52:57,684: INFO/ForkPoolWorker-7] CACHE_VDB_DIR_CREATING
+[2026-10-03 15:52:57,686: INFO/ForkPoolWorker-7] CACHE_VDB_STORE_INITIALIZING
+[2026-10-03 15:52:57,735: INFO/MainProcess] Task ai.ltm_vdb[04315a3a-4fd2-4328-8c97-01d0b864d92e] received
+[2026-10-03 15:52:57,737: INFO/ForkPoolWorker-8] CELERY_TASK_STARTED
+[2026-10-03 15:52:57,739: INFO/ForkPoolWorker-8] LTM_VDB_DIR_CREATING
+[2026-10-03 15:52:57,748: INFO/ForkPoolWorker-8] LTM_VDB_STORE_INITIALIZING
+[2026-10-03 15:52:58,389: INFO/ForkPoolWorker-8] LTM_VDB_MARKED_READY
+[2026-10-03 15:52:58,419: INFO/ForkPoolWorker-7] CACHE_VDB_MARKED_READY
+[2026-10-03 15:52:58,575: INFO/ForkPoolWorker-8] Task ai.ltm_vdb[04315a3a-4fd2-4328-8c97-01d0b864d92e] succeeded in 0.8380069109989563s: {'status': 'READY', 'user_id': 38}
+[2026-10-03 15:52:58,638: INFO/ForkPoolWorker-7] Task ai.cache_vdb[68746889-9a5c-40dc-8797-f00dc7f8aa41] succeeded in 0.9555326410009002s: {'status': 'READY', 'user_id': 38}
+[2026-10-03 15:53:01,806: INFO/MainProcess] Task ai.push_cache_vdb[e74526fb-7cc7-425a-8a2b-c4ad4d5d3739] received
+[2026-10-03 15:53:01,808: INFO/ForkPoolWorker-7] CACHE_VDB_PUSH_ASYNC_ENTERED
+[2026-10-03 15:53:03,601: INFO/ForkPoolWorker-7] Task ai.push_cache_vdb[e74526fb-7cc7-425a-8a2b-c4ad4d5d3739] succeeded in 1.7935145599985844s: '2026-10-03T10:53:01.938681+00:00'
+
+
+
+7) Asking same question again (T1) test:
+--> Incoming request: POST /question
+[REQUEST START] POST /question client=127.0.0.1
+2026-10-03 15:55:07 | INFO | QUESTION_ROUTE_STARTED | ask_question | None | None | None
+2026-10-03 15:55:07 | INFO | CHECKING_USER_VDB | ask_question | None | None | None
+2026-10-03 15:55:07 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 15:55:07 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 15:55:07 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 15:55:07 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-03 15:55:07 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-10-03 15:55:07 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 15:55:07 | INFO | LTM_VDB_STATUS_SKIPPED | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 15:55:07 | INFO | CHECKING_MULTI_TIER_CACHE | ask_question | None | None | None
+2026-10-03 15:55:07 | INFO | CACHE_TIER1_EXACT_HIT | multi_tier_cache_system | None | None | None
+2026-10-03 15:55:07 | INFO | CACHE_HIT_SUCCESS | ask_question | None | None | None
+2026-10-03 15:55:07 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
+[REQUEST END] POST /question status=200 time=124.81ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:47440 - "POST /question HTTP/1.1" 200 OK
+
+
+
+8) Asking same question rephrased (T2) test:
+--> Incoming request: POST /question
+[REQUEST START] POST /question client=127.0.0.1
+2026-10-03 15:57:38 | INFO | QUESTION_ROUTE_STARTED | ask_question | None | None | None
+2026-10-03 15:57:38 | INFO | CHECKING_USER_VDB | ask_question | None | None | None
+2026-10-03 15:57:38 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 15:57:38 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 15:57:38 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 15:57:38 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-03 15:57:38 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-10-03 15:57:38 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 15:57:38 | INFO | LTM_VDB_STATUS_SKIPPED | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 15:57:38 | INFO | CHECKING_MULTI_TIER_CACHE | ask_question | None | None | None
+2026-10-03 15:57:38 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
+2026-10-03 15:57:38 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
+2026-10-03 15:57:38 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
+2026-10-03 15:57:38 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
+2026-10-03 15:57:39 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
+2026-10-03 15:57:39 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
+2026-10-03 15:57:39 | INFO | CACHE_POLICY_CACHEABLE | multi_tier_cache_system | None | None | None
+2026-10-03 15:57:39 | INFO | REDIS_VECTOR_SEARCH_STARTED | get_redis_vector_cached | None | None | None
+2026-10-03 15:57:39 | INFO | REDIS_VECTOR_GENERATING_EMBEDDING | get_redis_vector_cached | None | None | None
+2026-10-03 15:57:39 | INFO | REDIS_VECTOR_SCOPE_NORMALIZED | get_redis_vector_cached | None | None | None
+2026-10-03 15:57:39 | INFO | REDIS_VECTOR_QUERY_EXECUTING | get_redis_vector_cached | None | None | None
+2026-10-03 15:57:39 | INFO | REDIS_VECTOR_HIT_FOUND | get_redis_vector_cached | None | None | None
+2026-10-03 15:57:39 | INFO | CACHE_TIER2_VECTOR_HIT | multi_tier_cache_system | None | None | None
+2026-10-03 15:57:39 | INFO | CACHE_HIT_SUCCESS | ask_question | None | None | None
+2026-10-03 15:57:39 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
+[REQUEST END] POST /question status=200 time=867.56ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:38080 - "POST /question HTTP/1.1" 200 OK
+
+
+9) (T3) cache test:
+terminal:
+--> Incoming request: POST /question
+[REQUEST START] POST /question client=127.0.0.1
+2026-10-03 16:07:03 | INFO | QUESTION_ROUTE_STARTED | ask_question | None | None | None
+2026-10-03 16:07:03 | INFO | CHECKING_USER_VDB | ask_question | None | None | None
+2026-10-03 16:07:03 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 16:07:03 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 16:07:03 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 16:07:04 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-03 16:07:04 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-10-03 16:07:04 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 16:07:04 | INFO | LTM_VDB_STATUS_SKIPPED | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 16:07:04 | INFO | CHECKING_MULTI_TIER_CACHE | ask_question | None | None | None
+2026-10-03 16:07:04 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
+2026-10-03 16:07:04 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
+2026-10-03 16:07:04 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
+2026-10-03 16:07:04 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
+2026-10-03 16:07:04 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
+2026-10-03 16:07:04 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
+2026-10-03 16:07:04 | INFO | CHECKING_USER_VDB | get_user_cache_vdb | None | None | None
+2026-10-03 16:07:04 | INFO | VDB_FOUND | get_user_cache_vdb | None | None | None
+2026-10-03 16:07:04 | INFO | CHROMA_SIMILARITY_SEARCH_STARTED | get_cached | None | None | None
+2026-10-03 16:07:04 | INFO | CHROMA_BATCH_VERSION_FETCH | get_cached | None | None | None
+2026-10-03 16:07:04 | INFO | CHROMA_VALID_CANDIDATES_FOUND | get_cached | None | None | None
+2026-10-03 16:07:04 | INFO | CHROMA_RERANK_STARTED | get_cached | None | None | None
+2026-10-03 16:07:04 | INFO | AI_SERVICE_STARTED | cohere_rerank | None | None | None
+2026-10-03 16:07:04 | INFO | AI_PROVIDER_REQUEST | cohere_rerank | None | None | None
+2026-10-03 16:07:04 | INFO | AI_PROVIDER_IN_PROCESSING | cohere_rerank | None | None | None
+2026-10-03 16:07:05 | INFO | AI_PROVIDER_SUCCESS | cohere_rerank | None | None | None
+2026-10-03 16:07:05 | INFO | VALIDATING_RERANK_RESULT_STARTED | cohere_rerank | None | None | None
+2026-10-03 16:07:05 | INFO | VALIDATING_RERANK_RESULT_SUCCESS | cohere_rerank | None | None | None
+2026-10-03 16:07:05 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-10-03 16:07:05 | INFO | AI_SERVICE_ENDED | cohere_rerank | None | None | None
+2026-10-03 16:07:05 | INFO | EXITING_AI_SERVICE | cohere_rerank | None | None | None
+2026-10-03 16:07:05 | INFO | CHROMA_CACHE_HIT | get_cached | None | None | None
+2026-10-03 16:07:05 | INFO | CACHE_TIER3_CHROMA_HIT | multi_tier_cache_system | None | None | None
+2026-10-03 16:07:05 | INFO | CACHE_HIT_SUCCESS | ask_question | None | None | None
+2026-10-03 16:07:05 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
+[REQUEST END] POST /question status=200 time=2043.71ms
+2026-10-03 16:07:05 | INFO | REDIS_VECTOR_SAVE_STARTED | save_to_redis_vector_cache | None | None | None
+2026-10-03 16:07:05 | INFO | REDIS_INDEX_CHECK_STARTED | create_redis_vector_index | None | None | None
+<-- Outgoing response: 200
+INFO:     127.0.0.1:58786 - "POST /question HTTP/1.1" 200 OK (why on T3? well when some is found on t3 meaning t2 missed it so we populate t1,t2)
+2026-10-03 16:07:05 | INFO | REDIS_INDEX_EXISTS_CACHED | create_redis_vector_index | None | None | None
+2026-10-03 16:07:05 | INFO | REDIS_VECTOR_INDEX_ENSURED | save_to_redis_vector_cache | None | None | None
+2026-10-03 16:07:05 | INFO | REDIS_VECTOR_EMBEDDING_GENERATED | save_to_redis_vector_cache | None | None | None
+2026-10-03 16:07:05 | INFO | REDIS_VECTOR_PAYLOAD_SERIALIZED | save_to_redis_vector_cache | None | None | None
+2026-10-03 16:07:05 | INFO | REDIS_VECTOR_HASH_SAVED | save_to_redis_vector_cache | None | None | None
+2026-10-03 16:07:05 | INFO | REDIS_VECTOR_TTL_SET | save_to_redis_vector_cache | None | None | None
+
+
+celery:
+[2026-10-03 16:01:24,002: INFO/ForkPoolWorker-7] CACHE_VDB_PUSH_ASYNC_ENTERED
+[2026-10-03 16:01:24,588: INFO/ForkPoolWorker-7] Task ai.push_cache_vdb[7ea579dd-7b74-46bd-996b-ae75aaf4c5af] succeeded in 0.586500787998375s: '2026-10-03T11:01:24.169264+00:00'
+
+
+
+
+10) starting a convoseration session convo_ai (new agentic update):
+a) manditory pooling:
+--> Incoming request: GET /convo-id
+[REQUEST START] GET /convo-id client=127.0.0.1
+[REQUEST END] GET /convo-id status=200 time=12.34ms
+<-- Outgoing response: 200
+
+
+
+11) Convo_ai:
+terminal:
+--> Incoming request: POST /convo
+[REQUEST START] POST /convo client=127.0.0.1
+2026-10-03 17:27:37 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 17:27:37 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 17:27:37 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 17:27:38 | INFO | QUESTION_ROUTE_STARTED | start_convo | None | None | None
+2026-10-03 17:27:38 | INFO | CHECKING_USER_VDB | start_convo | None | None | None
+2026-10-03 17:27:38 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 17:27:38 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 17:27:38 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 17:27:38 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-03 17:27:38 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-10-03 17:27:38 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 17:27:38 | INFO | LTM_VDB_STATUS_SKIPPED | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 17:27:38 | INFO | CHECKING_MULTI_TIER_CACHE | start_convo | None | None | None
+2026-10-03 17:27:38 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
+2026-10-03 17:27:38 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
+2026-10-03 17:27:38 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
+2026-10-03 17:27:38 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
+2026-10-03 17:27:39 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
+2026-10-03 17:27:39 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
+2026-10-03 17:27:39 | INFO | CACHE_POLICY_CACHEABLE | multi_tier_cache_system | None | None | None
+2026-10-03 17:27:39 | INFO | REDIS_VECTOR_SEARCH_STARTED | get_redis_vector_cached | None | None | None
+2026-10-03 17:27:39 | INFO | REDIS_VECTOR_GENERATING_EMBEDDING | get_redis_vector_cached | None | None | None
+2026-10-03 17:27:39 | INFO | REDIS_VECTOR_SCOPE_NORMALIZED | get_redis_vector_cached | None | None | None
+2026-10-03 17:27:39 | INFO | REDIS_VECTOR_QUERY_EXECUTING | get_redis_vector_cached | None | None | None
+2026-10-03 17:27:39 | INFO | REDIS_VECTOR_CACHE_MISS | get_redis_vector_cached | None | None | None
+2026-10-03 17:27:39 | INFO | CHECKING_USER_VDB | get_user_cache_vdb | None | None | None
+2026-10-03 17:27:39 | INFO | VDB_FOUND | get_user_cache_vdb | None | None | None
+2026-10-03 17:27:39 | INFO | CHROMA_SIMILARITY_SEARCH_STARTED | get_cached | None | None | None
+2026-10-03 17:27:39 | INFO | CHROMA_CANDIDATES_NOT_FOUND | get_cached | None | None | None
+2026-10-03 17:27:39 | INFO | CACHE_SYSTEM_MISS_FALLBACK | multi_tier_cache_system | None | None | None
+2026-10-03 17:27:39 | INFO | CACHE_MISS_FALLTHROUGH | start_convo | None | None | None
+2026-10-03 17:27:39 | INFO | INVOKING_AI_SERVICE | start_convo | None | None | None
+2026-10-03 17:27:39 | INFO | AI_SERVICE_STARTED | continue_convo | None | None | None
+2026-10-03 17:27:39 | INFO | AI_SERVICE_STARTED | get_user_intent | None | None | None
+2026-10-03 17:27:39 | INFO | AI_PROVIDER_REQUEST | get_user_intent | None | None | None
+2026-10-03 17:27:39 | INFO | AI_PROVIDER_IN_PROCESSING | get_user_intent | None | None | None
+2026-10-03 17:27:40 | INFO | AI_PROVIDER_SUCCESS | get_user_intent | None | None | None
+2026-10-03 17:27:40 | INFO | AI_SERVICE_COMPLETED | get_user_intent | None | None | None
+2026-10-03 17:27:40 | INFO | AI_SERVICE_ENDED | get_user_intent | None | None | None
+2026-10-03 17:27:40 | INFO | EXITING_AI_SERVICE | get_user_intent | None | None | None
+2026-10-03 17:27:40 | INFO | EXTRACTING_REQUEST_DATA | continue_convo | None | None | None
+2026-10-03 17:27:40 | INFO | CONTEXTUAL_QNA_EXTRACTION_SUCCESS | continue_convo | None | None | None
+2026-10-03 17:27:40 | INFO | USING_EXTRACTED_CONTEXT_QNA | continue_convo | None | None | None
+2026-10-03 17:27:40 | INFO | CONTEXTUAL_QNA_EXTRACTION_FAILURE | continue_convo | None | None | None
+2026-10-03 17:27:40 | INFO | EXTRACTING_PAST_COVO_CONTEXT | continue_convo | None | None | None
+2026-10-03 17:27:40 | INFO | EXTRACTING_PAST_COVO_CONTEXT_FAILURE | continue_convo | None | None | None
+2026-10-03 17:27:40 | INFO | EXTRACTING_PAST_COVO_CONTEXT_SUCCESS | continue_convo | None | None | None
+2026-10-03 17:27:40 | INFO | CREATING_TOOLS | continue_convo | None | None | None
+2026-10-03 17:27:40 | INFO | CREATING_MODEL_WITH_TOOLS | continue_convo | None | None | None
+2026-10-03 17:27:40 | INFO | AI_PROVIDER_REQUEST | continue_convo | None | None | None
+2026-10-03 17:27:40 | INFO | AI_PROVIDER_IN_PROCESSING | continue_convo | None | None | None
+2026-10-03 17:27:41 | INFO | AI_PROVIDER_SUCCESS | continue_convo | None | None | None
+2026-10-03 17:27:41 | INFO | AI_SERVICE_COMPLETED | continue_convo | None | None | None
+2026-10-03 17:27:41 | INFO | AI_SERVICE_ENDED | continue_convo | None | None | None
+2026-10-03 17:27:41 | INFO | EXITING_AI_SERVICE | continue_convo | None | None | None
+2026-10-03 17:27:41 | INFO | QUESTION_SUCCESS | start_convo | None | None | None
+2026-10-03 17:27:41 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+2026-10-03 17:27:41 | INFO | BACKGROUND_CACHE_POPULATION_FIRED | start_convo | None | None | None
+2026-10-03 17:27:41 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+[REQUEST END] POST /convo status=200 time=3941.86ms
+2026-10-03 17:27:41 | INFO | REDIS_VECTOR_SAVE_STARTED | save_to_redis_vector_cache | None | None | None
+2026-10-03 17:27:41 | INFO | REDIS_INDEX_CHECK_STARTED | create_redis_vector_index | None | None | None
+<-- Outgoing response: 200
+INFO:     127.0.0.1:57350 - "POST /convo HTTP/1.1" 200 OK
+2026-10-03 17:27:41 | INFO | REDIS_INDEX_EXISTS_CACHED | create_redis_vector_index | None | None | None
+2026-10-03 17:27:41 | INFO | REDIS_VECTOR_INDEX_ENSURED | save_to_redis_vector_cache | None | None | None
+2026-10-03 17:27:41 | INFO | REDIS_VECTOR_EMBEDDING_GENERATED | save_to_redis_vector_cache | None | None | None
+2026-10-03 17:27:41 | INFO | REDIS_VECTOR_PAYLOAD_SERIALIZED | save_to_redis_vector_cache | None | None | None
+2026-10-03 17:27:41 | INFO | REDIS_VECTOR_HASH_SAVED | save_to_redis_vector_cache | None | None | None
+2026-10-03 17:27:41 | INFO | REDIS_VECTOR_TTL_SET | save_to_redis_vector_cache | None | None | None
+
+celery:
+[2026-10-03 17:27:41,869: INFO/MainProcess] Task ai.push_ltm_vdb[c0862de0-c908-4c9e-8f3c-1c12bd62831f] received
+[2026-10-03 17:27:41,912: INFO/MainProcess] Task ai.push_cache_vdb[02e8b98b-713d-4916-8f0b-db8a3d125696] received
+[2026-10-03 17:27:42,373: INFO/ForkPoolWorker-8] CACHE_VDB_PUSH_ASYNC_ENTERED
+[2026-10-03 17:27:42,374: INFO/ForkPoolWorker-7] CACHE_VDB_PUSH_ASYNC_ENTERED
+[2026-10-03 17:27:44,744: INFO/ForkPoolWorker-8] Task ai.push_cache_vdb[02e8b98b-713d-4916-8f0b-db8a3d125696] succeeded in 2.488097330999153s: '2026-10-03T12:27:42.407449+00:00'
+[2026-10-03 17:27:44,974: INFO/ForkPoolWorker-7] Task ai.push_ltm_vdb[c0862de0-c908-4c9e-8f3c-1c12bd62831f] succeeded in 2.678465018998395s: '2026-10-03T12:27:42.461625+00:00'
+
+
+
+12) convo_ai tool test (calling answer_ai):
+terminal:
+--> Incoming request: POST /convo
+[REQUEST START] POST /convo client=127.0.0.1
+2026-10-03 17:58:14 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 17:58:14 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 17:58:14 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 17:58:14 | INFO | QUESTION_ROUTE_STARTED | start_convo | None | None | None
+2026-10-03 17:58:14 | INFO | CHECKING_USER_VDB | start_convo | None | None | None
+2026-10-03 17:58:14 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 17:58:14 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 17:58:14 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 17:58:15 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-03 17:58:15 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-10-03 17:58:15 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 17:58:15 | INFO | LTM_VDB_STATUS_SKIPPED | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 17:58:15 | INFO | CHECKING_MULTI_TIER_CACHE | start_convo | None | None | None
+2026-10-03 17:58:15 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
+2026-10-03 17:58:15 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
+2026-10-03 17:58:15 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
+2026-10-03 17:58:15 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
+2026-10-03 17:58:15 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
+2026-10-03 17:58:15 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
+2026-10-03 17:58:15 | INFO | CACHE_POLICY_CACHEABLE | multi_tier_cache_system | None | None | None
+2026-10-03 17:58:15 | INFO | REDIS_VECTOR_SEARCH_STARTED | get_redis_vector_cached | None | None | None
+2026-10-03 17:58:15 | INFO | REDIS_VECTOR_GENERATING_EMBEDDING | get_redis_vector_cached | None | None | None
+2026-10-03 17:58:15 | INFO | REDIS_VECTOR_SCOPE_NORMALIZED | get_redis_vector_cached | None | None | None
+2026-10-03 17:58:15 | INFO | REDIS_VECTOR_QUERY_EXECUTING | get_redis_vector_cached | None | None | None
+2026-10-03 17:58:15 | INFO | REDIS_VECTOR_SCORE_MISMATCH | get_redis_vector_cached | None | None | None
+2026-10-03 17:58:15 | INFO | CHECKING_USER_VDB | get_user_cache_vdb | None | None | None
+2026-10-03 17:58:15 | INFO | VDB_FOUND | get_user_cache_vdb | None | None | None
+2026-10-03 17:58:15 | INFO | CHROMA_SIMILARITY_SEARCH_STARTED | get_cached | None | None | None
+2026-10-03 17:58:16 | INFO | CHROMA_VALID_CANDIDATES_FOUND | get_cached | None | None | None
+2026-10-03 17:58:16 | INFO | CHROMA_RERANK_STARTED | get_cached | None | None | None
+2026-10-03 17:58:16 | INFO | AI_SERVICE_STARTED | cohere_rerank | None | None | None
+2026-10-03 17:58:16 | INFO | AI_PROVIDER_REQUEST | cohere_rerank | None | None | None
+2026-10-03 17:58:16 | INFO | AI_PROVIDER_IN_PROCESSING | cohere_rerank | None | None | None
+2026-10-03 17:58:16 | INFO | AI_PROVIDER_SUCCESS | cohere_rerank | None | None | None
+2026-10-03 17:58:16 | INFO | VALIDATING_RERANK_RESULT_STARTED | cohere_rerank | None | None | None
+2026-10-03 17:58:16 | INFO | VALIDATING_RERANK_RESULT_SUCCESS | cohere_rerank | None | None | None
+2026-10-03 17:58:16 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-10-03 17:58:16 | INFO | AI_SERVICE_ENDED | cohere_rerank | None | None | None
+2026-10-03 17:58:16 | INFO | EXITING_AI_SERVICE | cohere_rerank | None | None | None
+2026-10-03 17:58:16 | INFO | CHROMA_RELEVANCE_THRESHOLD_FAILED | get_cached | None | None | None
+2026-10-03 17:58:16 | INFO | CACHE_SYSTEM_MISS_FALLBACK | multi_tier_cache_system | None | None | None
+2026-10-03 17:58:16 | INFO | CACHE_MISS_FALLTHROUGH | start_convo | None | None | None
+2026-10-03 17:58:16 | INFO | INVOKING_AI_SERVICE | start_convo | None | None | None
+2026-10-03 17:58:16 | INFO | AI_SERVICE_STARTED | continue_convo | None | None | None
+2026-10-03 17:58:16 | INFO | AI_SERVICE_STARTED | get_user_intent | None | None | None
+2026-10-03 17:58:16 | INFO | AI_PROVIDER_REQUEST | get_user_intent | None | None | None
+2026-10-03 17:58:16 | INFO | AI_PROVIDER_IN_PROCESSING | get_user_intent | None | None | None
+2026-10-03 17:58:17 | INFO | AI_PROVIDER_SUCCESS | get_user_intent | None | None | None
+2026-10-03 17:58:17 | INFO | AI_SERVICE_COMPLETED | get_user_intent | None | None | None
+2026-10-03 17:58:17 | INFO | AI_SERVICE_ENDED | get_user_intent | None | None | None
+2026-10-03 17:58:17 | INFO | EXITING_AI_SERVICE | get_user_intent | None | None | None
+2026-10-03 17:58:17 | INFO | EXTRACTING_REQUEST_DATA | continue_convo | None | None | None
+2026-10-03 17:58:17 | INFO | CONTEXTUAL_QNA_EXTRACTION_SUCCESS | continue_convo | None | None | None
+2026-10-03 17:58:17 | INFO | USING_EXTRACTED_CONTEXT_QNA | continue_convo | None | None | None
+2026-10-03 17:58:17 | INFO | CONTEXTUAL_QNA_EXTRACTION_FAILURE | continue_convo | None | None | None
+2026-10-03 17:58:17 | INFO | EXTRACTING_PAST_COVO_CONTEXT | continue_convo | None | None | None
+2026-10-03 17:58:17 | INFO | EXTRACTING_PAST_COVO_CONTEXT_SUCCESS | continue_convo | None | None | None
+2026-10-03 17:58:17 | INFO | CREATING_TOOLS | continue_convo | None | None | None
+2026-10-03 17:58:17 | INFO | CREATING_MODEL_WITH_TOOLS | continue_convo | None | None | None
+2026-10-03 17:58:17 | INFO | AI_PROVIDER_REQUEST | continue_convo | None | None | None
+2026-10-03 17:58:17 | INFO | AI_PROVIDER_IN_PROCESSING | continue_convo | None | None | None
+2026-10-03 17:58:18 | INFO | TOOL_EXECUTION_IN_PROCESS | continue_convo | None | None | None
+2026-10-03 17:58:18 | INFO | CALLING_NEEDED_TOOL | continue_convo | None | None | None
+2026-10-03 17:58:18 | INFO | TOOL_DISPATCH_STARTED | continue_convo_tool_answer_ai | None | None | None
+2026-10-03 17:58:18 | INFO | CALLING_ANSWER_AI_TOOL | continue_convo | None | None | None
+2026-10-03 17:58:18 | INFO | AI_SERVICE_STARTED | Answer_ai | None | None | None
+2026-10-03 17:58:18 | INFO | AI_SERVICE_STARTED | query_classifier | None | None | None
+2026-10-03 17:58:18 | INFO | AI_PROVIDER_REQUEST | query_classifier | None | None | None
+2026-10-03 17:58:18 | INFO | AI_PROVIDER_IN_PROCESSING | query_classifier | None | None | None
+2026-10-03 17:58:18 | INFO | AI_PROVIDER_SUCCESS | query_classifier | None | None | None
+2026-10-03 17:58:18 | INFO | AI_SERVICE_COMPLETED | query_classifier | None | None | None
+2026-10-03 17:58:18 | INFO | AI_SERVICE_ENDED | query_classifier | None | None | None
+2026-10-03 17:58:18 | INFO | EXITING_AI_SERVICE | query_classifier | None | None | None
+[TIMING] asyncio.gather (retriever + classifier): 717.66 ms
+[TIMING] retrieval strategy / safe_retrieve execution: 106.09 ms
+2026-10-03 17:58:18 | INFO | AI_SERVICE_STARTED | cohere_rerank | None | None | None
+2026-10-03 17:58:18 | INFO | AI_PROVIDER_REQUEST | cohere_rerank | None | None | None
+2026-10-03 17:58:18 | INFO | AI_PROVIDER_IN_PROCESSING | cohere_rerank | None | None | None
+2026-10-03 17:58:19 | INFO | AI_PROVIDER_SUCCESS | cohere_rerank | None | None | None
+2026-10-03 17:58:19 | INFO | VALIDATING_RERANK_RESULT_STARTED | cohere_rerank | None | None | None
+2026-10-03 17:58:19 | INFO | VALIDATING_RERANK_RESULT_SUCCESS | cohere_rerank | None | None | None
+2026-10-03 17:58:19 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-10-03 17:58:19 | INFO | AI_SERVICE_ENDED | cohere_rerank | None | None | None
+2026-10-03 17:58:19 | INFO | EXITING_AI_SERVICE | cohere_rerank | None | None | None
+[TIMING] cohere_rerank execution: 308.71 ms
+2026-10-03 17:58:19 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-10-03 17:58:19 | INFO | AI_PROVIDER_REQUEST | Answer_ai | None | None | None
+2026-10-03 17:58:19 | INFO | AI_PROVIDER_IN_PROCESSING | Answer_ai | None | None | None
+2026-10-03 17:58:25 | INFO | AI_PROVIDER_SUCCESS | Answer_ai | None | None | None
+2026-10-03 17:58:25 | INFO | AI_SERVICE_COMPLETED | Answer_ai | None | None | None
+2026-10-03 17:58:25 | INFO | AI_SERVICE_ENDED | Answer_ai | None | None | None
+2026-10-03 17:58:25 | INFO | EXITING_AI_SERVICE | Answer_ai | None | None | None
+2026-10-03 17:58:25 | INFO | TOOL_DISPATCH_COMPLETED | continue_convo_tool_answer_ai | None | None | None
+2026-10-03 17:58:25 | INFO | TOOL_EXECUTION_SUCCESS | continue_convo | None | None | None
+
+
+celery:
+[2026-10-03 17:58:45,440: INFO/MainProcess] Task ai.push_ltm_vdb[69949890-a5de-434e-8fdf-e0490e426763] received
+[2026-10-03 17:58:45,478: INFO/MainProcess] Task ai.push_cache_vdb[2cfa6e3b-2ef6-4d44-a5ea-9fe72a8bfa6f] received
+[2026-10-03 17:58:45,535: INFO/ForkPoolWorker-7] CACHE_VDB_PUSH_ASYNC_ENTERED
+[2026-10-03 17:58:45,536: INFO/ForkPoolWorker-8] CACHE_VDB_PUSH_ASYNC_ENTERED
+[2026-10-03 17:58:46,543: INFO/ForkPoolWorker-7] Task ai.push_ltm_vdb[69949890-a5de-434e-8fdf-e0490e426763] succeeded in 1.0332366969996656s: '2026-10-03T12:58:45.547248+00:00'
+[2026-10-03 17:58:46,875: INFO/ForkPoolWorker-8] Task ai.push_cache_vdb[2cfa6e3b-2ef6-4d44-a5ea-9fe72a8bfa6f] succeeded in 1.3650345129972266s: '2026-10-03T12:58:45.548318+00:00'
+
+
+
+13) convo_ai cache T1 check:
+--> Incoming request: POST /convo
+[REQUEST START] POST /convo client=127.0.0.1
+2026-10-03 18:01:28 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 18:01:28 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 18:01:28 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 18:01:28 | INFO | QUESTION_ROUTE_STARTED | start_convo | None | None | None
+2026-10-03 18:01:28 | INFO | CHECKING_USER_VDB | start_convo | None | None | None
+2026-10-03 18:01:28 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 18:01:28 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 18:01:28 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 18:01:28 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-03 18:01:28 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-10-03 18:01:28 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 18:01:28 | INFO | LTM_VDB_STATUS_SKIPPED | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 18:01:28 | INFO | CHECKING_MULTI_TIER_CACHE | start_convo | None | None | None
+2026-10-03 18:01:28 | INFO | CACHE_TIER1_EXACT_HIT | multi_tier_cache_system | None | None | None
+2026-10-03 18:01:28 | INFO | CACHE_HIT_SUCCESS | start_convo | None | None | None
+2026-10-03 18:01:28 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+[REQUEST END] POST /convo status=200 time=200.13ms
+<-- Outgoing response: 200
+INFO:     127.0.0.1:43996 - "POST /convo HTTP/1.1" 200 OK
+
+
+
+14) convo_ai web search tool:
+--> Incoming request: POST /convo
+[REQUEST START] POST /convo client=127.0.0.1
+2026-10-03 18:04:53 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 18:04:53 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 18:04:53 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 18:04:53 | INFO | QUESTION_ROUTE_STARTED | start_convo | None | None | None
+2026-10-03 18:04:53 | INFO | CHECKING_USER_VDB | start_convo | None | None | None
+2026-10-03 18:04:53 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 18:04:53 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 18:04:53 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 18:04:53 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-03 18:04:53 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-10-03 18:04:53 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 18:04:53 | INFO | LTM_VDB_STATUS_SKIPPED | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 18:04:53 | INFO | CHECKING_MULTI_TIER_CACHE | start_convo | None | None | None
+2026-10-03 18:04:53 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
+2026-10-03 18:04:53 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
+2026-10-03 18:04:53 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
+2026-10-03 18:04:53 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
+2026-10-03 18:04:54 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
+2026-10-03 18:04:54 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
+2026-10-03 18:04:54 | INFO | CACHE_POLICY_NON_CACHEABLE | multi_tier_cache_system | None | None | None
+2026-10-03 18:04:54 | INFO | CACHE_MISS_FALLTHROUGH | start_convo | None | None | None
+2026-10-03 18:04:54 | INFO | INVOKING_AI_SERVICE | start_convo | None | None | None
+2026-10-03 18:04:54 | INFO | AI_SERVICE_STARTED | continue_convo | None | None | None
+2026-10-03 18:04:54 | INFO | AI_SERVICE_STARTED | get_user_intent | None | None | None
+2026-10-03 18:04:54 | INFO | AI_PROVIDER_REQUEST | get_user_intent | None | None | None
+2026-10-03 18:04:54 | INFO | AI_PROVIDER_IN_PROCESSING | get_user_intent | None | None | None
+2026-10-03 18:04:55 | INFO | AI_PROVIDER_SUCCESS | get_user_intent | None | None | None
+2026-10-03 18:04:55 | INFO | AI_SERVICE_COMPLETED | get_user_intent | None | None | None
+2026-10-03 18:04:55 | INFO | AI_SERVICE_ENDED | get_user_intent | None | None | None
+2026-10-03 18:04:55 | INFO | EXITING_AI_SERVICE | get_user_intent | None | None | None
+2026-10-03 18:04:55 | INFO | EXTRACTING_REQUEST_DATA | continue_convo | None | None | None
+2026-10-03 18:04:55 | INFO | CONTEXTUAL_QNA_EXTRACTION_SUCCESS | continue_convo | None | None | None
+2026-10-03 18:04:55 | INFO | USING_EXTRACTED_CONTEXT_QNA | continue_convo | None | None | None
+2026-10-03 18:04:55 | INFO | CONTEXTUAL_QNA_EXTRACTION_FAILURE | continue_convo | None | None | None
+2026-10-03 18:04:55 | INFO | EXTRACTING_PAST_COVO_CONTEXT | continue_convo | None | None | None
+2026-10-03 18:04:55 | INFO | EXTRACTING_PAST_COVO_CONTEXT_SUCCESS | continue_convo | None | None | None
+2026-10-03 18:04:55 | INFO | CREATING_TOOLS | continue_convo | None | None | None
+2026-10-03 18:04:55 | INFO | CREATING_MODEL_WITH_TOOLS | continue_convo | None | None | None
+2026-10-03 18:04:55 | INFO | AI_PROVIDER_REQUEST | continue_convo | None | None | None
+2026-10-03 18:04:55 | INFO | AI_PROVIDER_IN_PROCESSING | continue_convo | None | None | None
+2026-10-03 18:04:56 | INFO | TOOL_EXECUTION_IN_PROCESS | continue_convo | None | None | None
+2026-10-03 18:04:56 | INFO | CALLING_NEEDED_TOOL | continue_convo | None | None | None
+2026-10-03 18:04:56 | INFO | TOOL_DISPATCH_STARTED | continue_convo_search_duckduckgo | None | None | None
+2026-10-03 18:04:56 | INFO | CALLING_NEEDED_TOOL | continue_convo | None | None | None
+2026-10-03 18:04:59 | INFO | TOOL_DISPATCH_COMPLETED | continue_convo_search_duckduckgo | None | None | None
+2026-10-03 18:04:59 | INFO | TOOL_EXECUTION_SUCCESS | continue_convo | None | None | None
+2026-10-03 18:05:00 | INFO | AI_PROVIDER_SUCCESS | continue_convo | None | None | None
+2026-10-03 18:05:00 | INFO | AI_SERVICE_COMPLETED | continue_convo | None | None | None
+2026-10-03 18:05:00 | INFO | AI_SERVICE_ENDED | continue_convo | None | None | None
+2026-10-03 18:05:00 | INFO | EXITING_AI_SERVICE | continue_convo | None | None | None
+2026-10-03 18:05:00 | INFO | QUESTION_SUCCESS | start_convo | None | None | None
+2026-10-03 18:05:00 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+2026-10-03 18:05:00 | INFO | BACKGROUND_CACHE_POPULATION_FIRED | start_convo | None | None | None
+2026-10-03 18:05:00 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+[REQUEST END] POST /convo status=200 time=7069.03ms
+2026-10-03 18:05:00 | INFO | REDIS_VECTOR_SAVE_STARTED | save_to_redis_vector_cache | None | None | None
+2026-10-03 18:05:00 | INFO | REDIS_INDEX_CHECK_STARTED | create_redis_vector_index | None | None | None
+<-- Outgoing response: 200
+INFO:     127.0.0.1:53988 - "POST /convo HTTP/1.1" 200 OK
+2026-10-03 18:05:00 | INFO | REDIS_INDEX_EXISTS_CACHED | create_redis_vector_index | None | None | None
+2026-10-03 18:05:00 | INFO | REDIS_VECTOR_INDEX_ENSURED | save_to_redis_vector_cache | None | None | None
+2026-10-03 18:05:01 | INFO | REDIS_VECTOR_EMBEDDING_GENERATED | save_to_redis_vector_cache | None | None | None
+2026-10-03 18:05:01 | INFO | REDIS_VECTOR_PAYLOAD_SERIALIZED | save_to_redis_vector_cache | None | None | None
+2026-10-03 18:05:01 | INFO | REDIS_VECTOR_HASH_SAVED | save_to_redis_vector_cache | None | None | None
+2026-10-03 18:05:01 | INFO | REDIS_VECTOR_TTL_SET | save_to_redis_vector_cache | None | None | None
+
+
+
+
+15) genral intent understanding tool classifier convo_ai:
+--> Incoming request: POST /convo
+[REQUEST START] POST /convo client=127.0.0.1
+2026-10-03 20:00:16 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 20:00:16 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 20:00:16 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 20:00:16 | INFO | QUESTION_ROUTE_STARTED | start_convo | None | None | None
+2026-10-03 20:00:16 | INFO | CHECKING_USER_VDB | start_convo | None | None | None
+2026-10-03 20:00:16 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-03 20:00:16 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-03 20:00:16 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-03 20:00:16 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-03 20:00:17 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-10-03 20:00:17 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 20:00:17 | INFO | LTM_VDB_STATUS_SKIPPED | create_LTM_vdb_inishiator | None | None | None
+2026-10-03 20:00:17 | INFO | CHECKING_MULTI_TIER_CACHE | start_convo | None | None | None
+2026-10-03 20:00:17 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
+2026-10-03 20:00:17 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
+2026-10-03 20:00:17 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
+2026-10-03 20:00:17 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
+2026-10-03 20:00:18 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
+2026-10-03 20:00:18 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
+2026-10-03 20:00:18 | INFO | CACHE_POLICY_NON_CACHEABLE | multi_tier_cache_system | None | None | None
+2026-10-03 20:00:18 | INFO | CACHE_MISS_FALLTHROUGH | start_convo | None | None | None
+2026-10-03 20:00:18 | INFO | INVOKING_AI_SERVICE | start_convo | None | None | None
+2026-10-03 20:00:18 | INFO | AI_SERVICE_STARTED | continue_convo | None | None | None
+2026-10-03 20:00:18 | INFO | AI_SERVICE_STARTED | get_user_intent | None | None | None
+2026-10-03 20:00:18 | INFO | AI_PROVIDER_REQUEST | get_user_intent | None | None | None
+2026-10-03 20:00:18 | INFO | AI_PROVIDER_IN_PROCESSING | get_user_intent | None | None | None
+2026-10-03 20:00:18 | INFO | AI_PROVIDER_SUCCESS | get_user_intent | None | None | None
+2026-10-03 20:00:18 | INFO | AI_SERVICE_COMPLETED | get_user_intent | None | None | None
+2026-10-03 20:00:18 | INFO | AI_SERVICE_ENDED | get_user_intent | None | None | None
+2026-10-03 20:00:18 | INFO | EXITING_AI_SERVICE | get_user_intent | None | None | None
+2026-10-03 20:00:18 | INFO | EXTRACTING_REQUEST_DATA | continue_convo | None | None | None
+2026-10-03 20:00:18 | INFO | CONTEXTUAL_QNA_EXTRACTION_SUCCESS | continue_convo | None | None | None
+2026-10-03 20:00:18 | INFO | USING_EXTRACTED_CONTEXT_QNA | continue_convo | None | None | None
+2026-10-03 20:00:18 | INFO | EXTRACTING_PAST_COVO_CONTEXT | continue_convo | None | None | None
+2026-10-03 20:00:18 | INFO | EXTRACTING_PAST_COVO_CONTEXT_SUCCESS | continue_convo | None | None | None
+2026-10-03 20:00:18 | INFO | CREATING_TOOLS | continue_convo | None | None | None
+2026-10-03 20:00:18 | INFO | CREATING_MODEL_WITH_TOOLS | continue_convo | None | None | None
+2026-10-03 20:00:18 | INFO | AI_PROVIDER_REQUEST | continue_convo | None | None | None
+2026-10-03 20:00:18 | INFO | AI_PROVIDER_IN_PROCESSING | continue_convo | None | None | None
+2026-10-03 20:00:19 | INFO | TOOL_EXECUTION_IN_PROCESS | continue_convo | None | None | None
+2026-10-03 20:00:19 | INFO | CALLING_NEEDED_TOOL | continue_convo | None | None | None
+2026-10-03 20:00:19 | INFO | TOOL_DISPATCH_STARTED | continue_convo_tool_genral_classifier | None | None | None
+2026-10-03 20:00:19 | INFO | CALLING_GENRAL_CLASSIFIER_TOOL | continue_convo | None | None | None
+2026-10-03 20:00:19 | INFO | AI_SERVICE_STARTED | get_general_query_intent | None | None | None
+2026-10-03 20:00:19 | INFO | AI_PROVIDER_REQUEST | get_general_query_intent | None | None | None
+2026-10-03 20:00:19 | INFO | AI_PROVIDER_SUCCESS | get_general_query_intent | None | None | None
+2026-10-03 20:00:19 | INFO | AI_SERVICE_COMPLETED | get_general_query_intent | None | None | None
+2026-10-03 20:00:19 | INFO | TOOL_DISPATCH_COMPLETED | continue_convo_tool_genral_classifier | None | None | None
+2026-10-03 20:00:19 | INFO | TOOL_EXECUTION_SUCCESS | continue_convo | None | None | None
+2026-10-03 20:00:31 | INFO | AI_PROVIDER_SUCCESS | continue_convo | None | None | None
+2026-10-03 20:00:31 | INFO | AI_SERVICE_COMPLETED | continue_convo | None | None | None
+2026-10-03 20:00:31 | INFO | AI_SERVICE_ENDED | continue_convo | None | None | None
+2026-10-03 20:00:31 | INFO | EXITING_AI_SERVICE | continue_convo | None | None | None
+2026-10-03 20:00:31 | INFO | QUESTION_SUCCESS | start_convo | None | None | None
+2026-10-03 20:00:31 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+2026-10-03 20:00:31 | INFO | BACKGROUND_CACHE_POPULATION_FIRED | start_convo | None | None | None
+2026-10-03 20:00:31 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+[REQUEST END] POST /convo status=200 time=14175.69ms
+2026-10-03 20:00:31 | INFO | REDIS_VECTOR_SAVE_STARTED | save_to_redis_vector_cache | None | None | None
+2026-10-03 20:00:31 | INFO | REDIS_INDEX_CHECK_STARTED | create_redis_vector_index | None | None | None
+<-- Outgoing response: 200
+INFO:     127.0.0.1:36266 - "POST /convo HTTP/1.1" 200 OK
+2026-10-03 20:00:31 | INFO | REDIS_INDEX_EXISTS_CACHED | create_redis_vector_index | None | None | None
+2026-10-03 20:00:31 | INFO | REDIS_VECTOR_INDEX_ENSURED | save_to_redis_vector_cache | None | None | None
+2026-10-03 20:00:31 | INFO | REDIS_VECTOR_EMBEDDING_GENERATED | save_to_redis_vector_cache | None | None | None
+2026-10-03 20:00:31 | INFO | REDIS_VECTOR_PAYLOAD_SERIALIZED | save_to_redis_vector_cache | None | None | None
+2026-10-03 20:00:31 | INFO | REDIS_VECTOR_HASH_SAVED | save_to_redis_vector_cache | None | None | None
+2026-10-03 20:00:31 | INFO | REDIS_VECTOR_TTL_SET | save_to_redis_vector_cache | None | None | None
+
+
+
+
+16) Normal conversation:
+--> Incoming request: POST /convo
+[REQUEST START] POST /convo client=127.0.0.1
+2026-10-04 21:57:55 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-04 21:57:55 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-04 21:57:55 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-04 21:57:55 | INFO | QUESTION_ROUTE_STARTED | start_convo | None | None | None
+2026-10-04 21:57:55 | INFO | CHECKING_USER_VDB | start_convo | None | None | None
+2026-10-04 21:57:55 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-04 21:57:55 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-04 21:57:55 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-04 21:57:55 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-04 21:57:55 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-10-04 21:57:55 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-04 21:57:55 | INFO | LTM_VDB_STATUS_SKIPPED | create_LTM_vdb_inishiator | None | None | None
+2026-10-04 21:57:55 | INFO | CHECKING_MULTI_TIER_CACHE | start_convo | None | None | None
+2026-10-04 21:57:55 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
+2026-10-04 21:57:55 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
+2026-10-04 21:57:55 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
+2026-10-04 21:57:55 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
+2026-10-04 21:57:56 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
+2026-10-04 21:57:56 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
+2026-10-04 21:57:56 | INFO | CACHE_POLICY_NON_CACHEABLE | multi_tier_cache_system | None | None | None
+2026-10-04 21:57:56 | INFO | CACHE_MISS_FALLTHROUGH | start_convo | None | None | None
+2026-10-04 21:57:56 | INFO | INVOKING_AI_SERVICE | start_convo | None | None | None
+2026-10-04 21:57:56 | INFO | AI_SERVICE_STARTED | continue_convo | None | None | None
+2026-10-04 21:57:56 | INFO | AI_SERVICE_STARTED | get_user_intent | None | None | None
+2026-10-04 21:57:56 | INFO | AI_PROVIDER_REQUEST | get_user_intent | None | None | None
+2026-10-04 21:57:56 | INFO | AI_PROVIDER_IN_PROCESSING | get_user_intent | None | None | None
+2026-10-04 21:57:57 | INFO | AI_PROVIDER_SUCCESS | get_user_intent | None | None | None
+2026-10-04 21:57:57 | INFO | AI_SERVICE_COMPLETED | get_user_intent | None | None | None
+2026-10-04 21:57:57 | INFO | AI_SERVICE_ENDED | get_user_intent | None | None | None
+2026-10-04 21:57:57 | INFO | EXITING_AI_SERVICE | get_user_intent | None | None | None
+2026-10-04 21:57:57 | INFO | EXTRACTING_REQUEST_DATA | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | CONTEXTUAL_QNA_EXTRACTION_SUCCESS | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | USING_EXTRACTED_CONTEXT_QNA | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | EXTRACTING_PAST_COVO_CONTEXT | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | EXTRACTING_PAST_COVO_CONTEXT_SUCCESS | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | CREATING_TOOLS | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | CREATING_MODEL_WITH_TOOLS | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | AI_PROVIDER_REQUEST | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | AI_PROVIDER_IN_PROCESSING | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | AI_PROVIDER_SUCCESS | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | AI_SERVICE_COMPLETED | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | AI_SERVICE_ENDED | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | EXITING_AI_SERVICE | continue_convo | None | None | None
+2026-10-04 21:57:57 | INFO | QUESTION_SUCCESS | start_convo | None | None | None
+2026-10-04 21:57:57 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+2026-10-04 21:57:57 | INFO | BACKGROUND_CACHE_POPULATION_FIRED | start_convo | None | None | None
+2026-10-04 21:57:57 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+[REQUEST END] POST /convo status=200 time=2731.71ms
+2026-10-04 21:57:57 | INFO | REDIS_VECTOR_SAVE_STARTED | save_to_redis_vector_cache | None | None | None
+2026-10-04 21:57:57 | INFO | REDIS_INDEX_CHECK_STARTED | create_redis_vector_index | None | None | None
+<-- Outgoing response: 200
+INFO:     127.0.0.1:59936 - "POST /convo HTTP/1.1" 200 OK
+2026-10-04 21:57:57 | INFO | REDIS_INDEX_EXISTS_CACHED | create_redis_vector_index | None | None | None
+2026-10-04 21:57:57 | INFO | REDIS_VECTOR_INDEX_ENSURED | save_to_redis_vector_cache | None | None | None
+2026-10-04 21:57:58 | INFO | REDIS_VECTOR_EMBEDDING_GENERATED | save_to_redis_vector_cache | None | None | None
+2026-10-04 21:57:58 | INFO | REDIS_VECTOR_PAYLOAD_SERIALIZED | save_to_redis_vector_cache | None | None | None
+2026-10-04 21:57:58 | INFO | REDIS_VECTOR_HASH_SAVED | save_to_redis_vector_cache | None | None | None
+2026-10-04 21:57:58 | INFO | REDIS_VECTOR_TTL_SET | save_to_redis_vector_cache | None | None | None
+
+
+
+17) Asking a past question in same session convo_ai (to check ltm tool):
+--> Incoming request: POST /convo
+[REQUEST START] POST /convo client=127.0.0.1
+2026-10-04 22:09:28 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-04 22:09:28 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-04 22:09:28 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-04 22:09:28 | INFO | QUESTION_ROUTE_STARTED | start_convo | None | None | None
+2026-10-04 22:09:28 | INFO | CHECKING_USER_VDB | start_convo | None | None | None
+2026-10-04 22:09:28 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-04 22:09:28 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-04 22:09:28 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-04 22:09:29 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-04 22:09:29 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-10-04 22:09:29 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-04 22:09:29 | INFO | LTM_VDB_STATUS_SKIPPED | create_LTM_vdb_inishiator | None | None | None
+2026-10-04 22:09:29 | INFO | CHECKING_MULTI_TIER_CACHE | start_convo | None | None | None
+2026-10-04 22:09:29 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
+2026-10-04 22:09:29 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
+2026-10-04 22:09:29 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
+2026-10-04 22:09:29 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
+2026-10-04 22:09:29 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
+2026-10-04 22:09:29 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
+2026-10-04 22:09:29 | INFO | CACHE_POLICY_NON_CACHEABLE | multi_tier_cache_system | None | None | None
+2026-10-04 22:09:29 | INFO | CACHE_MISS_FALLTHROUGH | start_convo | None | None | None
+2026-10-04 22:09:29 | INFO | INVOKING_AI_SERVICE | start_convo | None | None | None
+2026-10-04 22:09:29 | INFO | AI_SERVICE_STARTED | continue_convo | None | None | None
+2026-10-04 22:09:29 | INFO | AI_SERVICE_STARTED | get_user_intent | None | None | None
+2026-10-04 22:09:29 | INFO | AI_PROVIDER_REQUEST | get_user_intent | None | None | None
+2026-10-04 22:09:29 | INFO | AI_PROVIDER_IN_PROCESSING | get_user_intent | None | None | None
+2026-10-04 22:09:30 | INFO | AI_PROVIDER_SUCCESS | get_user_intent | None | None | None
+2026-10-04 22:09:30 | INFO | AI_SERVICE_COMPLETED | get_user_intent | None | None | None
+2026-10-04 22:09:30 | INFO | AI_SERVICE_ENDED | get_user_intent | None | None | None
+2026-10-04 22:09:30 | INFO | EXITING_AI_SERVICE | get_user_intent | None | None | None
+2026-10-04 22:09:30 | INFO | EXTRACTING_REQUEST_DATA | continue_convo | None | None | None
+2026-10-04 22:09:30 | INFO | CONTEXTUAL_QNA_EXTRACTION_SUCCESS | continue_convo | None | None | None
+2026-10-04 22:09:30 | INFO | USING_EXTRACTED_CONTEXT_QNA | continue_convo | None | None | None
+2026-10-04 22:09:30 | INFO | EXTRACTING_PAST_COVO_CONTEXT | continue_convo | None | None | None
+2026-10-04 22:09:30 | INFO | EXTRACTING_PAST_COVO_CONTEXT_SUCCESS | continue_convo | None | None | None
+2026-10-04 22:09:30 | INFO | CREATING_TOOLS | continue_convo | None | None | None
+2026-10-04 22:09:30 | INFO | CREATING_MODEL_WITH_TOOLS | continue_convo | None | None | None
+2026-10-04 22:09:30 | INFO | AI_PROVIDER_REQUEST | continue_convo | None | None | None
+2026-10-04 22:09:30 | INFO | AI_PROVIDER_IN_PROCESSING | continue_convo | None | None | None
+2026-10-04 22:09:31 | INFO | TOOL_EXECUTION_IN_PROCESS | continue_convo | None | None | None
+2026-10-04 22:09:31 | INFO | CALLING_NEEDED_TOOL | continue_convo | None | None | None
+2026-10-04 22:09:31 | INFO | TOOL_DISPATCH_STARTED | continue_convo_search_user_long_term_memory_in_curr_session | None | None | None
+2026-10-04 22:09:31 | INFO | CALLING_SEMENTIC_CONTEXT_TOOL | continue_convo | None | None | None
+2026-10-04 22:09:31 | INFO | CHECKING_USER_LTM_VDB | get_user_ltm_vdb | None | None | None
+2026-10-04 22:09:31 | INFO | LTM_VDB_FOUND | get_user_ltm_vdb | None | None | None
+2026-10-04 22:09:31 | INFO | TOOL_DISPATCH_COMPLETED | continue_convo_search_user_long_term_memory_in_curr_session | None | None | None
+2026-10-04 22:09:31 | INFO | TOOL_EXECUTION_SUCCESS | continue_convo | None | None | None
+2026-10-04 22:09:55 | INFO | AI_PROVIDER_SUCCESS | continue_convo | None | None | None
+2026-10-04 22:09:55 | INFO | AI_SERVICE_COMPLETED | continue_convo | None | None | None
+2026-10-04 22:09:55 | INFO | AI_SERVICE_ENDED | continue_convo | None | None | None
+2026-10-04 22:09:55 | INFO | EXITING_AI_SERVICE | continue_convo | None | None | None
+2026-10-04 22:09:55 | INFO | QUESTION_SUCCESS | start_convo | None | None | None
+2026-10-04 22:09:55 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+2026-10-04 22:09:55 | INFO | BACKGROUND_CACHE_POPULATION_FIRED | start_convo | None | None | None
+2026-10-04 22:09:55 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+[REQUEST END] POST /convo status=200 time=26277.38ms
+2026-10-04 22:09:55 | INFO | REDIS_VECTOR_SAVE_STARTED | save_to_redis_vector_cache | None | None | None
+2026-10-04 22:09:55 | INFO | REDIS_INDEX_CHECK_STARTED | create_redis_vector_index | None | None | None
+<-- Outgoing response: 200
+INFO:     127.0.0.1:59686 - "POST /convo HTTP/1.1" 200 OK
+2026-10-04 22:09:55 | INFO | REDIS_INDEX_EXISTS_CACHED | create_redis_vector_index | None | None | None
+2026-10-04 22:09:55 | INFO | REDIS_VECTOR_INDEX_ENSURED | save_to_redis_vector_cache | None | None | None
+2026-10-04 22:09:55 | INFO | REDIS_VECTOR_EMBEDDING_GENERATED | save_to_redis_vector_cache | None | None | None
+2026-10-04 22:09:55 | INFO | REDIS_VECTOR_PAYLOAD_SERIALIZED | save_to_redis_vector_cache | None | None | None
+2026-10-04 22:09:55 | INFO | REDIS_VECTOR_HASH_SAVED | save_to_redis_vector_cache | None | None | None
+2026-10-04 22:09:55 | INFO | REDIS_VECTOR_TTL_SET | save_to_redis_vector_cache | None | None | None
+
+
+
+18) from another seesion getting imp discussion points tool:
+--> Incoming request: POST /convo
+[REQUEST START] POST /convo client=127.0.0.1
+2026-10-04 22:13:20 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-04 22:13:20 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-04 22:13:20 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-04 22:13:20 | INFO | QUESTION_ROUTE_STARTED | start_convo | None | None | None
+2026-10-04 22:13:20 | INFO | CHECKING_USER_VDB | start_convo | None | None | None
+2026-10-04 22:13:20 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-10-04 22:13:20 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-10-04 22:13:20 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-10-04 22:13:20 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-10-04 22:13:20 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-10-04 22:13:20 | INFO | LTM_VDB_CHECKING_RESOURCE | create_LTM_vdb_inishiator | None | None | None
+2026-10-04 22:13:20 | INFO | LTM_VDB_STATUS_SKIPPED | create_LTM_vdb_inishiator | None | None | None
+2026-10-04 22:13:20 | INFO | CHECKING_MULTI_TIER_CACHE | start_convo | None | None | None
+2026-10-04 22:13:20 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
+2026-10-04 22:13:20 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
+2026-10-04 22:13:20 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
+2026-10-04 22:13:20 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
+2026-10-04 22:13:21 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
+2026-10-04 22:13:21 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
+2026-10-04 22:13:21 | INFO | CACHE_POLICY_NON_CACHEABLE | multi_tier_cache_system | None | None | None
+2026-10-04 22:13:21 | INFO | CACHE_MISS_FALLTHROUGH | start_convo | None | None | None
+2026-10-04 22:13:21 | INFO | INVOKING_AI_SERVICE | start_convo | None | None | None
+2026-10-04 22:13:21 | INFO | AI_SERVICE_STARTED | continue_convo | None | None | None
+2026-10-04 22:13:21 | INFO | AI_SERVICE_STARTED | get_user_intent | None | None | None
+2026-10-04 22:13:21 | INFO | AI_PROVIDER_REQUEST | get_user_intent | None | None | None
+2026-10-04 22:13:21 | INFO | AI_PROVIDER_IN_PROCESSING | get_user_intent | None | None | None
+2026-10-04 22:13:22 | INFO | AI_PROVIDER_SUCCESS | get_user_intent | None | None | None
+2026-10-04 22:13:22 | INFO | AI_SERVICE_COMPLETED | get_user_intent | None | None | None
+2026-10-04 22:13:22 | INFO | AI_SERVICE_ENDED | get_user_intent | None | None | None
+2026-10-04 22:13:22 | INFO | EXITING_AI_SERVICE | get_user_intent | None | None | None
+2026-10-04 22:13:22 | INFO | EXTRACTING_REQUEST_DATA | continue_convo | None | None | None
+2026-10-04 22:13:22 | INFO | EXTRACTING_PAST_COVO_CONTEXT | continue_convo | None | None | None
+2026-10-04 22:13:22 | INFO | EXTRACTING_PAST_COVO_CONTEXT_FAILURE | continue_convo | None | None | None
+2026-10-04 22:13:22 | INFO | EXTRACTING_PAST_COVO_CONTEXT_SUCCESS | continue_convo | None | None | None
+2026-10-04 22:13:22 | INFO | CREATING_TOOLS | continue_convo | None | None | None
+2026-10-04 22:13:22 | INFO | CREATING_MODEL_WITH_TOOLS | continue_convo | None | None | None
+2026-10-04 22:13:22 | INFO | AI_PROVIDER_REQUEST | continue_convo | None | None | None
+2026-10-04 22:13:22 | INFO | AI_PROVIDER_IN_PROCESSING | continue_convo | None | None | None
+2026-10-04 22:13:22 | INFO | TOOL_EXECUTION_IN_PROCESS | continue_convo | None | None | None
+2026-10-04 22:13:22 | INFO | CALLING_NEEDED_TOOL | continue_convo | None | None | None
+2026-10-04 22:13:22 | INFO | TOOL_DISPATCH_STARTED | continue_convo_search_user_long_term_memory_globally | None | None | None
+2026-10-04 22:13:22 | INFO | CALLING_NORMAL_CONTEXT_TOOL | continue_convo | None | None | None
+2026-10-04 22:13:22 | INFO | CHECKING_USER_LTM_VDB | get_user_ltm_vdb | None | None | None
+2026-10-04 22:13:22 | INFO | LTM_VDB_FOUND | get_user_ltm_vdb | None | None | None
+2026-10-04 22:13:22 | INFO | TOOL_DISPATCH_COMPLETED | continue_convo_search_user_long_term_memory_globally | None | None | None
+2026-10-04 22:13:22 | INFO | TOOL_EXECUTION_SUCCESS | continue_convo | None | None | None
+2026-10-04 22:13:38 | INFO | AI_PROVIDER_SUCCESS | continue_convo | None | None | None
+2026-10-04 22:13:38 | INFO | AI_SERVICE_COMPLETED | continue_convo | None | None | None
+2026-10-04 22:13:38 | INFO | AI_SERVICE_ENDED | continue_convo | None | None | None
+2026-10-04 22:13:38 | INFO | EXITING_AI_SERVICE | continue_convo | None | None | None
+2026-10-04 22:13:38 | INFO | QUESTION_SUCCESS | start_convo | None | None | None
+2026-10-04 22:13:38 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+2026-10-04 22:13:38 | INFO | BACKGROUND_CACHE_POPULATION_FIRED | start_convo | None | None | None
+2026-10-04 22:13:38 | INFO | EXITING_QUESTION_SERVICE | start_convo | None | None | None
+[REQUEST END] POST /convo status=200 time=17857.88ms
+2026-10-04 22:13:38 | INFO | REDIS_VECTOR_SAVE_STARTED | save_to_redis_vector_cache | None | None | None
+2026-10-04 22:13:38 | INFO | REDIS_INDEX_CHECK_STARTED | create_redis_vector_index | None | None | None
+<-- Outgoing response: 200
+INFO:     127.0.0.1:52254 - "POST /convo HTTP/1.1" 200 OK
+2026-10-04 22:13:38 | INFO | REDIS_INDEX_EXISTS_CACHED | create_redis_vector_index | None | None | None
+2026-10-04 22:13:38 | INFO | REDIS_VECTOR_INDEX_ENSURED | save_to_redis_vector_cache | None | None | None
+2026-10-04 22:13:38 | INFO | REDIS_VECTOR_EMBEDDING_GENERATED | save_to_redis_vector_cache | None | None | None
+2026-10-04 22:13:38 | INFO | REDIS_VECTOR_PAYLOAD_SERIALIZED | save_to_redis_vector_cache | None | None | None
+2026-10-04 22:13:38 | INFO | REDIS_VECTOR_HASH_SAVED | save_to_redis_vector_cache | None | None | None
+2026-10-04 22:13:38 | INFO | REDIS_VECTOR_TTL_SET | save_to_redis_vector_cache | None | None | None
+
+
+
+ALL TESTS PASSED!

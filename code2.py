@@ -26,7 +26,6 @@ from utils.logging.config import setup_logging
 from utils.config import settings
 
 setup_logging() 
-
 os.environ["LANGCHAIN_TRACING_V2"] = "false"
 
 
@@ -76,14 +75,12 @@ async def lifespan(app: FastAPI):
     app.state.redis = Redis(
         host="localhost",
         port=6379,
-        decode_responses=True  # keeps str str!
+        decode_responses=True 
     )
-    
-    
     app.state.redis_binary = Redis(
         host="localhost",
         port=6379,
-        decode_responses=False 
+        decode_responses=False  # keeps bytes bytes!
     )
     
     yield
@@ -97,9 +94,7 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-
 app.add_middleware(ProcessTimeMiddleware)
-
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",

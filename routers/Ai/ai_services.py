@@ -31,15 +31,15 @@ import time
 
 converter = DocumentConverter()
 max_tokens = settings.tokenizer_max_tokens
-
-
-
 from utils.embedding_model import embedding_model
 
 
 UPLOAD_DIR = settings.upload_dir
+
 UPLOAD_DIR.mkdir(exist_ok=True, parents=True)
+
 MAX_FILE_SIZE = 25 * 1024 * 1024  # 25 MB
+
 ALLOWED_EXTENSIONS = {
     # PDF
     ".pdf",
@@ -98,7 +98,7 @@ def _validate_text_file(file_bytes: bytes) -> bool:
     """Validates text encoding using UTF-8 (with NUL-byte guards) or BOM-aware UTF-16."""
     try:
         file_bytes.decode("utf-8")
-
+        # UTF-8 text should not contain binary null sequences
         if b"\x00" in file_bytes[:4096]:
             return False
         return True
@@ -106,37 +106,34 @@ def _validate_text_file(file_bytes: bytes) -> bool:
         pass
 
     try:
-        
+        # Requires valid UTF-16 BOM/structure; skips NUL check since UTF-16 naturally uses \x00
         file_bytes.decode("utf-16")
         return True
     except UnicodeDecodeError:
         return False
-    
 
-
-
-
-
+# DEEP VALIDATION HELPERS
 def _validate_zip_container(file_bytes: bytes, file_extension: str, user_id: int) -> bool:
     """Inspects zip structures and verifies internal XML structures or mimetype metadata."""
     log_state(UploadFileLogs.VALIDATING_MAGIC_BYTES, function="_validate_zip_container", user_id=user_id)
     try:
-        with zipfile.ZipFile(io.BytesIO(file_bytes)) as z:  
+        with zipfile.ZipFile(io.BytesIO(file_bytes)) as z: 
             namelist = z.namelist()  
-            required_file = ZIP_CONTAINER_SIGNATURES.get(file_extension) 
+            # 1. Standard OOXML formats (.docx, .pptx, .xlsx)
+            required_file = ZIP_CONTAINER_SIGNATURES.get(file_extension)
             
-            if required_file:  
+            if required_file: 
                 is_valid = required_file in namelist
                 if not is_valid:
                     log_state(UploadFileLogs.VALIDATION_FAILED, function="_validate_zip_container", user_id=user_id)
                 return is_valid
 
-
+            # 2. OpenDocument & EPUB formats (.odt, .ods, .odp, .epub)
             expected_mime = OPEN_DOCUMENT_MIMES.get(file_extension)
             if expected_mime: 
                 if "mimetype" in namelist:  
                     with z.open("mimetype") as f: 
-                        internal_mime = f.read().decode("utf-8", errors="ignore").strip()  
+                        internal_mime = f.read().decode("utf-8", errors="ignore").strip() 
                         is_valid = (internal_mime == expected_mime)  
                         if not is_valid:
                             log_state(UploadFileLogs.VALIDATION_FAILED, function="_validate_zip_container", user_id=user_id)
@@ -151,8 +148,6 @@ def _validate_zip_container(file_bytes: bytes, file_extension: str, user_id: int
         log_state(UploadFileLogs.VALIDATION_SERVICE_FAILURE, level=LogState.EXCEPTION, function="_validate_zip_container", exc=e, user_id=user_id)
         return False
 
-
-
 def validate_file_content_type(file_bytes: bytes, file_extension: str, user_id: int) -> bool:
     """Authoritative validation dispatcher based on file category."""
     log_state(UploadFileLogs.VALIDATING_MAGIC_BYTES, function="validate_file_content_type", user_id=user_id)
@@ -161,8 +156,8 @@ def validate_file_content_type(file_bytes: bytes, file_extension: str, user_id: 
     if file_extension in TEXT_EXTENSIONS:
         if filetype.guess(file_bytes) is not None:  
             log_state(UploadFileLogs.VALIDATION_FAILED, function="validate_file_content_type", user_id=user_id)
-            return False  
-        return _validate_text_file(file_bytes)
+            return False 
+        return _validate_text_file(file_bytes) 
 
     # 2. PDF
     if file_extension == ".pdf":
@@ -172,7 +167,7 @@ def validate_file_content_type(file_bytes: bytes, file_extension: str, user_id: 
         return is_valid
 
     # 3. Zip Containers (.docx, .pptx, .xlsx, .odt, .ods, .odp, .epub)
-    if file_extension in ZIP_CONTAINER_SIGNATURES or file_extension in OPEN_DOCUMENT_MIMES: 
+    if file_extension in ZIP_CONTAINER_SIGNATURES or file_extension in OPEN_DOCUMENT_MIMES:  
         return _validate_zip_container(file_bytes, file_extension, user_id=user_id)  
 
     # 4. Outlook MSG
@@ -184,10 +179,6 @@ def validate_file_content_type(file_bytes: bytes, file_extension: str, user_id: 
 
     log_state(UploadFileLogs.VALIDATION_FAILED, function="validate_file_content_type", user_id=user_id)
     return False
-
-
-
-
 
 async def file_validation_service(
     file: UploadFile,
@@ -264,8 +255,9 @@ async def file_validation_service(
                 error_message="File size exceeds maximum limit of 25MB.",
             )
 
-        
+        # STEP 5: Authoritative Content Validation (Magic bytes)
         log_state(UploadFileLogs.VALIDATING_MAGIC_BYTES, function="file_validation_service", user_id=user_id, request_id=request_id)
+
         start_t = time.time()
         is_valid_content = await asyncio.to_thread(
             validate_file_content_type, file_bytes, file_extension, user_id
@@ -281,7 +273,7 @@ async def file_validation_service(
                 error_code=USER_ERROR_CODES.INAPPROPRIATE_FILE.value,
                 error_message="File signature or internal structure does not match extension.",
             )
-
+            
         # STEP 6: SHA-256 Duplicate Check
         log_state(UploadFileLogs.CHECKING_DUPLICATE_HASH, function="file_validation_service", user_id=user_id, request_id=request_id)
         file_hash = hashlib.sha256(file_bytes).hexdigest()
@@ -344,6 +336,7 @@ async def file_validation_service(
 
 
 
+import traceback
 async def save_validated_doc_task_service(payload: passed_vlidation_reponce, db: AsyncSession):
     doc_bytes: bytes = payload.file_bytes
     meta: UploadTaskPayload = payload.file_payload
@@ -375,22 +368,25 @@ async def save_validated_doc_task_service(payload: passed_vlidation_reponce, db:
 
         log_state(UploadFileLogs.COMMITTING_DOC_TO_DB, function="save_validated_doc_task_service", user_id=meta.user_id, request_id=meta.request_id)
         await db.commit()
-        await db.refresh(document) 
+        await db.refresh(document) #we addeded something like 2 lines above! we need the new doc orm obj so added thing is now init too!
         
         log_state(UploadFileLogs.VALIDATING_SAVED_DOC_ORM, function="save_validated_doc_task_service", user_id=meta.user_id, request_id=meta.request_id)
-        document_metadata = SavedDocumentPayload.model_validate(document)
+        document_metadata = SavedDocumentPayload.model_validate(document) #ORM valdianging with Pydantic???? well pyndatic v2 allows: model_config = ConfigDict(from_attributes=True)
         
         log_state(UploadFileLogs.SAVE_SERVICE_SUCCESS, function="save_validated_doc_task_service", user_id=meta.user_id, request_id=meta.request_id)
-        return document_metadata.model_dump() 
-
+        return document_metadata.model_dump() #since this will be used by worker2 and celey dont work well with objects so, ill have to pass a dict!
+        #dw we will use it in 2nd worker. and celery doesnt like objetcs so win win 2nd worker being: task2_parse_saved_doc!
 
     except Exception as e:
         log_state(UploadFileLogs.SAVE_SERVICE_FAILED_ROLLING_BACK, function="save_validated_doc_task_service", user_id=meta.user_id, request_id=meta.request_id, exc=e)
+        print("========== ORIGINAL SAVE ERROR ==========")
+        print(repr(e))
+        traceback.print_exc()
+        print("=========================================")
         await db.rollback()
 
         if Path(meta.file_path).exists():
             Path(meta.file_path).unlink()
-
         raise SavingValidatedFileException(
             error_code=SYSTEM_ERROR_CODES.SAVING_VALIDATED_FILE_EXCEPTION.value,
             message="Unexpected error saving validated file in dir"
@@ -400,17 +396,15 @@ async def save_validated_doc_task_service(payload: passed_vlidation_reponce, db:
 
 
 
-
 def parse_stage(document: Document) -> DoclingDocument:
     result = converter.convert(document.file_path)
     
     document.status = DocumentStatus.PARSED
-    doc: DoclingDocument = result.document
-    
+    doc: DoclingDocument = result.document   
     return doc
 
 def chunking_stage(document: Document, doc: DoclingDocument) -> list[BaseChunk]:
-    chunks = list(chunker.chunk(dl_doc=doc))
+    # chunks = list(chunker.chunk(dl_doc=doc))
     document.chunk_count = len(chunks)
     document.status = DocumentStatus.CHUNKED
     return chunks
@@ -439,7 +433,6 @@ async def embeding_stage(document: Document, chunks: list[BaseChunk], db: AsyncS
     user_id = document.user_id
     user_chroma_dir = (Path(settings.chroma_db_dir) / f"user_{user_id}")
     
-    
     Chroma.from_documents( 
         documents=docs,
         embedding=embedding_model,
@@ -448,9 +441,6 @@ async def embeding_stage(document: Document, chunks: list[BaseChunk], db: AsyncS
     )
     document.status = DocumentStatus.READY
 
-
-    #why do this? well its a mark! which means new doc has come by! and bm25 needs to be updated in the future!
-    # Find the user's BM25 resource and mark it stale if it was previously READY
     bm25_stmt = select(BM25Resource).where(BM25Resource.user_id == user_id)
     bm25_result = await db.execute(bm25_stmt)
     bm25_res = bm25_result.scalar_one_or_none()
@@ -458,15 +448,15 @@ async def embeding_stage(document: Document, chunks: list[BaseChunk], db: AsyncS
     if bm25_res and bm25_res.status == BM25Status.READY:
         bm25_res.status = BM25Status.STALE
         await db.commit()
-
+    
 async def failed_case(document: Document, db: AsyncSession, reason: Exception, stage: str):
     document.status = DocumentStatus.FAILED
     document.failure_reason = f"{stage} failed: {reason}"
     await db.commit()
 
 async def parse_chunk_embed_saved_doc_task2_service(doc_meta_obj: SavedDocumentPayload, db: AsyncSession):
-    log_state(UploadFileLogs.TASK_2_SERVICE_STARTED, function="parse_chunk_embed_saved_doc_task2_service", user_id=doc_meta_obj.user_id, request_id=doc_meta_obj.request_id)
-    document = await db.get(Document, doc_meta_obj.doc_id)  
+    log_state(UploadFileLogs.TASK_2_SERVICE_STARTED, function="parse_chunk_embed_saved_doc_task2_service", user_id=doc_meta_obj.user_id, request_id=doc_meta_obj.request_id)  
+    document = await db.get(Document, doc_meta_obj.doc_id) 
 
     if document is None:
         log_state(UploadFileLogs.DOCUMENT_NOT_FOUND_IN_SERVICE, function="parse_chunk_embed_saved_doc_task2_service", user_id=doc_meta_obj.user_id, request_id=doc_meta_obj.request_id)

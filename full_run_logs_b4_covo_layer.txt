@@ -1,6 +1,8 @@
+route logs: (single doc)
+INFO:     Will watch for changes in these directories: ['/mnt/g/python/Talk 2 docs proj/DOC proj']
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 INFO:     Started reloader process [7778] using WatchFiles
-/mnt/g/python/BackEnd FastAPI/Lecs/L20/.V_ENV/lib/python3.12/site-packages/numpy/_core/getlimits.py:551: UserWarning: Signature b'\x00\xd0\xcc\xcc\xcc\xcc\xcc\xcc\xfb\xbf\x00\x00\x00\x00\x00\x00' for <class 'numpy.longdouble'> does not match any known type: falling back to type probe function.
+.V_ENV/lib/python3.12/site-packages/numpy/_core/getlimits.py:551: UserWarning: Signature b'\x00\xd0\xcc\xcc\xcc\xcc\xcc\xcc\xfb\xbf\x00\x00\x00\x00\x00\x00' for <class 'numpy.longdouble'> does not match any known type: falling back to type probe function.
 This warnings indicates broken support for the dtype!
   machar = _get_machar(dtype)
 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
@@ -195,9 +197,9 @@ Loading weights: 100%|███████████████████�
 -- ******* ---- Linux-4.4.0-18362-Microsoft-x86_64-with-glibc2.39 2026-08-27 23:36:30
 - *** --- * --- 
 - ** ---------- [config]
-- ** ---------- .> app:         fastapi_ai_backend:0x7fe1c2ab53d0
-- ** ---------- .> transport:   redis://localhost:6379/0
-- ** ---------- .> results:     redis://localhost:6379/1
+- ** ---------- .> app:         ai_backend:0x7fe1c2ab53d0
+- ** ---------- .> transport:   redis://localhost:xxxx/0
+- ** ---------- .> results:     redis://localhost:xxxx/1
 - *** --- * --- .> concurrency: 8 (prefork)
 -- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
 --- ***** ----- 
@@ -211,10 +213,10 @@ Loading weights: 100%|███████████████████�
   . ai.upload_save_file_worker
   . retri.creating_global_bm25
 
-[2026-08-27 23:36:36,335: INFO/MainProcess] Connected to redis://localhost:6379/0
+[2026-08-27 23:36:36,335: INFO/MainProcess] Connected to redis://localhost:xxxx/0
 [2026-08-27 23:36:36,343: INFO/MainProcess] mingle: searching for neighbors
 [2026-08-27 23:36:37,365: INFO/MainProcess] mingle: all alone
-[2026-08-27 23:36:37,415: INFO/MainProcess] celery@Floats ready.
+[2026-08-27 23:36:37,415: INFO/MainProcess] celery@Me! ready.
 [2026-08-27 23:38:33,131: INFO/MainProcess] Task ai.upload_save_file_worker[829d5af6-dd58-457b-832f-850346883671] received
 [2026-08-27 23:38:33,139: INFO/ForkPoolWorker-7] SAVE_TASK_STARTED
 [2026-08-27 23:38:33,140: INFO/ForkPoolWorker-7] VALIDATING_TASK_PAYLOAD
@@ -287,6 +289,8 @@ Loading weights: 100%|███████████████████�
 [2026-08-27 23:38:54,522: INFO/ForkPoolWorker-7] MULTI_INDEX_TASK_COMPLETED
 [2026-08-27 23:38:54,525: INFO/ForkPoolWorker-7] Task ai.create_rest_vdbs[6a2e883f-45c7-4200-a956-a91fd55fb3ea] succeeded in 6.47539020000022s: {'success': True, 'doc_id': 36, 'summary_status': 'ready', 'explanation_status': 'ready'}
 
+
+
 --> Incoming request: POST /question
 [REQUEST START] POST /question client=127.0.0.1
 2026-08-28 00:43:26 | INFO | QUESTION_SERVICE_STARTED | ask_question | None | None | None
@@ -350,7 +354,7 @@ route outputs:
 
 
 {
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX....",
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNywiamlkIjoiOWQ0ZDc3ZjQtNjg1NC00M2JkLTg2YWEtOTcyYWM0MDNlZTJkIiwiZXhwIjoxNzg3ODU5NDk0fQ.B8ynT-IYRoB6cPEa8fNmgbZt8VVKG3u-HApHrCyUsNM",
   "token_type": "bearer"
 }
 
@@ -385,7 +389,7 @@ route outputs:
   "bm25_worker_3": {
     "status": "READY",
     "version": 1,
-    "index_path": "../v_dbs/user_27/master_bm25_docs_v1.pkl",
+    "index_path": ".../v_dbs/user_27/master_bm25_docs_v1.pkl",
     "failure_reason": null
   }
 }
@@ -399,7 +403,7 @@ route outputs:
     {
       "page_number": null,
       "section_heading": null,
-      "location_fallback": "Source File: New bleach system (mine).docx", #a file i made and uploaded :(
+      "location_fallback": "Source File: New bleach system (mine).docx",
       "verbatim_quote": "**III. Ω PRIME (HEAD CAPTAIN OF SQUAD Ω)**\n**Role:**\nHighest authority of Squad Ω and sole Royal Guard candidate.\n**Functions:**\n- Commands all Squad Ω operations\n- Acts as final stabilizer of Seireitei crisis\n- Maintains system balance between Ω and Squad 0"
     }
   ],
@@ -570,115 +574,3 @@ results:
   "confidence_score": 0.25,
   "is_meaning_preserved": true
 }
-
-
-
-
-run after adding cache:
-Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 103/103 [00:00<00:00, 1684.07it/s]
-INFO:     Started server process [9186]
-INFO:     Waiting for application startup.
-Starting application
-INFO:     Application startup complete.
---> Incoming request: POST /question
-[REQUEST START] POST /question client=127.0.0.1
-2026-09-11 05:59:33 | INFO | QUESTION_ROUTE_STARTED | ask_question | None | None | None
-2026-09-11 05:59:33 | INFO | CHECKING_USER_VDB | ask_question | None | None | None
-2026-09-11 05:59:33 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
-2026-09-11 05:59:33 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
-2026-09-11 05:59:34 | INFO | VDB_FOUND | get_user_vdb | None | None | None
-2026-09-11 05:59:34 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
-2026-09-11 05:59:34 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
-2026-09-11 05:59:34 | INFO | CHECKING_MULTI_TIER_CACHE | ask_question | None | None | None
-2026-09-11 05:59:34 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
-2026-09-11 05:59:34 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
-2026-09-11 05:59:34 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
-2026-09-11 05:59:34 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
-2026-09-11 05:59:35 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
-2026-09-11 05:59:35 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
-2026-09-11 05:59:35 | INFO | CACHE_POLICY_CACHEABLE | multi_tier_cache_system | None | None | None
-2026-09-11 05:59:35 | INFO | REDIS_VECTOR_SEARCH_STARTED | get_redis_vector_cached | None | None | None
-2026-09-11 05:59:35 | INFO | REDIS_VECTOR_GENERATING_EMBEDDING | get_redis_vector_cached | None | None | None
-2026-09-11 05:59:35 | INFO | REDIS_VECTOR_SCOPE_NORMALIZED | get_redis_vector_cached | None | None | None
-2026-09-11 05:59:35 | INFO | REDIS_VECTOR_QUERY_EXECUTING | get_redis_vector_cached | None | None | None
-2026-09-11 05:59:35 | INFO | REDIS_VECTOR_ERROR | get_redis_vector_cached | None | str | SEARCH_INDEX_NOT_FOUND Index not found: idx:user_cache:34
-2026-09-11 05:59:35 | INFO | CHECKING_USER_VDB | get_user_cache_vdb | None | None | None
-2026-09-11 05:59:35 | INFO | VDB_FOUND | get_user_cache_vdb | None | None | None
-2026-09-11 05:59:35 | INFO | CHROMA_SIMILARITY_SEARCH_STARTED | get_cached | None | None | None
-2026-09-11 05:59:35 | INFO | CHROMA_CANDIDATES_NOT_FOUND | get_cached | None | None | None
-2026-09-11 05:59:35 | INFO | CACHE_SYSTEM_MISS_FALLBACK | multi_tier_cache_system | None | None | None
-2026-09-11 05:59:35 | INFO | CACHE_MISS_FALLTHROUGH | ask_question | None | None | None
-2026-09-11 05:59:35 | INFO | INVOKING_AI_SERVICE | ask_question | None | None | None
-2026-09-11 05:59:35 | INFO | AI_SERVICE_STARTED | Answer_ai | None | None | None
-2026-09-11 05:59:35 | INFO | BUILDING_RETRIVER_STARTED | build_get_retriever | None | None | None
-2026-09-11 05:59:35 | INFO | FETCHING_DOCS_FOR_BM25 | build_get_retriever | None | None | None
-2026-09-11 05:59:35 | INFO | AI_SERVICE_STARTED | query_classifier | None | None | None
-2026-09-11 05:59:35 | INFO | AI_PROVIDER_REQUEST | query_classifier | None | None | None
-2026-09-11 05:59:35 | INFO | AI_PROVIDER_IN_PROCESSING | query_classifier | None | None | None
-[CACHE MISS] Loading global BM25 retriever from disk/file for user 34 (v1)
-2026-09-11 05:59:36 | INFO | BUILDING_VECTOR_RETRIVER | build_get_retriever | None | None | None
-2026-09-11 05:59:36 | INFO | BUILDING_VECTOR_RETRIVER_SUCCESS | build_get_retriever | None | None | None
-2026-09-11 05:59:36 | INFO | BUILDING_BM25 | build_get_retriever | None | None | None
-2026-09-11 05:59:36 | INFO | BUILDING_BM25_SUCCESS | build_get_retriever | None | None | None
-2026-09-11 05:59:36 | INFO | CREATING_HYBRID_RETRIVER | build_get_retriever | None | None | None
-2026-09-11 05:59:36 | INFO | CREATING_HYBRID_RETRIVER_SUCCESS | build_get_retriever | None | None | None
-2026-09-11 05:59:36 | INFO | BUILDING_RETRIVER_SUCCESS | build_get_retriever | None | None | None
-2026-09-11 05:59:36 | INFO | EXITING_RETRIVER_BUILDER | build_get_retriever | None | None | None
-2026-09-11 05:59:36 | INFO | AI_PROVIDER_SUCCESS | query_classifier | None | None | None
-2026-09-11 05:59:36 | INFO | AI_SERVICE_COMPLETED | query_classifier | None | None | None
-2026-09-11 05:59:36 | INFO | AI_SERVICE_ENDED | query_classifier | None | None | None
-2026-09-11 05:59:36 | INFO | EXITING_AI_SERVICE | query_classifier | None | None | None
-[TIMING] asyncio.gather (retriever + classifier): 876.08 ms
-[TIMING] retrieval strategy / safe_retrieve execution: 263.82 ms
-2026-09-11 05:59:37 | INFO | AI_SERVICE_STARTED | cohere_rerank | None | None | None
-2026-09-11 05:59:37 | INFO | AI_PROVIDER_REQUEST | cohere_rerank | None | None | None
-2026-09-11 05:59:37 | INFO | AI_PROVIDER_IN_PROCESSING | cohere_rerank | None | None | None
-2026-09-11 05:59:37 | INFO | AI_PROVIDER_SUCCESS | cohere_rerank | None | None | None
-2026-09-11 05:59:37 | INFO | VALIDATING_RERANK_RESULT_STARTED | cohere_rerank | None | None | None
-2026-09-11 05:59:37 | INFO | VALIDATING_RERANK_RESULT_SUCCESS | cohere_rerank | None | None | None
-2026-09-11 05:59:37 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
-2026-09-11 05:59:37 | INFO | AI_SERVICE_ENDED | cohere_rerank | None | None | None
-2026-09-11 05:59:37 | INFO | EXITING_AI_SERVICE | cohere_rerank | None | None | None
-[TIMING] cohere_rerank execution: 900.19 ms
-2026-09-11 05:59:37 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
-2026-09-11 05:59:37 | INFO | AI_PROVIDER_REQUEST | Answer_ai | None | None | None
-2026-09-11 05:59:37 | INFO | AI_PROVIDER_IN_PROCESSING | Answer_ai | None | None | None
-2026-09-11 05:59:38 | ERROR | AI_PROVIDER_FAILURE | Answer_ai | None | UnboundLocalError | cannot access local variable 'recovered' where it is not associated with a value
-Traceback (most recent call last):
-  File "/mnt/g/python/Talk 2 docs proj/DOC proj/Ai/Talk2Doc.py", line 526, in Answer_ai
-    ans: APIResponse = await push_responce_in_cache_inishiator(model_output=recovered, question=question, user_id=user_id, doc_name=doc_name, db=db)
-                                                                            ^^^^^^^^^
-       
-UnboundLocalError: cannot access local variable 'recovered' where it is not associated with a value
-#DON'T WORRY I FIXED THIS! INSTEAD OF model_output=recovered (which would've been true if model retried), i replaced it with:
-#model_output=parsed which fixed this issue so ive same line in two places with recovered and with parsed so don't worry
-
-
-2026-09-11 05:59:38 | WARNING | AI_REPAIR_INITIALIZED | Answer_ai | None | None | None
-2026-09-11 05:59:38 | INFO | AI_REPAIR_STARTED | Answer_ai | None | None | None
-2026-09-11 05:59:38 | INFO | AI_REPAIR_IN_PROGRESS | Answer_ai | None | None | None
-2026-09-11 05:59:39 | INFO | AI_REPAIR_SUCCESS | Answer_ai | None | None | None
-2026-09-11 05:59:39 | INFO | AI_SERVICE_COMPLETED | Answer_ai | None | None | None
-2026-09-11 05:59:39 | INFO | AI_SERVICE_ENDED | Answer_ai | None | None | None
-2026-09-11 05:59:39 | INFO | EXITING_AI_SERVICE | Answer_ai | None | None | None
-2026-09-11 05:59:39 | INFO | QUESTION_SUCCESS | ask_question | None | None | None
-2026-09-11 05:59:39 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
-2026-09-11 05:59:39 | INFO | BACKGROUND_CACHE_POPULATION_FIRED | ask_question | None | None | None
-2026-09-11 05:59:39 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
-[REQUEST END] POST /question status=200 time=5298.44ms
-2026-09-11 05:59:39 | INFO | REDIS_VECTOR_SAVE_STARTED | save_to_redis_vector_cache | None | None | None
-2026-09-11 05:59:39 | INFO | REDIS_INDEX_CHECK_STARTED | create_redis_vector_index | None | None | None
-#See? how come this worked then ;) so redis index works dw about that
-
-
-<-- Outgoing response: 200
-INFO:     127.0.0.1:58464 - "POST /question HTTP/1.1" 200 OK
-2026-09-11 05:59:39 | INFO | REDIS_INDEX_CREATION_STARTED | create_redis_vector_index | None | None | None
-2026-09-11 05:59:39 | INFO | REDIS_INDEX_CREATED_SUCCESS | create_redis_vector_index | None | None | None
-2026-09-11 05:59:39 | INFO | REDIS_INDEX_INITIALIZATION_COMPLETE | create_redis_vector_index | None | None | None
-2026-09-11 05:59:39 | INFO | REDIS_VECTOR_INDEX_ENSURED | save_to_redis_vector_cache | None | None | None
-2026-09-11 05:59:39 | INFO | REDIS_VECTOR_EMBEDDING_GENERATED | save_to_redis_vector_cache | None | None | None
-2026-09-11 05:59:39 | INFO | REDIS_VECTOR_PAYLOAD_SERIALIZED | save_to_redis_vector_cache | None | None | None
-2026-09-11 05:59:39 | INFO | REDIS_VECTOR_HASH_SAVED | save_to_redis_vector_cache | None | None | None
-2026-09-11 05:59:39 | INFO | REDIS_VECTOR_TTL_SET | save_to_redis_vector_cache | None | None | None

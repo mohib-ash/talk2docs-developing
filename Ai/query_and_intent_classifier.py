@@ -63,8 +63,6 @@ class QueryClassificationResult(BaseModel):
             "version": "3.0.0",
         },
     )
-
-    # --- Intent & Security Fields (Absorbed from Intent Classifier) ---
     intent: AvailableIntents = Field(
         ...,
         title="User Intent Classification",
@@ -81,7 +79,6 @@ class QueryClassificationResult(BaseModel):
         description="True ONLY when the user is discussing a harmful technique in an educational context."
     )
 
-    # --- Routing & Ambiguity Fields ---
     is_ambiguous: bool = Field(
         ...,
         title="Question Ambiguity Flag",

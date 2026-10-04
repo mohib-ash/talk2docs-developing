@@ -13,6 +13,7 @@ from langchain_core.prompts import (
     ChatPromptTemplate,
     FewShotChatMessagePromptTemplate,
 )
+from langchain_core.vectorstores import VectorStoreRetriever
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -77,7 +78,7 @@ RULES:
 
 
 async def advanced_translation_function(
-    model: Any, question: str, user_id: int, retriever: EnsembleRetriever
+    model: Any, question: str, user_id: int, retriever: EnsembleRetriever | VectorStoreRetriever
 ) -> APIResponse:
     log_state(
         AdvancedTranslationLog.ADVANCED_TRANSLATION_STARTED,
@@ -117,8 +118,6 @@ async def advanced_translation_function(
             cleaned_content = re.sub(r"\n?```$", "", cleaned_content).strip()
 
         extracted_parsed = parser.parse(cleaned_content)
-
-        # FIXED: Moved inside the try block so it only fires on true provider & parsing success[cite: 10]
         log_state(
             ProviderLog.AI_PROVIDER_SUCCESS,
             function="advanced_translation_function",

@@ -5,10 +5,10 @@ import asyncio
 from typing import Any
 
 from langchain_classic.retrievers.ensemble import EnsembleRetriever
+from langchain_core.vectorstores import VectorStoreRetriever
 
-from Ai import query_classifier
 from Ai.ai_utils import build_get_retriever
-from Ai.query_classifier import QueryClassificationResult, QueryTechnique
+from Ai.query_and_intent_classifier import QueryClassificationResult, QueryTechnique
 
 from Ai.query_construction.HYDE.HYDE_file import HYDE_fucntion
 from Ai.query_construction.HYDE.HYDE_service import use_HYDE
@@ -30,22 +30,19 @@ from vector_db.chroma import (
 )
 
 
-    
-#btw this function acts as a middle man for Answer_Ai and classification techniqyes
-async def execute_retrieval_strategy(model, redis_client: Redis, question: str, classification_response: QueryClassificationResult, user_id: int, retriever: EnsembleRetriever, doc_name: list[str], db: AsyncSession) -> APIResponse:
+async def execute_retrieval_strategy(model, redis_client: Redis, question: str, classification_response: QueryClassificationResult, user_id: int, retriever: EnsembleRetriever | VectorStoreRetriever, doc_name: list[str], db: AsyncSession) -> APIResponse:
     log_state(RetrievalStrategyLog.RETRIEVAL_STRATEGY_STARTED, function="execute_retrieval_strategy", user_id=user_id)
     
     technique: QueryTechnique = classification_response.selected_technique
     confidence_score: float = classification_response.confidence_score
     
-    #why this has 2? coz it doesnt contain a pydantic
     if technique == QueryTechnique.HYDE:
         result: APIResponse = await HYDE_fucntion(question=question, user_id=user_id)
         if not result.success:
             log_state(RetrievalStrategyLog.RETRIEVAL_STRATEGY_FAILED, function="execute_retrieval_strategy", user_id=user_id)
             log_state(RetrievalStrategyLog.EXITING_RETRIEVAL_STRATEGY, function="execute_retrieval_strategy", user_id=user_id)
             log_state(RetrievalStrategyLog.FALLING_BACK_TO_DEFAULT_ROUTE, function="execute_retrieval_strategy", user_id=user_id)
-            return result #hyde didnt work so now ill go to defualt case and use orignal question
+            return result 
         
         
         result: APIResponse = await use_HYDE(user_id=user_id, hyde_doc=result.data, retriever=retriever)
@@ -57,7 +54,7 @@ async def execute_retrieval_strategy(model, redis_client: Redis, question: str, 
         
         log_state(RetrievalStrategyLog.RETRIEVAL_STRATEGY_SUCCESS, function="execute_retrieval_strategy", user_id=user_id)
         log_state(RetrievalStrategyLog.EXITING_RETRIEVAL_STRATEGY, function="execute_retrieval_strategy", user_id=user_id)
-        return result ##list[langchaindocument] of 20! senmtaic serch results -> same case is for defualt clase 
+        return result 
         
     
     if technique == QueryTechnique.MULTI_QUERY:
@@ -74,7 +71,7 @@ async def execute_retrieval_strategy(model, redis_client: Redis, question: str, 
             return result 
         log_state(RetrievalStrategyLog.RETRIEVAL_STRATEGY_SUCCESS, function="execute_retrieval_strategy", user_id=user_id)
         log_state(RetrievalStrategyLog.EXITING_RETRIEVAL_STRATEGY, function="execute_retrieval_strategy", user_id=user_id)
-        return result #list[langchaindocument] of 20! senmtaic serch results -> same case is for defualt clase 
+        return result 
     
     
     if technique == QueryTechnique.ADVANCED_TRANSLATION:
@@ -112,9 +109,7 @@ async def execute_retrieval_strategy(model, redis_client: Redis, question: str, 
         log_state(RetrievalStrategyLog.EXITING_RETRIEVAL_STRATEGY, function="execute_retrieval_strategy", user_id=user_id)
         return result
         
-        
-
-    if technique == QueryTechnique.MULTI_INDEXING:
+    if technique == QueryTechnique.MULTI_INDEXING and not isinstance(retriever, VectorStoreRetriever) and isinstance(retriever, EnsembleRetriever):
         stmt = select(Document).where(Document.user_id == user_id, Document.status == DocumentStatus.READY)
         
         if doc_name:
@@ -147,7 +142,7 @@ async def execute_retrieval_strategy(model, redis_client: Redis, question: str, 
             summary_vdb, explain_vdb = await asyncio.gather(
                 get_user_summary_vdb(user_id=user_id, db=db),
                 get_user_explanation_vdb(user_id=user_id, db=db)
-            )  #unlike normal await this one is: u both go i will await for both of u! instead of 1st await finish then 2nd await 
+            ) 
 
             if summary_vdb and explain_vdb:
                 # Concurrently build secondary retrievers
@@ -178,7 +173,6 @@ async def execute_retrieval_strategy(model, redis_client: Redis, question: str, 
             log_state(RetrievalStrategyLog.MULTI_INDEX_NOT_READY, function="execute_retrieval_strategy", user_id=user_id)
             log_state(RetrievalStrategyLog.FALLING_BACK_TO_MULTI_QUERY, function="execute_retrieval_strategy", user_id=user_id)
 
-        #coz if prediction was to do multi-index heavy level vague came so cant let it go normally we do mult-quer
         result: APIResponse = await multi_query_function(
             model=model, 
             user_id=user_id, 
@@ -235,3 +229,4 @@ async def execute_retrieval_strategy(model, redis_client: Redis, question: str, 
         error_code=SYSTEM_ERROR_CODES.INTERNAL_SYSTEM_ERROR.value,
         error_message="No valid retrieval strategy was executed."
     )
+    

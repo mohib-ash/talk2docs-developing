@@ -25,8 +25,7 @@ from pydantic import (
 )
 import re
 
-from Ai import query_classifier
-from Ai.query_classifier import QueryClassificationResult, QueryTechnique
+from Ai.query_and_intent_classifier import QueryClassificationResult, QueryTechnique
 from Ai.raw_and_parsed_clean import extract_parsed_data, extract_raw_data
 from Ai.retry_logic import check_provider_quota
 from core.Exceptions.exceptions import AIServiceException
@@ -140,7 +139,6 @@ async def HYDE_fucntion(question: str, user_id: int) -> APIResponse:
         log_state(ProviderLog.AI_PROVIDER_REQUEST, function="HYDE_fucntion", user_id=user_id)
         log_state(ProviderLog.AI_PROVIDER_IN_PROCESSING, function="HYDE_fucntion", user_id=user_id)
         
-        # Pipeline with StrOutputParser ensures return type is str (not AIMessage)
         chain = HYDE_PROMPT | model | StrOutputParser()
         raw_result: str = await chain.ainvoke({"question": question})
         cleaned_result: str = raw_result.strip()

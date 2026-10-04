@@ -23,10 +23,9 @@ from pydantic import (
     model_validator,
 )
 
-from Ai import query_classifier
 from Ai.ai_utils import safe_retrieve
 # from Ai.intent_classifier import get_user_intent
-from Ai.query_classifier import QueryClassificationResult, QueryTechnique
+from Ai.query_and_intent_classifier import QueryClassificationResult, QueryTechnique
 from Ai.query_construction.multi_query.multi_query_fuction import _reciprocal_rank_fusion
 from Ai.raw_and_parsed_clean import extract_parsed_data, extract_raw_data
 from Ai.retry_logic import check_provider_quota
@@ -50,16 +49,10 @@ from collections.abc import Awaitable
 
 
 def _resolve_to_original_chunk(doc: LangChainDocument) -> LangChainDocument:
-    """Guarantees that a retrieved document chunk holds verbatim original text,
-    restoring page_content from metadata if retrieved from Summary or Explanation indices.
-    """
-    doc_type = doc.metadata.get("doc_type", "raw")  #if u find value of "doc_type" get it else give me "raw" as value, in key_value pair
-    
-    
+    doc_type = doc.metadata.get("doc_type", "raw") 
     if doc_type != "raw" and "raw_content" in doc.metadata:
-        
         return LangChainDocument(
-            page_content=doc.metadata["raw_content"],
+            page_content=doc.metadata["raw_content"], 
             metadata={**doc.metadata, "doc_type": "raw"}
         )
     return doc
@@ -80,18 +73,13 @@ def _reciprocal_rank_fusion_multi_index(
 
         for docs in results_per_query:
             for rank, doc in enumerate(docs):
-                # Unique chunk ID linking Raw, Summary, and Explanation representations
                 chunk_id = doc.metadata.get("chunk_id") or str(
                     hash((doc.page_content, tuple(sorted(doc.metadata.items()))))
                 )
 
                 if chunk_id not in fused_scores:
                     fused_scores[chunk_id] = 0.0
-
-                # Accumulate RRF score: score = sum(1 / (k + rank))
                 fused_scores[chunk_id] += 1.0 / (k + rank + 1)
-
-                # Prioritize holding the true 'raw' document if encountered
                 if chunk_id not in doc_map:
                     doc_map[chunk_id] = doc
                 else:
@@ -100,7 +88,6 @@ def _reciprocal_rank_fusion_multi_index(
                     if existing_type != "raw" and current_type == "raw":
                         doc_map[chunk_id] = doc
 
-        
         sorted_chunks = sorted(fused_scores.items(), key=lambda item: item[1], reverse=True)
         resolved_original_chunks = [
             _resolve_to_original_chunk(doc_map[chunk_id]) 
@@ -131,14 +118,12 @@ async def multi_indexing_function(
     top_n_final: int = 20,
 ) -> APIResponse:
     log_state(MultiIndexLog.MULTI_INDEX_STARTED, function="multi_indexing_function", user_id=user_id)
-
     try:
-        # 1. PARALLEL SEARCHES (Search A, Search B, Search C)
         retrieval_tasks: list[Awaitable[list[LangChainDocument]]] = [
            safe_retrieve(raw_retriever, question),  # Search A
             safe_retrieve(summary_retriever, question),  # Search B
             safe_retrieve(explanation_retriever, question),  # Search C
-        ]# the fetch will be form summary but metadata will hold orignal chunk ;)
+        ]
         parallel_results: list[list[LangChainDocument]] = await asyncio.gather(*retrieval_tasks)
 
     except Exception as exc:

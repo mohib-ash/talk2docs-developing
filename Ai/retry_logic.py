@@ -53,14 +53,9 @@ async def safe_parse(raw_output, parser, llm, query, max_retries=3) -> object | 
         if "```" in current_str:
             parts: List[str] = current_str.split("```")
             current_str = max(parts, key=len).strip()
-            
-            
             if current_str.lower().startswith("json"):
                 current_str = current_str[4:].strip() 
-                
             current_str = clean_json_string(current_str)
-
-
 
         try:
             return parser.parse(current_str) 

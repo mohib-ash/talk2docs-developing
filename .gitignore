@@ -1,92 +1,126 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.pyo
 
-# Virtual environments
-.venv/
-venv/
-env/
-ENV/
-.V_ENV/
+# C extensions
+*.so
 
-# Distribution / Packaging
+# Distribution / packaging
+.Python
 build/
+develop-eggs/
 dist/
-*.egg-info/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
 sdist/
+var/
 wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
 
-# Environment / Secrets
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff (if applicable)
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff
+instance/
+.webassets-cache
+
+# Scrapy stuff
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+# .python-version
+
+# pipenv
+# Supervisor / Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
 .env
-.env.*
-!.env.example
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-
-# IDE / Editor
+# IDEs and Editors
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
+# Project-Specific Ignores 
 
-# Logs / Runtime / Temporary Files
-logs/
-*.log
-temp.py
-*.tmp
-
-
-# Uploaded / User-generated Files
-uploaded_files/
-
-
-# Vector Databases / Generated Indexes / Persistent Data
-v_dbs/
-*.sqlite
-*.sqlite3
+# Local databases & Vector Stores
+db.sqlite3
 *.db
+*.sqlite
 
+# Uploaded runtime files
+uploaded_files/*
+!uploaded_files/.gitkeep
 
-# Testing / Coverage / Caching
-.pytest_cache/
-.coverage
-.coverage.*
-htmlcov/
-.mypy_cache/
-.ruff_cache/
+# Application logs & test output reports
+logs/*.log
+!README.md
+!requirements.txt
 
+#mine
+logs/
+notes/
+temp.py
 
-# OS Generated
-.DS_Store
-Thumbs.db
-desktop.ini
-
-
-# My Own:
-Ai/70b
-Ai/old
-Ai/intent_classifier_manul.py
-Ai/intent_classifier(merged_w_qury_c).py
-routers/chat/question_route(b4 abstraction).py
-
-#txt and for me
-notes
-alembic.ini
-asyncio notes.txt
-cache idea.txt
-csv, xclx.txt
-info.txt
-with_cache_full_run.txt
-how to make nignx read.png
-notes.txt
-old_redis....txt
-Structure to reach.txt
-
-
-
-
-
-push token.txt

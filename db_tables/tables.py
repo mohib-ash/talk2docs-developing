@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
 from db import Base
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, func,Index
 from sqlalchemy.orm import relationship
 from sqlalchemy import Enum
-from utils.schemas import BM25Status, CacheVDBStatus, DocumentStatus, MultiIndexStatus
+from utils.schemas import BM25Status, CacheVDBStatus, DocumentStatus, LTMVDBStatus, MultiIndexStatus
 from sqlalchemy import Boolean, text
 
 
@@ -18,9 +18,11 @@ class User(Base):
 
     documents = relationship("Document", back_populates="user", cascade="all, delete-orphan")
     messages = relationship("Message", back_populates="user", cascade="all, delete-orphan")
-    
+    ai_responses = relationship("AiResponse", back_populates="user", cascade="all, delete-orphan")
+
     bm25_resource = relationship("BM25Resource", back_populates="user", uselist=False, cascade="all, delete-orphan")
     cache_vdb_resource = relationship("CacheVDBResource", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    ltm_vdb_resource = relationship("LTMVDBResource", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
 
 class Document(Base):
@@ -76,24 +78,77 @@ class Message(Base):
 
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     user = relationship("User", back_populates="messages")
-    ai_response = relationship("AiResponse", back_populates="message", uselist=False, cascade="all, delete-orphan")
 
 
 class AiResponse(Base):
     __tablename__ = "ai_responses"
 
     response_id = Column(Integer, primary_key=True, autoincrement=True)
-    message_id = Column(Integer, ForeignKey("messages.message_id", ondelete="CASCADE"), nullable=False, unique=True)
 
-    response_text = Column(Text, nullable=False)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.user_id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
 
-    retrieved_chunks_count = Column(Integer, default=3, server_default="3", nullable=False)
-    processing_time_ms = Column(Integer, nullable=True)
+    convo_id = Column(Text, nullable=True) 
+    question = Column(Text, nullable=False)
+    response_text = Column(Text, nullable=True)
+    ai_source = Column(String(20), nullable=False)
+    from_tool = Column(Boolean, nullable=True)
 
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
 
-    message = relationship("Message", back_populates="ai_response")
+    user = relationship("User", back_populates="ai_responses")
+    
+    __table_args__ = (
+        Index("idx_ai_responses_created_at_desc", text("created_at DESC")),
+    )
 
+
+class ConversationData(Base):
+    __tablename__ = "conversations"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    
+    convo_id = Column(Text, nullable=False) 
+    user_id = Column(Integer, nullable=False, index=True)
+
+    starter_question = Column(Text, nullable=False)
+    starter_answer = Column(Text, nullable=False)
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
+    
+    __table_args__ = (
+        Index("idx_ai_convo_created_at_desc", text("created_at DESC")),
+    )
+
+
+#i'll make after testing is done in next push this will be changed drasticly
+"""
+class Conversation(Base):
+    __tablename__ = "conversations"
+
+    conversation_id = Column(Text, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False, index=True)
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
+
+    user = relationship("User", back_populates="conversations")
+"""
 
 
 class BM25Resource(Base):
@@ -108,7 +163,6 @@ class BM25Resource(Base):
         unique=True,
         index=True,
     ) 
-
 
     status = Column(Enum(BM25Status), default=BM25Status.PENDING, nullable=False, index=True)
     version = Column(Integer, default=0, server_default="0", nullable=False)
@@ -149,3 +203,31 @@ class CacheVDBResource(Base):
     )
 
     user = relationship("User", back_populates="cache_vdb_resource")
+
+
+class LTMVDBResource(Base):
+    __tablename__ = "ltm_vdb_resources"
+
+    ltm_vdb_id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False, unique=True, index=True)
+
+    status = Column(Enum(LTMVDBStatus), default=LTMVDBStatus.PENDING, nullable=False, index=True)
+    version = Column(Integer, default=0, server_default="0", nullable=False)
+
+    vdb_path = Column(String(512), nullable=True)
+    failure_reason = Column(Text, nullable=True)
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
+
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    user = relationship("User", back_populates="ltm_vdb_resource")

@@ -13,6 +13,7 @@ from langchain_core.prompts import (
     ChatPromptTemplate,
     FewShotChatMessagePromptTemplate,
 )
+from langchain_core.vectorstores import VectorStoreRetriever
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -197,19 +198,15 @@ def _reciprocal_rank_fusion(user_id: int, results_per_query: list[list[LangChain
 
         for doc_list in results_per_query:
             for rank, doc in enumerate(doc_list, start=1):
-                # Unique identifier using metadata or content hash
                 chunk_id = doc.metadata.get("chunk_id") or str(hash((
                     doc.page_content,
                     doc.metadata.get("source", ""),
                     doc.metadata.get("page", ""),
                 )))
-
                 if chunk_id not in doc_map:
                     doc_map[chunk_id] = doc
                     fused_scores[chunk_id] = 0.0
-
                 fused_scores[chunk_id] += 1.0 / (k + rank)
-                
         reranked_ids = sorted(fused_scores.keys(), key=lambda x: fused_scores[x], reverse=True)
         final_docs = [doc_map[doc_id] for doc_id in reranked_ids]
     except Exception as exc:
@@ -219,7 +216,7 @@ def _reciprocal_rank_fusion(user_id: int, results_per_query: list[list[LangChain
     return final_docs
 
 
-async def multi_query_function(model: Any, question: str, user_id: int, retriever: EnsembleRetriever, top_n_final: int = 20) -> APIResponse:
+async def multi_query_function(model: Any, question: str, user_id: int, retriever: EnsembleRetriever | VectorStoreRetriever, top_n_final: int = 20) -> APIResponse:
     log_state(MultiQueryLog.MULTI_QUERY_STARTED, function="multi_query_function", user_id=user_id)
     log_state(ServiceLog.AI_SERVICE_STARTED, function="multi_query_function", user_id=user_id)
 
@@ -269,10 +266,9 @@ async def multi_query_function(model: Any, question: str, user_id: int, retrieve
 
     expanded_queries: list[str] = []
 
-    # Branch 1: Structured parsing succeeded
     if extracted_parsed and extracted_parsed.queries:
         expanded_queries = extracted_parsed.queries 
-
+                                                      
     # Branch 2: Structured parsing failed -> Fallback to Raw Repair
     else:
         log_state(RepairLog.AI_REPAIR_INITIALIZED, function="multi_query_function", user_id=user_id)
@@ -290,7 +286,6 @@ async def multi_query_function(model: Any, question: str, user_id: int, retrieve
             log_state(RepairLog.AI_REPAIR_STARTED, function="multi_query_function", user_id=user_id)
             log_state(RepairLog.AI_REPAIR_IN_PROGRESS, function="multi_query_function", user_id=user_id)
 
-            # Target schema correctly set to MultiQueryOutput
             recovered = await extract_raw_data(raw, parser, model, question, MultiQueryOutput)        
         
         except Exception as e:
@@ -322,20 +317,17 @@ async def multi_query_function(model: Any, question: str, user_id: int, retrieve
         expanded_queries = recovered.queries
 
 
-    
-
     if question not in expanded_queries: 
-        expanded_queries.append(question)
+        expanded_queries.append(question) 
 
 
     # 3. Asynchronous parallel vector retrieval
     try:
         log_state(MultiQueryLog.MULTI_QUERY_RETRIEVAL_STARTED, function="multi_query_function", user_id=user_id)
-    
-        retrieval_tasks: list[Awaitable[list[LangChainDocument]]] = [safe_retrieve(retriever, query) for query in expanded_queries] 
+        retrieval_tasks: list[Awaitable[list[LangChainDocument]]] = [safe_retrieve(retriever, query) for query in expanded_queries]   
+                                                                                                                
         multi_query_results: list[list[LangChainDocument]] = await asyncio.gather(*retrieval_tasks) 
         log_state(MultiQueryLog.MULTI_QUERY_RETRIEVAL_SUCCESS, function="multi_query_function", user_id=user_id)
-        
 
     except Exception as exc:
         log_state(ExceptionLog.NO_RELATED_VECTOR_DATABASE_FOUND, function="multi_query_function", user_id=user_id, exc=str(exc))

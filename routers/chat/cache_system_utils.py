@@ -1,17 +1,14 @@
 import hashlib
 import json
+from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from db_tables.tables import Document
 from sqlalchemy import select
 
 
 
-
 async def get_corpus_source_versions_by_id(user_id: int, db_session: AsyncSession, doc_name: str | list[str] | None = None) -> dict[int, int]:
-    """
-    Fetches current document versions from PostgreSQL for the requested scope.
-    Returns a standardized dictionary mapping document IDs to versions: {12: 4, 18: 2}
-    """
+
     # 1. Normalize target documents based on scope request
     target_docs = None
     if isinstance(doc_name, str):
@@ -35,23 +32,18 @@ async def get_corpus_source_versions_by_id(user_id: int, db_session: AsyncSessio
 
 
 
-#i plan to make doc_name none or str, coz front-end will have list of user's uploaded documents too talk to, if he doesnt chose then he talks to all thus None
-def generate_cache_key(user_id: int, question: str, doc_name: list[str] | str | None) -> str:
-    # Normalize the question for consistent exact-match hits
+def generate_cache_key(user_id: int, question: str, doc_name: list[str] | str | None, convo_id: Optional[str] = None) -> str:
     normalized_q = question.strip().lower()
-    
-    # Handle doc_name if passed as a single string instead of list
+
     if isinstance(doc_name, str):
         doc_name = [doc_name]
 
-    # Sort doc_names so order doesn't break the cache key hash
-    sorted_docs = sorted(doc_name) if doc_name else [] #sort coz if user asks in a,b,c then in c,b,a -> cache will create new! we dont want that!
-    
-    # Construct a unique payload string combining user, question, and scoped documents
-    payload = f"{user_id}:{normalized_q}:{json.dumps(sorted_docs)}"
-    
-    # Hash it using SHA-256 to keep the Redis key clean and fixed-length
+    sorted_docs = sorted(doc_name) if doc_name else []
+
+    # convo_id:
+    #   None          -> answer_ai
+    #   actual ID     -> continue_convo
+    payload = f"{user_id}:{normalized_q}:{json.dumps(sorted_docs)}:{convo_id}"
     hash_sig = hashlib.sha256(payload.encode("utf-8")).hexdigest()
-    
     return f"ai_hot_cache:{user_id}:{hash_sig}"
 

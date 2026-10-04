@@ -1,5 +1,5 @@
 import re
-from typing import Any, Literal
+from typing import Any, Literal, List, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
@@ -39,21 +39,42 @@ class ConversationIntentSchema(BaseModel):
 
 
 system_intent_template = """
-You are a precise conversation flow router for an AI assistant specialized in UAE perfumes.
-Classify the incoming user query into EXACTLY ONE of two categories:
-- "continue_chat": The user is following up, asking for clarification, or continuing the discussion on the exact same perfume/topic currently active.
-- "next_question": The user is shifting to a completely new perfume, brand, or an unrelated query, meaning past context is no longer needed.
+You are a precise conversation flow router for an AI assistant.
+Classify the incoming user query into EXACTLY ONE of two categories based on the provided conversation history (if any):
+- "continue_chat": The latest question depends on, refers to, follows up on, clarifies, or extends information from the previous conversation (e.g., using implicit context, pronouns, or asking follow-up mechanics).
+- "next_question": The latest question can be understood independently and does not meaningfully depend on the preceding conversation (even if it's within the same broader technical domain).
 
 Do not output anything outside the requested schema.
 
 {format_instructions}
 """
 
+# Few-shot examples
+examples = [
+        {
+            "input": "Conversation History:\nNo prior conversation history available.\n\nUser input:\nHow do I configure the connection timeout for this setting?",
+            "output": "{\n    \"intent\": \"next_question\",\n    \"confidence_score\": 0.95\n}"
+        },
+        {
+            "input": "Conversation History:\nRecent Short-Term Cache History:\n- Q: How does Redis persistence work?\n  A: Redis uses RDB snapshots and AOF logs to persist data to disk.\n\nUser input:\nAnd what happens if the process crashes before the snapshot?",
+            "output": "{\n    \"intent\": \"continue_chat\",\n    \"confidence_score\": 0.99\n}"
+        },
+        {
+            "input": "Conversation History:\nRecent Short-Term Cache History:\n- Q: Explain Redis persistence.\n  A: Redis provides RDB and AOF persistence mechanisms.\n\nUser input:\nOkay, what about Celery?",
+            "output": "{\n    \"intent\": \"next_question\",\n    \"confidence_score\": 0.94\n}"
+        }
+    ]
+parser = PydanticOutputParser(pydantic_object=ConversationIntentSchema)
 
-async def classify_conversation_intent(text: str, user_id: int) -> APIResponse:
+async def classify_conversation_intent(
+    text: str, 
+    user_id: int, 
+    last_LTM: Optional[list[tuple[str, str]]] = None, 
+    last_cache: Optional[list[tuple[str, str]]] = None
+) -> APIResponse:
     """
-    Parser-based conversation flow classifier powered by few-shot examples 
-    to accurately determine if we need past context history.
+    Parser-based conversation flow classifier that dynamically incorporates 
+    Short-Term Cache and Long-Term Memory (LTM) histories to evaluate intent.
     """
     log_state(ServiceLog.AI_SERVICE_STARTED, function="classify_conversation_intent", user_id=user_id)
 
@@ -66,28 +87,22 @@ async def classify_conversation_intent(text: str, user_id: int) -> APIResponse:
             error_message="Query string cannot be empty for intent classification."
         )
 
-    parser = PydanticOutputParser(pydantic_object=ConversationIntentSchema)
 
-    # Define concrete few-shot examples for technical documentation RAG
-    examples = [
-        {
-            "input": "User input:\nHow do I configure the connection timeout for this setting?",
-            "output": "{\n    \"intent\": \"continue_chat\",\n    \"confidence_score\": 0.98\n}"
-        },
-        {
-            "input": "User input:\nCan you show me an example of how to implement that middleware?",
-            "output": "{\n    \"intent\": \"continue_chat\",\n    \"confidence_score\": 0.99\n}"
-        },
-        {
-            "input": "User input:\nWhat is the pricing model for the enterprise tier?",
-            "output": "{\n    \"intent\": \"next_question\",\n    \"confidence_score\": 0.97\n}"
-        },
-        {
-            "input": "User input:\nHow do I set up Docker Compose for local development?",
-            "output": "{\n    \"intent\": \"next_question\",\n    \"confidence_score\": 0.96\n}"
-        }
-    ]
+    # Build context blocks dynamically based on what history is available
+    context_blocks = []
 
+    if last_cache:
+        cache_str = "\n".join([f"- Q: {q}\n  A: {a}" for q, a in last_cache if q and a])
+        if cache_str:
+            context_blocks.append(f"Recent Short-Term Cache History:\n{cache_str}")
+        
+
+    if last_LTM:
+        ltm_str = "\n".join([f"- Q: {q}\n  A: {a}" for q, a in last_LTM if q and a])
+        if ltm_str:
+            context_blocks.append(f"Long-Term Memory History:\n{ltm_str}")
+
+    history_section: str = "\n\n".join(context_blocks) if context_blocks else "No prior conversation history available."   
     example_prompt = ChatPromptTemplate.from_messages([
         ("human", "{input}"),
         ("ai", "{output}")
@@ -101,7 +116,7 @@ async def classify_conversation_intent(text: str, user_id: int) -> APIResponse:
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_intent_template),
         few_shot_prompt,
-        ("human", "User input:\n{query}")
+        ("human", "Conversation History:\n{history}\n\nUser input:\n{query}")
     ]).partial(format_instructions=parser.get_format_instructions())
 
     extracted_parsed = None
@@ -110,7 +125,10 @@ async def classify_conversation_intent(text: str, user_id: int) -> APIResponse:
         log_state(ProviderLog.AI_PROVIDER_REQUEST, function="classify_conversation_intent", user_id=user_id)
         log_state(ProviderLog.AI_PROVIDER_IN_PROCESSING, function="classify_conversation_intent", user_id=user_id)
 
-        raw_response = await (prompt | model).ainvoke({"query": text.strip()})
+        raw_response = await (prompt | model).ainvoke({
+            "history": history_section,
+            "query": text.strip()
+        })
         cleaned_content = raw_response.content.strip()
 
         if cleaned_content.startswith("```"):

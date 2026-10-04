@@ -30,6 +30,7 @@ class RateLimits:
         DEFAULT = "30/minute"
         FILE_UPLOAD = "30/hour"
         ASK_QUESTION = "40/minute"
+        CONVO = "40/minute"
 
     class Admin:
         READ = "10/minute"

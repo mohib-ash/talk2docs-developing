@@ -13,6 +13,7 @@ from langchain_core.prompts import (
     ChatPromptTemplate,
     FewShotChatMessagePromptTemplate,
 )
+from langchain_core.vectorstores import VectorStoreRetriever
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -94,7 +95,7 @@ _sb_few_shot_prompt = FewShotChatMessagePromptTemplate(
 )
 
 
-async def step_back_function(model: Any, question: str, user_id: int, retriever: EnsembleRetriever, top_n_final: int = 20) -> APIResponse:
+async def step_back_function(model: Any, question: str, user_id: int, retriever: EnsembleRetriever | VectorStoreRetriever, top_n_final: int = 20) -> APIResponse:
     log_state(StepBackLog.STEP_BACK_STARTED, function="step_back_function", user_id=user_id)
     log_state(ServiceLog.AI_SERVICE_STARTED, function="step_back_function", user_id=user_id)
 
@@ -202,6 +203,8 @@ async def step_back_function(model: Any, question: str, user_id: int, retriever:
         log_state(RepairLog.AI_REPAIR_SUCCESS, function="step_back_function", user_id=user_id)
         step_back_query = recovered.step_back_question
 
+    
+    # 3. Dual Parallel Retrieval (Abstract Step-Back Query + Raw Original Query)  
     try:        
         log_state(StepBackLog.STEP_BACK_RETRIEVAL_STARTED, function="step_back_function", user_id=user_id)
         retrieval_tasks: list[Awaitable[list[LangChainDocument]]] = [

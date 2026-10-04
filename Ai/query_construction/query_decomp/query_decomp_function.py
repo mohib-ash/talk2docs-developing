@@ -13,6 +13,7 @@ from langchain_core.prompts import (
     ChatPromptTemplate,
     FewShotChatMessagePromptTemplate,
 )
+from langchain_core.vectorstores import VectorStoreRetriever
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -173,25 +174,17 @@ def _reciprocal_rank_fusion(user_id: int, results_per_query: list[list[LangChain
 
         for doc_list in results_per_query:
             for rank, doc in enumerate(doc_list, start=1):
-                # Unique identifier using metadata or content hash
                 chunk_id = doc.metadata.get("chunk_id") or str(hash((
                     doc.page_content,
                     doc.metadata.get("source", ""),
                     doc.metadata.get("page", ""),
                 )))
-                """
-                    this is either get chunk_id of form embedding's metadata OR of they dont got no id, get all rest and use em to make hash
-                    so we have a way to work around
-                """
-
-
-                #if we have not seen a chunk then add it to dict, if we have then move onn 
                 if chunk_id not in doc_map:
                     doc_map[chunk_id] = doc
                     fused_scores[chunk_id] = 0.0
 
                 fused_scores[chunk_id] += 1.0 / (k + rank)
-                
+    
         reranked_ids = sorted(fused_scores.keys(), key=lambda x: fused_scores[x], reverse=True)
         final_docs = [doc_map[doc_id] for doc_id in reranked_ids]
     except Exception as exc:
@@ -201,7 +194,7 @@ def _reciprocal_rank_fusion(user_id: int, results_per_query: list[list[LangChain
     return final_docs
 
 
-async def query_decomposition_function(model: Any, question: str, user_id: int, retriever: EnsembleRetriever, top_n_final: int = 20) -> APIResponse:
+async def query_decomposition_function(model: Any, question: str, user_id: int, retriever: EnsembleRetriever | VectorStoreRetriever, top_n_final: int = 20) -> APIResponse:
     
     log_state(QueryDecompositionLog.QUERY_DECOMPOSITION_STARTED, function="query_decomposition_function", user_id=user_id)
     log_state(ServiceLog.AI_SERVICE_STARTED, function="query_decomposition_function", user_id=user_id)
@@ -230,8 +223,6 @@ async def query_decomposition_function(model: Any, question: str, user_id: int, 
             cleaned_content = re.sub(r"\n?```$", "", cleaned_content).strip()
 
         extracted_parsed = parser.parse(cleaned_content)
-
-        # FIXED: Success is logged strictly here when both invocation and parsing succeed
         log_state(ProviderLog.AI_PROVIDER_SUCCESS, level=LogState.INFO, function="query_decomposition_function", user_id=user_id)
 
     except Exception as e:

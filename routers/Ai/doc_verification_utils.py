@@ -16,17 +16,16 @@ from utils.schemas import BM25Status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 async def upload_doc_worker_inishiator(data: passed_vlidation_reponce):
-    task = save_validated_doc_task.delay(validated_file_data=data.model_dump())  
+    task = save_validated_doc_task.delay(validated_file_data=data.model_dump()) 
     return task.id 
-
-
-
 
 
 
 
 async def multi_index_db_creation_worker_and_bm25_maker_inishiator(user_id: int, request_id: str, db: AsyncSession) -> APIResponse:
     log_state(UploadFileLogs.INITIATING_WORKER, function="multi_index_db_creation_worker_and_bm25_maker_inishiator", user_id=user_id, request_id=request_id)
+
+    # Get the document belonging to this user + request
     stmt = select(Document).where(
         Document.request_id == request_id,
         Document.user_id == user_id,
@@ -49,7 +48,7 @@ async def multi_index_db_creation_worker_and_bm25_maker_inishiator(user_id: int,
     if document.status != DocumentStatus.READY:
         log_state(UploadFileLogs.WORKER_SKIPPED_DOC_NOT_READY, function="multi_index_db_creation_worker_and_bm25_maker_inishiator", user_id=user_id, request_id=request_id)
         return APIResponse(
-            success=True, 
+            success=True,
             data=None,
             error_code=None,
             error_message=None,
@@ -76,7 +75,7 @@ async def multi_index_db_creation_worker_and_bm25_maker_inishiator(user_id: int,
     else:
         log_state(UploadFileLogs.BM25_STATUS_FETCHED_SUCCESS, function="multi_index_db_creation_worker_and_bm25_maker_inishiator", user_id=user_id, request_id=request_id)
 
-    # 1. All targets (VDBs & BM25) already exist 
+    # 1. All targets (VDBs & BM25) already exist -> don't do anything
     if (
         document.summary_vdb_status == MultiIndexStatus.READY
         and document.explanation_vdb_status == MultiIndexStatus.READY
@@ -88,7 +87,7 @@ async def multi_index_db_creation_worker_and_bm25_maker_inishiator(user_id: int,
             data=None,
             error_code=None,
             error_message=None,
-        )  
+        ) 
 
 
     # 2. Decide which resources actually need to be created
@@ -109,6 +108,7 @@ async def multi_index_db_creation_worker_and_bm25_maker_inishiator(user_id: int,
         BM25Status.STALE,
     )
 
+    # If none need to be started (e.g. everything required is already PROCESSING or READY), don't spawn workers
     if not create_summary and not create_explanation and not create_bm25:
         log_state(UploadFileLogs.WORKER_SKIPPED_NONE_NEEDED, function="multi_index_db_creation_worker_and_bm25_maker_inishiator", user_id=user_id, request_id=request_id)
         return APIResponse(

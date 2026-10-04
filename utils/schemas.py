@@ -115,7 +115,7 @@ class Title_genOut_Route(BaseModel):
 #overall server responce
 class APIResponse(BaseModel):
     success: bool
-    data: Any | None = None #basically the pydentic will be inside it!
+    data: Any | None = None 
     error_code: str | None = None
     error_message: str | None = None
 
@@ -262,6 +262,16 @@ class QuestionRequest(BaseModel):
 
 
 
+#convo route
+class ConvoRequest(BaseModel):
+    new_question: str 
+    doc_name: list[str] | None = None
+    
+    last_question: Optional[str] = None
+    last_model_answer: Optional[str] = None
+    convo_id: Optional[str] = None
+
+
 class MultiIndexStatus(str, enum.Enum):
     PENDING = "pending"
     PROCESSING = "processing"
@@ -276,13 +286,20 @@ class LogState(enum.Enum):
     ERROR = "error"
 
 class BM25Status(str, enum.Enum):
-    PENDING = "PENDING"
-    PROCESSING = "PROCESSING" 
+    PENDING = "PENDING" #started
+    PROCESSING = "PROCESSING" #in working!
     READY = "READY"
-    FAILED = "FAILED"
-    STALE = "STALE"
+    FAILED = "FAILED" #meaning failed to build
+    STALE = "STALE" #meaning bm25 exists but is old coz new doc has come by
 
 class CacheVDBStatus(enum.Enum):
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    READY = "READY"
+    FAILED = "FAILED"
+
+
+class LTMVDBStatus(enum.Enum):
     PENDING = "PENDING"
     PROCESSING = "PROCESSING"
     READY = "READY"

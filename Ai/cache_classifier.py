@@ -72,7 +72,7 @@ Do not output anything outside the requested schema.
 """
 
 
-async def get_classification(question: str, user_id: int) -> APIResponse:
+async def get_cache_classification(question: str, user_id: int) -> APIResponse:
     log_state(ServiceLog.AI_SERVICE_STARTED, function="get_classification", user_id=user_id)
 
     if not question or not question.strip():

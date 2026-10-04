@@ -11,7 +11,6 @@ from utils.schemas import APIResponse, TokenDataSchema
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-
 def get_worker_redis_status(task_id: str, user_id: int) -> APIResponse:
     log_state(UploadFileLogs.CHECKING_REDIS_WORKER_STATE, function="get_worker_redis_status", user_id=user_id)
     

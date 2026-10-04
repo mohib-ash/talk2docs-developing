@@ -31,16 +31,15 @@ def format_tiered_context(docs: list[LangChainDocument]) -> str:
     ]
 
     formatted_chunks = []
-    for idx, doc in enumerate(docs[:5]):
+
+    for idx, doc in enumerate(docs[:5]): 
         label = tier_labels[idx] 
         
-        metadata = doc.metadata or {}
-        file_name = metadata.get("file_name", "Unknown Source")
-
+        metadata = doc.metadata or {} 
+        file_name = metadata.get("file_name", "Unknown Source") 
         rerank_score = metadata.get("rerank_score")
         quote = metadata.get("key_evidence_quote")
         reasoning = metadata.get("rerank_reasoning")
-
 
         extra_lines = []
         if rerank_score is not None:
@@ -50,31 +49,32 @@ def format_tiered_context(docs: list[LangChainDocument]) -> str:
         if reasoning:
             extra_lines.append(f"Reasoning: {reasoning}")
 
-
         extra_info_str = ("\n" + "\n".join(extra_lines)) if extra_lines else ""
 
         chunk_entry = (
-            f"=== [{label}] ===\n" 
-            f"Source File: {file_name}\n"
+            f"=== [{label}] ===\n"
+            f"Source File: {file_name}\n" 
             f"{extra_info_str}\n" 
-            f"Content: {doc.page_content}" 
+            f"Content: {doc.page_content}"
         )
-        formatted_chunks.append(chunk_entry)
+        formatted_chunks.append(chunk_entry) 
     return "\n\n".join(formatted_chunks) 
+
 
 
 async def build_get_retriever(user_vdb: Chroma, user_id: int, db: AsyncSession, redis_client: Redis, doc_name: list[str] | None = None, k: int = 20) -> EnsembleRetriever | VectorStoreRetriever | None:
     log_state(RetriverLog.BUILDING_RETRIVER_STARTED, function="build_get_retriever", user_id=user_id)
-    if isinstance(doc_name, str): 
+    
+    
+    # 1. Fetch documents from user's Chroma collection for BM25
+    if isinstance(doc_name, str):
         doc_name = [doc_name]
     
-    where_filter = {"file_name": {"$in": doc_name}} if doc_name and len(doc_name) > 0 else None 
-    
-    
+    where_filter = {"file_name": {"$in": doc_name}} if doc_name and len(doc_name) > 0 else None #None coz wt if empty sring is passed? (wont happen but aye more safe)
     log_state(RetriverLog.FETCHING_DOCS_FOR_BM25, function="build_get_retriever", user_id=user_id)
     bm25_retriever: BM25Retriever | None = await get_user_bm25_retriever(user_id=user_id, db=db, redis_client=redis_client, doc_name=doc_name, k=k)
 
-    
+    # 2. Build Vector Retriever (Needed for both hybrid and solo fallback)
     search_kwargs = {"k": k}
     if where_filter:
         search_kwargs["filter"] = where_filter
@@ -84,14 +84,14 @@ async def build_get_retriever(user_vdb: Chroma, user_id: int, db: AsyncSession, 
         vector_retriever = user_vdb.as_retriever(
             search_type="similarity",
             search_kwargs=search_kwargs,
-        )
+        ) #fetching by embeddings ;) ++ accuracy
     except Exception:
         log_state(RetriverLog.BUILDING_VECTOR_RETRIVER_FAILURE, function="build_get_retriever", user_id=user_id)
         return None
 
     log_state(RetriverLog.BUILDING_VECTOR_RETRIVER_SUCCESS, function="build_get_retriever", user_id=user_id)
 
-    
+    # Safeguard: If we somehow have no BM25 retriever (e.g. fresh user before Celery builds index), fall back to solo vector retriever gracefully!
     if not bm25_retriever:
         log_state(RetriverLog.COULD_NOT_FIND_DOCS_FOR_BM25, function="build_get_retriever", user_id=user_id)
         log_state(RetriverLog.BUILDING_RETRIVER_SUCCESS, function="build_get_retriever", user_id=user_id)
@@ -103,6 +103,7 @@ async def build_get_retriever(user_vdb: Chroma, user_id: int, db: AsyncSession, 
 
     try:
         log_state(RetriverLog.CREATING_HYBRID_RETRIVER, function="build_get_retriever", user_id=user_id)
+        # 3. Combine both into Hybrid Ensemble Retriever
         hybrid_retirver = EnsembleRetriever(
             retrievers=[vector_retriever, bm25_retriever],
             weights=[0.5, 0.5],
@@ -110,11 +111,9 @@ async def build_get_retriever(user_vdb: Chroma, user_id: int, db: AsyncSession, 
         )
     except Exception:
         log_state(RetriverLog.CREATING_HYBRID_RETRIVER_FAILURE, function="build_get_retriever", user_id=user_id)
-        return vector_retriever 
+        return vector_retriever  
         
     log_state(RetriverLog.CREATING_HYBRID_RETRIVER_SUCCESS, function="build_get_retriever", user_id=user_id)
     log_state(RetriverLog.BUILDING_RETRIVER_SUCCESS, function="build_get_retriever", user_id=user_id)
     log_state(RetriverLog.EXITING_RETRIVER_BUILDER, function="build_get_retriever", user_id=user_id)
     return hybrid_retirver
-
-

@@ -1,0 +1,107 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 103/103 [00:00<00:00, 1684.07it/s]
+INFO:     Started server process [9186]
+INFO:     Waiting for application startup.
+Starting application
+INFO:     Application startup complete.
+--> Incoming request: POST /question
+[REQUEST START] POST /question client=127.0.0.1
+2026-09-11 05:59:33 | INFO | QUESTION_ROUTE_STARTED | ask_question | None | None | None
+2026-09-11 05:59:33 | INFO | CHECKING_USER_VDB | ask_question | None | None | None
+2026-09-11 05:59:33 | INFO | GETTING_USER_VDB | get_user_vdb | None | None | None
+2026-09-11 05:59:33 | INFO | FETCHING_COLLECTION_NAME | get_user_vdb | None | None | None
+2026-09-11 05:59:34 | INFO | VDB_FOUND | get_user_vdb | None | None | None
+2026-09-11 05:59:34 | INFO | CACHE_VDB_CHECKING_RESOURCE | create_cache_vdb_inishiator | None | None | None
+2026-09-11 05:59:34 | INFO | CACHE_VDB_STATUS_SKIPPED | create_cache_vdb_inishiator | None | None | None
+2026-09-11 05:59:34 | INFO | CHECKING_MULTI_TIER_CACHE | ask_question | None | None | None
+2026-09-11 05:59:34 | INFO | CACHE_CLASSIFICATION_AI | multi_tier_cache_system | None | None | None
+2026-09-11 05:59:34 | INFO | AI_SERVICE_STARTED | get_classification | None | None | None
+2026-09-11 05:59:34 | INFO | AI_PROVIDER_REQUEST | get_classification | None | None | None
+2026-09-11 05:59:34 | INFO | AI_PROVIDER_IN_PROCESSING | get_classification | None | None | None
+2026-09-11 05:59:35 | INFO | AI_PROVIDER_SUCCESS | get_classification | None | None | None
+2026-09-11 05:59:35 | INFO | AI_SERVICE_COMPLETED | get_classification | None | None | None
+2026-09-11 05:59:35 | INFO | CACHE_POLICY_CACHEABLE | multi_tier_cache_system | None | None | None
+2026-09-11 05:59:35 | INFO | REDIS_VECTOR_SEARCH_STARTED | get_redis_vector_cached | None | None | None
+2026-09-11 05:59:35 | INFO | REDIS_VECTOR_GENERATING_EMBEDDING | get_redis_vector_cached | None | None | None
+2026-09-11 05:59:35 | INFO | REDIS_VECTOR_SCOPE_NORMALIZED | get_redis_vector_cached | None | None | None
+2026-09-11 05:59:35 | INFO | REDIS_VECTOR_QUERY_EXECUTING | get_redis_vector_cached | None | None | None
+2026-09-11 05:59:35 | INFO | REDIS_VECTOR_ERROR | get_redis_vector_cached | None | str | SEARCH_INDEX_NOT_FOUND Index not found: idx:user_cache:34
+2026-09-11 05:59:35 | INFO | CHECKING_USER_VDB | get_user_cache_vdb | None | None | None
+2026-09-11 05:59:35 | INFO | VDB_FOUND | get_user_cache_vdb | None | None | None
+2026-09-11 05:59:35 | INFO | CHROMA_SIMILARITY_SEARCH_STARTED | get_cached | None | None | None
+2026-09-11 05:59:35 | INFO | CHROMA_CANDIDATES_NOT_FOUND | get_cached | None | None | None
+2026-09-11 05:59:35 | INFO | CACHE_SYSTEM_MISS_FALLBACK | multi_tier_cache_system | None | None | None
+2026-09-11 05:59:35 | INFO | CACHE_MISS_FALLTHROUGH | ask_question | None | None | None
+2026-09-11 05:59:35 | INFO | INVOKING_AI_SERVICE | ask_question | None | None | None
+2026-09-11 05:59:35 | INFO | AI_SERVICE_STARTED | Answer_ai | None | None | None
+2026-09-11 05:59:35 | INFO | BUILDING_RETRIVER_STARTED | build_get_retriever | None | None | None
+2026-09-11 05:59:35 | INFO | FETCHING_DOCS_FOR_BM25 | build_get_retriever | None | None | None
+2026-09-11 05:59:35 | INFO | AI_SERVICE_STARTED | query_classifier | None | None | None
+2026-09-11 05:59:35 | INFO | AI_PROVIDER_REQUEST | query_classifier | None | None | None
+2026-09-11 05:59:35 | INFO | AI_PROVIDER_IN_PROCESSING | query_classifier | None | None | None
+[CACHE MISS] Loading global BM25 retriever from disk/file for user 34 (v1)
+2026-09-11 05:59:36 | INFO | BUILDING_VECTOR_RETRIVER | build_get_retriever | None | None | None
+2026-09-11 05:59:36 | INFO | BUILDING_VECTOR_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-09-11 05:59:36 | INFO | BUILDING_BM25 | build_get_retriever | None | None | None
+2026-09-11 05:59:36 | INFO | BUILDING_BM25_SUCCESS | build_get_retriever | None | None | None
+2026-09-11 05:59:36 | INFO | CREATING_HYBRID_RETRIVER | build_get_retriever | None | None | None
+2026-09-11 05:59:36 | INFO | CREATING_HYBRID_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-09-11 05:59:36 | INFO | BUILDING_RETRIVER_SUCCESS | build_get_retriever | None | None | None
+2026-09-11 05:59:36 | INFO | EXITING_RETRIVER_BUILDER | build_get_retriever | None | None | None
+2026-09-11 05:59:36 | INFO | AI_PROVIDER_SUCCESS | query_classifier | None | None | None
+2026-09-11 05:59:36 | INFO | AI_SERVICE_COMPLETED | query_classifier | None | None | None
+2026-09-11 05:59:36 | INFO | AI_SERVICE_ENDED | query_classifier | None | None | None
+2026-09-11 05:59:36 | INFO | EXITING_AI_SERVICE | query_classifier | None | None | None
+[TIMING] asyncio.gather (retriever + classifier): 876.08 ms
+[TIMING] retrieval strategy / safe_retrieve execution: 263.82 ms
+2026-09-11 05:59:37 | INFO | AI_SERVICE_STARTED | cohere_rerank | None | None | None
+2026-09-11 05:59:37 | INFO | AI_PROVIDER_REQUEST | cohere_rerank | None | None | None
+2026-09-11 05:59:37 | INFO | AI_PROVIDER_IN_PROCESSING | cohere_rerank | None | None | None
+2026-09-11 05:59:37 | INFO | AI_PROVIDER_SUCCESS | cohere_rerank | None | None | None
+2026-09-11 05:59:37 | INFO | VALIDATING_RERANK_RESULT_STARTED | cohere_rerank | None | None | None
+2026-09-11 05:59:37 | INFO | VALIDATING_RERANK_RESULT_SUCCESS | cohere_rerank | None | None | None
+2026-09-11 05:59:37 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-09-11 05:59:37 | INFO | AI_SERVICE_ENDED | cohere_rerank | None | None | None
+2026-09-11 05:59:37 | INFO | EXITING_AI_SERVICE | cohere_rerank | None | None | None
+[TIMING] cohere_rerank execution: 900.19 ms
+2026-09-11 05:59:37 | INFO | AI_SERVICE_COMPLETED | cohere_rerank | None | None | None
+2026-09-11 05:59:37 | INFO | AI_PROVIDER_REQUEST | Answer_ai | None | None | None
+2026-09-11 05:59:37 | INFO | AI_PROVIDER_IN_PROCESSING | Answer_ai | None | None | None
+2026-09-11 05:59:38 | ERROR | AI_PROVIDER_FAILURE | Answer_ai | None | UnboundLocalError | cannot access local variable 'recovered' where it is not associated with a value
+Traceback (most recent call last):
+  File "/mnt/g/python/Talk 2 docs proj/DOC proj/Ai/Talk2Doc.py", line 526, in Answer_ai
+    ans: APIResponse = await push_responce_in_cache_inishiator(model_output=recovered, question=question, user_id=user_id, doc_name=doc_name, db=db)
+                                                                            ^^^^^^^^^
+       
+UnboundLocalError: cannot access local variable 'recovered' where it is not associated with a value
+#DON'T WORRY I FIXED THIS! INSTEAD OF model_output=recovered (which would've been true if model retried), i replaced it with:
+#model_output=parsed which fixed this issue so ive same line in two places with recovered and with parsed so don't worry
+
+
+2026-09-11 05:59:38 | WARNING | AI_REPAIR_INITIALIZED | Answer_ai | None | None | None
+2026-09-11 05:59:38 | INFO | AI_REPAIR_STARTED | Answer_ai | None | None | None
+2026-09-11 05:59:38 | INFO | AI_REPAIR_IN_PROGRESS | Answer_ai | None | None | None
+2026-09-11 05:59:39 | INFO | AI_REPAIR_SUCCESS | Answer_ai | None | None | None
+2026-09-11 05:59:39 | INFO | AI_SERVICE_COMPLETED | Answer_ai | None | None | None
+2026-09-11 05:59:39 | INFO | AI_SERVICE_ENDED | Answer_ai | None | None | None
+2026-09-11 05:59:39 | INFO | EXITING_AI_SERVICE | Answer_ai | None | None | None
+2026-09-11 05:59:39 | INFO | QUESTION_SUCCESS | ask_question | None | None | None
+2026-09-11 05:59:39 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
+2026-09-11 05:59:39 | INFO | BACKGROUND_CACHE_POPULATION_FIRED | ask_question | None | None | None
+2026-09-11 05:59:39 | INFO | EXITING_QUESTION_SERVICE | ask_question | None | None | None
+[REQUEST END] POST /question status=200 time=5298.44ms
+2026-09-11 05:59:39 | INFO | REDIS_VECTOR_SAVE_STARTED | save_to_redis_vector_cache | None | None | None
+2026-09-11 05:59:39 | INFO | REDIS_INDEX_CHECK_STARTED | create_redis_vector_index | None | None | None
+#See? how come this worked then ;) so redis index works dw about that
+
+
+<-- Outgoing response: 200
+INFO:     127.0.0.1:58464 - "POST /question HTTP/1.1" 200 OK
+2026-09-11 05:59:39 | INFO | REDIS_INDEX_CREATION_STARTED | create_redis_vector_index | None | None | None
+2026-09-11 05:59:39 | INFO | REDIS_INDEX_CREATED_SUCCESS | create_redis_vector_index | None | None | None
+2026-09-11 05:59:39 | INFO | REDIS_INDEX_INITIALIZATION_COMPLETE | create_redis_vector_index | None | None | None
+2026-09-11 05:59:39 | INFO | REDIS_VECTOR_INDEX_ENSURED | save_to_redis_vector_cache | None | None | None
+2026-09-11 05:59:39 | INFO | REDIS_VECTOR_EMBEDDING_GENERATED | save_to_redis_vector_cache | None | None | None
+2026-09-11 05:59:39 | INFO | REDIS_VECTOR_PAYLOAD_SERIALIZED | save_to_redis_vector_cache | None | None | None
+2026-09-11 05:59:39 | INFO | REDIS_VECTOR_HASH_SAVED | save_to_redis_vector_cache | None | None | None
+2026-09-11 05:59:39 | INFO | REDIS_VECTOR_TTL_SET | save_to_redis_vector_cache | None | None | None

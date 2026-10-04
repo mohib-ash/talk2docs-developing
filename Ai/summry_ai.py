@@ -98,7 +98,7 @@ class SummaryModel(BaseModel):
     @classmethod
     def validate_non_empty(cls, value: str) -> str:
         if not value or not value.strip():
-            raise ValueError("Field cannot be empty or contain only whitespace.")
+            raise ValueError("Field cannot be empty or contain only whitespace.") #why not custom one? well This is a bg worker outside event loop so custom cant catch
         return value
 
 
@@ -117,10 +117,6 @@ class SummaryBatchModel(BaseModel):
 
     @model_validator(mode="after")
     def validate_strict_contiguous_indexing(self) -> "SummaryBatchModel":
-        """
-        Enforces at runtime that chunk_index forms an exact 0..N-1 contiguous sequence
-        (e.g., [0, 1, 2, 3]) with zero missing chunks, zero duplicates, and zero index drift.
-        """
         received_indices = [item.chunk_index for item in self.summaries]
         expected_indices = list(range(len(self.summaries)))
 

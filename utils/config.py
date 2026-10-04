@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     defualt_collection_name: str
     
     
-    #chroma_db:
+    #chroma_db  (all vdbs btw):
     chroma_db_dir: str 
     
     
@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     cohere_api_key: str
     cohere_rerank_model: str
     
+
     model_config = SettingsConfigDict(env_file=".env")
 
 settings = Settings()

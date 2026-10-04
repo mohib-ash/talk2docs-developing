@@ -23,7 +23,7 @@ from pydantic import (
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from Ai.ai_utils import build_get_retriever, format_tiered_context
-from Ai.query_classifier import (
+from Ai.query_and_intent_classifier import (
     QueryClassificationResult,
     QueryTechnique,
     query_classifier,
@@ -33,6 +33,8 @@ from Ai.raw_and_parsed_clean import extract_parsed_data, extract_raw_data
 from Ai.retry_logic import check_provider_quota
 from Ai.worker_inishiators import push_responce_in_cache_inishiator
 from core.Exceptions.exceptions import AIServiceException
+from db import AsyncSessionLocal
+from db_tables.tables import AiResponse
 from utils.APIResponce_error_code_enum import SYSTEM_ERROR_CODES, USER_ERROR_CODES
 from utils.logging.helper_log import LogState, log_state
 from utils.logging.logEvents import (
@@ -47,13 +49,14 @@ from utils.schemas import APIResponse, QuestionRequest
 from Ai.ai_utils import safe_retrieve
 from Ai.re_ranker_via_encoder import cohere_rerank
 from redis.asyncio import Redis
+from typing import Optional
 
-# Reuse string constraints cleanly across fields
+
 ShortTopicStr = Annotated[
     str,
     StringConstraints(
         min_length=2,
-        max_length=65,  # Bumped up to give the LLM more breathing room
+        max_length=65,  
         strip_whitespace=True,
         to_lower=False,
     ),
@@ -125,7 +128,7 @@ class AnswerModel(BaseModel):
         json_schema_extra={
             "examples": [
                 {
-                    "vdb_fetched_answer": "FastAPI leverages Uvicorn as an ASGI server to handle async web requests concurrently.",
+                    "answer": "FastAPI leverages Uvicorn as an ASGI server to handle async web requests concurrently.",
                     "topic": "FastAPI",
                     "citations": [
                         {
@@ -135,7 +138,6 @@ class AnswerModel(BaseModel):
                             "verbatim_quote": "FastAPI leverages Uvicorn as an ASGI server.",
                         }
                     ],
-                    "answer_summary": "FastAPI utilizes Uvicorn for asynchronous request execution.",
                     "confidence_score": 0.98,
                     "is_meaning_preserved": True,
                 }
@@ -143,17 +145,17 @@ class AnswerModel(BaseModel):
         },
     )
 
-    vdb_fetched_answer: str = Field(
-        ...,
-        title="Vector DB Retrieved Context",
-        description=(
-            "CRITICAL: Output ONLY the raw, literal text snippet retrieved from the vector database. "
-            "NEVER add introductory phrases, conversational framing, explanations, or wrapper sentences "
-            "(e.g., do NOT write 'The project plan includes...'). "
-            "Return the exact context string directly without any conversational preamble."
-        ),
-        min_length=1,
-    )
+    answer: str = Field(
+            ...,
+            title="Grounded Answer",
+            description=(
+                "A clear, conversational, and direct response to the user's question, "
+                "synthesized naturally from the retrieved document context like a human expert. "
+                "The answer MUST remain strictly grounded in the provided context, "
+                "avoiding unsupported facts, external speculation, or robotic copy-pasting."
+            ),
+            min_length=1,
+        )
 
     topic: ShortTopicStr = Field(
         ...,
@@ -173,15 +175,6 @@ class AnswerModel(BaseModel):
         ),
     )
 
-    answer_summary: str = Field(
-        ...,
-        title="Synthesized Summary",
-        description="A clear, concise summary capturing the main ideas and core meaning from the retrieved context.",
-        min_length=5,
-        # max_length=350,
-        examples=["FastAPI utilizes Uvicorn for asynchronous execution."],
-    )
-
     confidence_score: float = Field(
         ...,
         title="Hallucination Confidence Score",
@@ -198,61 +191,28 @@ class AnswerModel(BaseModel):
         description="Flag set to True if the summary strictly preserves original facts and intent without semantic distortion.",
         examples=[True],
     )
-
-    @field_validator("confidence_score")
-    @classmethod
-    def round_score(cls, v: float) -> float:
-        """Rounds confidence score to 2 decimal places cleanly."""
-        return round(v, 2)
     
-    @field_validator("answer_summary", mode="before") #--eq(1) before coz model will bring answers we wanna use those answers to do some logic on!
-    @classmethod #in pydantic v2 if class has model_config then classmethod is a must!
-    def truncate_summary(cls, v: Any) -> Any:
-        if isinstance(v, str) and len(v) > 350:
-            # Slice gracefully at 350 characters or find the last sentence break
-            truncated = v[:350]
-            last_period = truncated.rfind(".")
-            if last_period > 200:  # Cut cleanly at a sentence if possible
-                return truncated[: last_period + 1]
-            return truncated.strip() + "..."
-        return v
     
-    @field_validator("vdb_fetched_answer")
+    @field_validator("answer", mode="before")
     @classmethod
-    def strip_responce(cls, v: str):
-        return "\n".join([line.strip() for line in v.splitlines() if line.strip()])
-    
-    @field_validator("vdb_fetched_answer", mode="before")
-    @classmethod
-    def clean_and_limit_fetched_answer(cls, v: Any) -> Any:
-        if isinstance(v, str):
-            # First, normalize your newlines and whitespace if you want it neat
-            cleaned = " ".join(v.split())
+    def clean_and_limit_answer(cls, v: Any) -> Any:
+        if not isinstance(v, str):
+            return v
             
-            # Optional: Add a length cap if it tends to get excessively long
-            MAX_LEN = 1000
-            if len(cleaned) > MAX_LEN:
-                truncated = cleaned[:MAX_LEN]
-                last_space = truncated.rfind(" ")
-                if last_space > 500:
-                    return truncated[:last_space] + "..."
-                return truncated.strip() + "..."
-                
-            return cleaned
-        return v
-
-
-    
-    
-
-
-#a field_validator is additional instructions to BaseModel where basemodel is checking if input to feilds match the defined datatype
-#e.g age: int, name: str -> fo(age=5000, name="    ") -> technically valid logically WRRRONG! basemdoel will work coz we did gave int and str
-#but thats not correct now is it? so thats where field validtors come in!! more info to reach field!
-#field_validator can 1) check a field, 2) modify values, 3) resuing validators (more than 1 field)
-#field_validator -> takes inn a field name and passes it to the function bellow (ima use it in answer_summary) coz 350 too low and if i remove it yap
-#b4 that know for reach run field_validators run too! auto! and we can have checks init too! if check pass what we return becomes that field's value btw!
-#--eq(1)
+        # Clean line-by-line to preserve paragraph structure instead of flattening everything
+        cleaned_lines = [line.strip() for line in v.splitlines() if line.strip()]
+        cleaned = "\n".join(cleaned_lines)
+        
+        # Optional length cap (if needed)
+        MAX_LEN = 1000
+        if len(cleaned) > MAX_LEN:
+            truncated = cleaned[:MAX_LEN]
+            last_space = truncated.rfind(" ")
+            if last_space > 500:
+                return truncated[:last_space] + "..."
+            return truncated.strip() + "..."
+            
+        return cleaned
 
 
 
@@ -278,14 +238,15 @@ SYSTEM_TEMPLATE = r"""You are AnswerAI, an authoritative, highly precise AI rese
 - Set `page_number` to null/None if explicit page metadata is not provided in <context>. NEVER guess or estimate page numbers.
 - Use `location_fallback` (e.g., source file name, paragraph, or chunk ID) whenever `page_number` is null.
 - MULTI-SOURCE CITATION REQUIREMENT: If the answer incorporates facts or concepts from multiple distinct source files (e.g., Tier 1 and Tier 2/3), you MUST include a separate citation object for *each* contributing source file, rather than consolidating them into a single citation.
+- CONSOLIDATE CITATIONS: Avoid over-granular micro-citations from the same source file; combine them into a comprehensive citation object when applicable.
 
 4. UNANSWERABLE QUESTIONS & MISSING INFORMATION:
-- If Tiers 1 and 2 do NOT contain enough information to answer the question, explicitly explain what is missing in `answer_summary`.
-- If the context is insufficient, `vdb_fetched_answer` must still contain a concise grounded explanation of why the question cannot be answered from the context. NEVER return an empty string.
+- If Tiers 1 and 2 do NOT contain enough information to answer the question, `answer` must explicitly and conversationally explain what is missing or state why the question cannot be answered from the context. NEVER return an empty string.
 - Set `confidence_score` below 0.50 (or 0.0) whenever the context lacks facts to directly answer the question.
 
 5. STRICT FAITHFULNESS & HALLUCINATION CONTROL:
 - Do NOT invent information, external facts, or assumptions outside <context>.
+- Synthesize answers naturally like a human expert while remaining strictly grounded in the context.
 - Set `is_meaning_preserved` to True ONLY if the outputs rely strictly on facts provided in <context>.
 - Set `is_meaning_preserved` to False if forced to extrapolate or if factual accuracy cannot be guaranteed.
 
@@ -294,7 +255,7 @@ SYSTEM_TEMPLATE = r"""You are AnswerAI, an authoritative, highly precise AI rese
 
 COMPACT_FORMAT_INSTRUCTION = (
     "Respond ONLY with a valid JSON object matching this structure: "
-    '{"vdb_fetched_answer": str, "topic": str, "citations": [{"page_number": int|null, "section_heading": str|null, "location_fallback": str|null, "verbatim_quote": str}], "answer_summary": str, "confidence_score": float, "is_meaning_preserved": bool}'
+    '{"answer": str, "topic": str, "citations": [{"page_number": int|null, "section_heading": str|null, "location_fallback": str|null, "verbatim_quote": str}], "confidence_score": float, "is_meaning_preserved": bool}'
 )
 
 FEW_SHOT_EXAMPLES = [
@@ -319,7 +280,26 @@ FEW_SHOT_EXAMPLES = [
             "Content: Legacy v1 allowed a 25MB limit.\n"
             "</context>"
         ),
-        "output": '{"vdb_fetched_answer": "System v2 upgrades the maximum file upload limit to 100MB per request. Set `MAX_UPLOAD_SIZE_MB=100` in your environment config file to adjust application payload gates.", "topic": "API File Limits", "citations": [{"page_number": null, "section_heading": null, "location_fallback": "Source File: v2_api_specs.pdf", "verbatim_quote": "System v2 upgrades the maximum file upload limit to 100MB per request."}, {"page_number": null, "section_heading": null, "location_fallback": "Source File: config_guide.pdf", "verbatim_quote": "Set `MAX_UPLOAD_SIZE_MB=100` in your environment config file to adjust application payload gates."}], "answer_summary": "The maximum file upload limit is 100MB per request in System v2. It can be configured by setting `MAX_UPLOAD_SIZE_MB=100` in your environment configuration file.", "confidence_score": 0.98, "is_meaning_preserved": true}',
+        "output": json.dumps({
+            "answer": "The maximum file upload limit is 100MB per request in System v2. You can configure this by setting `MAX_UPLOAD_SIZE_MB=100` in your environment configuration file.",
+            "topic": "API File Limits",
+            "citations": [
+                {
+                    "page_number": None,
+                    "section_heading": None,
+                    "location_fallback": "Source File: v2_api_specs.pdf",
+                    "verbatim_quote": "System v2 upgrades the maximum file upload limit to 100MB per request."
+                },
+                {
+                    "page_number": None,
+                    "section_heading": None,
+                    "location_fallback": "Source File: config_guide.pdf",
+                    "verbatim_quote": "Set `MAX_UPLOAD_SIZE_MB=100` in your environment config file to adjust application payload gates."
+                }
+            ],
+            "confidence_score": 0.98,
+            "is_meaning_preserved": True
+        })
     },
     {
         "input": (
@@ -336,7 +316,20 @@ FEW_SHOT_EXAMPLES = [
             "Content: Docker containers manage isolated service execution.\n"
             "</context>"
         ),
-        "output": '{"vdb_fetched_answer": "The default server deployment timeout is strictly set to 300 seconds across all worker pools.", "topic": "Server Deployment", "citations": [{"page_number": null, "section_heading": null, "location_fallback": "Source File: deployment_guide.pdf", "verbatim_quote": "The default server deployment timeout is strictly set to 300 seconds across all worker pools."}], "answer_summary": "The default server deployment timeout is 300 seconds across all worker pools.", "confidence_score": 0.99, "is_meaning_preserved": true}',
+        "output": json.dumps({
+            "answer": "The default server deployment timeout is strictly set to 300 seconds across all worker pools.",
+            "topic": "Server Deployment",
+            "citations": [
+                {
+                    "page_number": None,
+                    "section_heading": None,
+                    "location_fallback": "Source File: deployment_guide.pdf",
+                    "verbatim_quote": "The default server deployment timeout is strictly set to 300 seconds across all worker pools."
+                }
+            ],
+            "confidence_score": 0.99,
+            "is_meaning_preserved": True
+        })
     },
     {
         "input": (
@@ -350,7 +343,20 @@ FEW_SHOT_EXAMPLES = [
             "Content: Session keys expire based on standard Time-To-Live (TTL) values.\n"
             "</context>"
         ),
-        "output": '{"vdb_fetched_answer": "Redis caching infrastructure operates entirely in-memory for session revocation checks.", "topic": "Redis Configuration", "citations": [{"page_number": null, "section_heading": null, "location_fallback": "Source File: database_architecture.pdf", "verbatim_quote": "Redis caching infrastructure operates entirely in-memory for session revocation checks."}], "answer_summary": "The provided documentation specifies that Redis operates in-memory for session revocation, but it does not contain instructions on configuring database persistence.", "confidence_score": 0.35, "is_meaning_preserved": true}',
+        "output": json.dumps({
+            "answer": "The provided documentation specifies that Redis caching infrastructure operates entirely in-memory for session revocation checks, but it does not contain instructions on configuring database persistence.",
+            "topic": "Redis Configuration",
+            "citations": [
+                {
+                    "page_number": None,
+                    "section_heading": None,
+                    "location_fallback": "Source File: database_architecture.pdf",
+                    "verbatim_quote": "Redis caching infrastructure operates entirely in-memory for session revocation checks."
+                }
+            ],
+            "confidence_score": 0.35,
+            "is_meaning_preserved": True
+        })
     },
 ]
 
@@ -361,19 +367,25 @@ async def Answer_ai(
     user_raw_vdb: Chroma,
     user_payload: QuestionRequest,
     db: AsyncSession,
-    normal_redis_instance: Redis,
+    # normal_redis_instance: Redis,
     bytes_redis: Redis,
     cache_policy: str,
+    from_tool: bool = False,  # True only when AnswerAI is invoked as a ConvoAI tool
+    convo_id: str | None = None
     # cache_vdb: Chroma
 ) -> APIResponse:
     log_state(ServiceLog.AI_SERVICE_STARTED, function="Answer_ai", user_id=user_id)
     question: str = user_payload.question
     doc_name: list[str] | None = user_payload.doc_name
 
+
     if not question or not question.strip():
         log_state(SecurityLog.EMPTY_INPUT, function="Answer_ai", user_id=user_id)
         log_state(ServiceLog.AI_SERVICE_FAILED, function="Answer_ai", user_id=user_id)
         log_state(ServiceLog.EXITING_AI_SERVICE, function="Answer_ai", user_id=user_id)
+        
+        if from_tool:
+            return "Question to ask is missing." #btw this goes in model lol
 
         return APIResponse(
             success=False,
@@ -390,31 +402,57 @@ async def Answer_ai(
     #INSTRUMENTATION TIMER START 
     t_pipeline_start = time.perf_counter()
 
-    retriever_task = asyncio.create_task(
-        build_get_retriever(user_vdb=user_raw_vdb, doc_name=doc_name, k=10, user_id=user_id, db=db, redis_client=bytes_redis)
-    )
-    classifier_task: APIResponse = asyncio.create_task(
-        query_classifier(question, user_id)
-    )
+    if not from_tool:
+        retriever_task = asyncio.create_task(
+            build_get_retriever(user_vdb=user_raw_vdb, doc_name=doc_name, k=10, user_id=user_id, db=db, redis_client=bytes_redis)
+        )
+        classifier_task: APIResponse = asyncio.create_task(
+            query_classifier(question, user_id)
+        )
 
-    retriever, classification_response = await asyncio.gather(
-        retriever_task, classifier_task
-    )
+        retriever, classification_response = await asyncio.gather(
+            retriever_task, classifier_task
+        )
+    
+    
+    if from_tool:
+        if isinstance(doc_name, str): 
+            doc_name = [doc_name]
+            
+        where_filter = {"file_name": {"$in": doc_name}} if doc_name and len(doc_name) > 0 else None
+        search_kwargs = {"k": 10}
+        if where_filter:
+            search_kwargs["filter"] = where_filter
+            
+        retriever_coro = asyncio.to_thread(
+            user_raw_vdb.as_retriever,
+            search_type="similarity",
+            search_kwargs=search_kwargs
+        )
+        classifier_task: APIResponse = asyncio.create_task(
+            query_classifier(question, user_id)
+        )
+        
+        retriever, classification_response = await asyncio.gather(
+            retriever_coro, classifier_task
+        )
+    
 
     print(f"[TIMING] asyncio.gather (retriever + classifier): {(time.perf_counter() - t_pipeline_start) * 1000:.2f} ms")
-
-    if not classification_response.success: #this is where bad intent is trund back!
+    if not classification_response.success: 
         return classification_response
 
-    if retriever is None:
+    if retriever is None and not from_tool:
         raise AIServiceException(
             error_code=SYSTEM_ERROR_CODES.NO_RELATED_VECTOR_DATABASE_FOUND.value,
             message=f"No valid text chunks found {docs_msg}.",
         )
+    
+    if retriever is None and from_tool:
+        return "retriver building failed for document search."
+
 
     retrieved_docs: list[LangChainDocument] | None = None
-    
-    # INSTRUMENTATION TIMER FOR STRATEGY/RETRIEVAL 
     t_retrieval_start = time.perf_counter()
 
     if (
@@ -445,16 +483,16 @@ async def Answer_ai(
         retrieved_docs = await safe_retrieve(retriever, question)
 
     print(f"[TIMING] retrieval strategy / safe_retrieve execution: {(time.perf_counter() - t_retrieval_start) * 1000:.2f} ms")
-
-    if not retrieved_docs:
+    if not retrieved_docs and not from_tool:
         raise AIServiceException(
             error_code=SYSTEM_ERROR_CODES.NO_DATA_FOUND_BY_RETRIVER.value,
             message=f"No data found by retriver in: {docs_msg}.",
         )
+    
+    if not retrieved_docs and from_tool:
+        return "No data found by retriver in the document.. perhpas user is asking the question form an older document version or simply something asked doesnt exist in the document."
 
-    #INSTRUMENTATION TIMER FOR COHERE 
     t_cohere_start = time.perf_counter()
-
     cohere_ranked_response = await cohere_rerank(
         user_id=user_id,
         question=question,
@@ -463,7 +501,6 @@ async def Answer_ai(
     )
     
     print(f"[TIMING] cohere_rerank execution: {(time.perf_counter() - t_cohere_start) * 1000:.2f} ms")
-
     if cohere_ranked_response.success and cohere_ranked_response.data:
         log_state(
             ServiceLog.AI_SERVICE_COMPLETED,
@@ -479,6 +516,7 @@ async def Answer_ai(
             user_id=user_id,
         )
         ranked_docs = retrieved_docs[:5]
+
 
     formatted_context: str = format_tiered_context(ranked_docs)
     parser = PydanticOutputParser(pydantic_object=AnswerModel)
@@ -522,10 +560,67 @@ async def Answer_ai(
         extracted_parsed = parser.parse(cleaned_content)
         
         
-        #WRAP THIS IN TRY TOO! COZ IF THIS FAILS IT THINKS FULL MODEL FAILED AND WE RETRY BAAAAD! 
-        if cache_policy == "cacheable":
-            ans: APIResponse = await push_responce_in_cache_inishiator(model_output=extracted_parsed, question=question, user_id=user_id, doc_name=doc_name, db=db)
-            task_id = ans.data["task_id"]
+        async def persist_response_background(user_id: int, question: str, response_text: str | None, ai_source: str, convo_id: str | None, from_tool: bool):
+            async with AsyncSessionLocal() as db: 
+                try:
+                    new_ai_response = AiResponse(
+                        user_id=user_id,
+                        question=question,
+                        response_text=response_text,
+                        ai_source=ai_source,
+                        convo_id=convo_id, 
+                        from_tool=from_tool
+                    )
+                    db.add(new_ai_response)
+                    await db.commit()
+                except Exception as e:
+                    await db.rollback()
+                    log_state(ServiceLog.AI_SERVICE_FAILED, level=LogState.WARNING, exc=e, function="Answer_Ai")
+
+
+        # 1. Persist the actual AI response
+        parsed_output = (extracted_parsed.model_dump() if hasattr(extracted_parsed, "model_dump") else extracted_parsed)
+        response_text_value = parsed_output.get("response", parsed_output.get("answer", ""))
+        ai_source_type = "answer_ai"
+
+        asyncio.create_task(
+            persist_response_background(
+                user_id=user_id,
+                question=question,
+                response_text=response_text_value,
+                ai_source=ai_source_type,
+                convo_id=convo_id,
+                from_tool=from_tool
+            )
+        )
+
+
+        # 2. Push reusable answer into Cache VDB
+        if cache_policy == "cacheable" and not from_tool:
+            try:
+                ans: APIResponse = await push_responce_in_cache_inishiator(
+                    model_output=(
+                        extracted_parsed.model_dump()
+                        if hasattr(extracted_parsed, "model_dump")
+                        else extracted_parsed
+                    ),
+                    question=question,
+                    user_id=user_id,
+                    doc_name=doc_name,
+                    ai_type="answer_ai",
+                    convo_id=convo_id 
+                )
+                task_id = ans.data["task_id"] if ans and ans.data else None
+
+            except Exception as cache_exc:
+                log_state(
+                    ServiceLog.AI_SERVICE_FAILED,
+                    level=LogState.WARNING,
+                    function="Answer_ai",
+                    user_id=user_id,
+                    exc=cache_exc,
+                )
+
         
         log_state(ProviderLog.AI_PROVIDER_SUCCESS, level=LogState.INFO, function="Answer_ai", user_id=user_id)
         log_state(ServiceLog.AI_SERVICE_COMPLETED, function="Answer_ai", user_id=user_id)
@@ -611,9 +706,48 @@ async def Answer_ai(
             error_message="Structured output parsing failed and manual recovery returned no result.",
         )
     
-    if cache_policy == "cacheable":
-        ans: APIResponse = await push_responce_in_cache_inishiator(model_output=recovered, question=question, user_id=user_id, doc_name=doc_name, db=db)
-        task_id = ans.data["task_id"]
+    
+    parsed_output = (recovered.model_dump() if hasattr(recovered, "model_dump") else recovered)
+    response_text_value = parsed_output.get("response", parsed_output.get("answer", ""))
+    ai_source_type = "answer_ai"
+    
+    asyncio.create_task(
+        persist_response_background(
+            user_id=user_id,
+            question=question,
+            response_text=response_text_value,
+            ai_source=ai_source_type,
+            convo_id=convo_id,
+            from_tool=from_tool
+        )
+    )
+    
+    if cache_policy == "cacheable" and not from_tool:
+        try:
+            ans: APIResponse = await push_responce_in_cache_inishiator(
+                model_output=(
+                    recovered.model_dump()
+                    if hasattr(recovered, "model_dump")
+                    else recovered
+                ),
+                question=question,
+                user_id=user_id,
+                doc_name=doc_name,
+                ai_type="answer_ai",
+                convo_id=convo_id
+            )
+            task_id = ans.data["task_id"] if ans and ans.data else None
+
+        except Exception as cache_exc:
+            log_state(
+                ServiceLog.AI_SERVICE_FAILED,
+                level=LogState.WARNING,
+                function="continue_convo",
+                user_id=user_id,
+                exc=cache_exc,
+            )
+        
+
 
     log_state(RepairLog.AI_REPAIR_SUCCESS, function="Answer_ai", user_id=user_id)
     log_state(ServiceLog.AI_SERVICE_COMPLETED, function="Answer_ai", user_id=user_id)

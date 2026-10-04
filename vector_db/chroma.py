@@ -23,14 +23,11 @@ async def get_user_collection_name(user_id: int, db: AsyncSession) -> str | None
         .where(Document.user_id == user_id)
         .limit(1)
     )
-
     result = await db.execute(stmt)
-
     return result.scalar_one_or_none()
 
 
 
-#why for all vdb question logs? well coz all of  that shii happens after we ask question!
 async def get_user_vdb(user_id: int, db: AsyncSession) -> Chroma | None:
     log_state(QuestionLogs.GETTING_USER_VDB, function="get_user_vdb", user_id=user_id)
     user_vdb_path = Path(settings.chroma_db_dir) / f"user_{user_id}"
@@ -170,7 +167,7 @@ async def get_user_bm25_retriever(
         current_version = 1
 
 
-    # PATH 1: NO DOC_NAME (Global Search -> Pre-built Retriever) [big boy is alredy bilt we just load it from pickle]
+    # PATH 1: NO DOC_NAME (Global Search -> Pre-built Retriever) 
     if not doc_name:
         if bm25_res:
             retriever_pickle_path: Path = Path(bm25_res.index_path).parent / f"master_bm25_retriever_v{current_version}.pkl" if bm25_res.index_path else (user_dir / f"master_bm25_retriever_v{current_version}.pkl")
@@ -179,16 +176,6 @@ async def get_user_bm25_retriever(
 
         redis_key: str = f"bm25_retriever:user_{user_id}:v{current_version}"
         cached_bytes: bytes | None = await redis_client.get(redis_key)
-        """
-        global Redis client was set up with decode_responses=True so that your normal string and JSON keys automatically return regular Python strings without you having to 
-        manually decode them everywhere. However, Python pickle creates raw binary streams (which start with byte 0x80). When Redis-py tries to automatically UTF-8 decode a 
-        binary pickle blob into a string because of decode_responses=True, it chokes and throws a UnicodeDecodeError.
-        
-        sol:
-        The .get() method in Redis-py obeys decode_responses=True and forces a string conversion. But calling redis_client.execute_command("GET", redis_key) bypasses that 
-        wrapper and tells the Redis driver: "Just give me the raw bytes directly for this specific command."
-        """
-        
         
         if cached_bytes:
             print(f"[CACHE HIT] Loaded global BM25 retriever from Redis for user {user_id} (v{current_version})")
@@ -207,8 +194,7 @@ async def get_user_bm25_retriever(
 
         # Fallback loop for global retriever versions
         fallback_version: int = current_version - 1
-        while fallback_version >= 1: #so if current version bm25 is not build use version - 1 which is saved in dir essentially doing case:2 of or logic which is question might not 
-                                    #always be form new doc
+        while fallback_version >= 1:
             fallback_redis_key: str = f"bm25_retriever:user_{user_id}:v{fallback_version}"
             cached_fallback_bytes: bytes | None = await redis_client.get(fallback_redis_key)
             
@@ -233,31 +219,15 @@ async def get_user_bm25_retriever(
         return None
 
     # PATH 2: SPECIFIC DOC_NAME PROVIDED (Filtered Search -> Build on the fly) [tho we build on the fly the LangChainDocs are alredy made!]
-    """
-    # SHORTCUT: If the full corpus retriever is already ready in Redis, use it instead of building on the fly!
-    global_redis_key = f"bm25_retriever:user_{user_id}:v{current_version}"
-    cached_global_bytes = await redis_client.get(global_redis_key)
-    if cached_global_bytes:
-        return await asyncio.to_thread(pickle.loads, cached_global_bytes)
-
-    #the idea is, even if user aksed to get from x,y,z doc, why build a retriver again? if we already have cached for full corpus! (but tradeoff is we might see)
-    #loss in accuracy!
-    """
-
-
-
-
     if bm25_res:
         pickle_path = Path(bm25_res.index_path) if bm25_res.index_path else (user_dir / f"master_bm25_docs_v{current_version}.pkl")
     else:
-        #very extreame fallback
         pickle_path = user_dir / f"master_bm25_docs_v1.pkl"
 
     redis_key = f"bm25_docs:user_{user_id}:v{current_version}"
     cached_bytes = await redis_client.get(redis_key)
     
-    master_docs = [] #these will be all the doc chunks upto that point saved alredy by a bg worker ;)
-
+    master_docs = [] 
     if cached_bytes:
         print(f"[CACHE HIT] Loaded master docs from Redis for user {user_id} (v{current_version})")
         master_docs = await asyncio.to_thread(pickle.loads, cached_bytes)
@@ -270,7 +240,6 @@ async def get_user_bm25_retriever(
         except Exception as e:
             log_state(QuestionLogs.VDB_NOT_FOUND, level=LogState.EXCEPTION, function="get_user_bm25_retriever", user_id=user_id)
     else:
-        # Fallback loop for raw doc versions
         fallback_version = current_version - 1
         while fallback_version >= 1:
             fallback_redis_key = f"bm25_docs:user_{user_id}:v{fallback_version}"
@@ -297,13 +266,11 @@ async def get_user_bm25_retriever(
 
     if not master_docs:
         return None
-
-    # Filter docs down to only the user-selected files
+    
     filtered_docs = [doc for doc in master_docs if doc.metadata.get("file_name") in doc_name] #so we only use the ones which we need ;)
 
     if not filtered_docs:
         return None
-
     try:
         targeted_retriever = await asyncio.to_thread(
             BM25Retriever.from_documents,

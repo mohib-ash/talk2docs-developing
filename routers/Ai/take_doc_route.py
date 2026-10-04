@@ -41,17 +41,12 @@ async def upload_doc(
     if not result.success:
         log_state(UploadFileLogs.VALIDATION_FAILED, function="upload_doc", user_id=user_id)
         
-        
-        
     data: passed_vlidation_reponce = handle_service_response(result, UploadingException)
     log_state(UploadFileLogs.VALIDATION_SUCCESS, function="upload_doc", user_id=user_id)
-    
-    
     log_state(UploadFileLogs.INITIATING_WORKER, function="upload_doc", user_id=user_id)
     task_id = await upload_doc_worker_inishiator(data=data)
     
     log_state(UploadFileLogs.WORKER_INITIATED_SUCCESS, function="upload_doc", user_id=user_id)
-    
     log_state(UploadFileLogs.UPLOAD_SUCCESS, function="upload_doc", user_id=user_id)
     log_state(UploadFileLogs.EXITING_UPLOAD_SERVICE, function="upload_doc", user_id=user_id)
     
@@ -62,8 +57,6 @@ async def upload_doc(
             user_id=user_id
         )
     )
-
-
 
 
 
@@ -78,25 +71,21 @@ async def get_upload_worker_result(
     result: APIResponse = await redis_and_db_worker_status(task_id=task_id, request_id=request_id, db=db, user_jwt_payload=user_jwt_payload)
     result_data: dict = result.data 
 
-    
+    # Try to initiate multi-index creation if RAW VDB is ready.
     log_state(UploadFileLogs.INITIATING_MULTI_INDEX_CHECK, function="get_upload_worker_result", user_id=user_jwt_payload.user_id, request_id=request_id)
+    
     two_vdb_and_bm25_task_id: APIResponse = await multi_index_db_creation_worker_and_bm25_maker_inishiator(user_id=user_jwt_payload.user_id, request_id=request_id, db=db)
     res: dict | None = handle_service_response(two_vdb_and_bm25_task_id, UploadingException) #if we get None means processing is happening if get data means ggz if nothing we've raised properly ;)
     
     if res is not None:
         bm25_task_id = res["bm25_task_id"] 
         multi_index_task_id = res["multi_index_task_id"]
-    
-
-    # Re-fetch document because the initiator may have changed
-    # summary/explanation statuses to PROCESSING.
+        
     log_state(UploadFileLogs.REFRESHING_DOCUMENT_STATUS, function="get_upload_worker_result", user_id=user_jwt_payload.user_id, request_id=request_id)
-
     stmt = select(Document).where(Document.request_id == request_id, Document.user_id == user_jwt_payload.user_id)
     db_result = await db.execute(stmt)
     document = db_result.scalar_one_or_none()
 
-    
     if document:
         result_data["multi_index_worker_2"] = {
             "doc_id": document.doc_id,
@@ -108,15 +97,12 @@ async def get_upload_worker_result(
             "summary_status": "STARTED",
             "explanation_status": "STARTED",
         }
-
-    # Fetch and log BM25 resource state during poll
     log_state(UploadFileLogs.CHECKING_BM25_STATUS, function="get_upload_worker_result", user_id=user_jwt_payload.user_id, request_id=request_id)
 
     bm25_stmt = select(BM25Resource).where(BM25Resource.user_id == user_jwt_payload.user_id)
     db_res = await db.execute(bm25_stmt)
     user_bm25_table_obj = db_res.scalar_one_or_none()
-    
-    
+
     if user_bm25_table_obj:
         log_state(UploadFileLogs.BM25_STATUS_FETCHED_SUCCESS, function="get_upload_worker_result", user_id=user_jwt_payload.user_id, request_id=request_id)
         result_data["bm25_worker_3"] = {
@@ -134,5 +120,3 @@ async def get_upload_worker_result(
         
     log_state(UploadFileLogs.POLL_WORKER_SUCCESS, function="get_upload_worker_result", user_id=user_jwt_payload.user_id, request_id=request_id)
     return result_data
-
-
