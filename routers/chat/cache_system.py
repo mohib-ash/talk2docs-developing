@@ -39,13 +39,16 @@ async def multi_tier_cache_system(convo_id: str, ai_type: str, question: str, us
     # BTW FOR CONVO_AI I TESTED ALL 3 TIERS THE WORK!
     if convo_id:
         print("Exiting early coz only T1 in covo_ai")
+        data = {
+            "cache_verdict": None,
+            "data": None
+        }
         return APIResponse(
             success=False,
             data=data,
             error_code=None,
             error_message=None
         )
-    
     
     cache_policy = "non_cacheable"
     log_state(QuestionLogs.CACHE_CLASSIFICATION_AI, function="multi_tier_cache_system", user_id=user_id)
